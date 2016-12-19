@@ -1,0 +1,54 @@
+/*
+*	Utility functions for the cartridge
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+importPackage( dw.io );
+
+importClass( dw.web.Resource );
+
+// API Includes
+var StringUtils = require('dw/util/StringUtils');
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global Variables
+var Utils = {};
+
+Utils.log = LogUtils.getLogger("Utils");
+
+/**
+*	Gets folder path from absolute path of file
+*/
+Utils.getFolderPath = function(absPath : String){
+	var folderPath = "";
+	if(absPath){
+		folderPath = absPath.substring(0, absPath.lastIndexOf(File.SEPARATOR) + 1);
+	}
+	return folderPath;
+}
+
+/*
+*	Gets filename part without extension
+*/
+Utils.getFileNameNoExt = function(fileName : String){
+	var fileNamePart = "";
+	if(fileName){
+		fileNamePart = fileName.substring(0, fileName.lastIndexOf("."));
+	}
+	return fileNamePart;
+}
+
+/*
+*	Gets filename extension
+*/
+Utils.getFileNameExtension = function(fileName : String){
+	var fileNameExtension = "";
+	if(fileName){
+		fileNameExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+	}
+	return fileNameExtension;
+}
+
+module.exports = Utils;

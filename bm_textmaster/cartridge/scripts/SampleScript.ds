@@ -1,0 +1,16 @@
+/**
+*	Sample script file
+*
+*/
+
+// API Includes
+var CatalogMgr 		= require('dw/catalog/CatalogMgr');
+	
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+function execute( pdict : PipelineDictionary ) : Number {
+	
+	return PIPELET_NEXT;
+}
