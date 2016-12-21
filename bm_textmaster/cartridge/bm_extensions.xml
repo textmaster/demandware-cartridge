@@ -23,9 +23,6 @@
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
 		</sub-pipelines>
-		<parameters>
-			<parameter name="mainmenuname" value="DEMO Site Menu Extension"/>
-		</parameters>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>
 </extensions>

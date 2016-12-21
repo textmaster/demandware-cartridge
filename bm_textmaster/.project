@@ -3,6 +3,7 @@
 	<name>bm_textmaster</name>
 	<comment></comment>
 	<projects>
+		<project>DemandwareServer</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

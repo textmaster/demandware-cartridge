@@ -1,0 +1,77 @@
+.new-translation {
+	max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+	font-size:13px;
+}
+.new-translation form {
+	margin:0;
+	padding:0;
+}
+.new-translation input[type=text],
+.new-translation select {
+	min-width:250px;
+	padding:2px;
+	border: 1px solid #A5AEB5;
+}
+.new-translation input[type=button]{
+	background-color: #d9d9d9;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    color: #00629b;
+    cursor: pointer;
+    margin: 0;
+    white-space: nowrap;
+}
+.new-translation input[type=button]:hover{
+	background-color: #eee;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+}
+.new-translation .checkbox-label {
+	position: relative;
+    top: -2px;
+    padding-right: 10px;
+}
+.new-translation h1 {
+	padding: 0 0 10px 0;
+    font-size: 26px;
+	color: #84BD00;
+	border-bottom: 1px solid #DADADA;
+}
+.new-translation  .field-holder.title-holder {
+	border-bottom: 1px solid #DADADA;
+    margin-bottom: 5px;
+	background-color:#F5F5F5;
+}
+.new-translation  .field-holder.title-holder.no-fields {
+	margin-bottom: 0;
+	border-bottom: medium none;
+}
+.new-translation h2 {
+	margin: 5px;
+    font-size: 14px;
+    font-weight: normal;
+}
+.new-translation .form-holder {
+    border: 1px solid #DADADA;
+	margin-top: 10px;
+}
+.new-translation .field-holder {
+	overflow: hidden;
+	padding: 5px;
+}
+.new-translation .field-holder .label-holder {
+	float:left;
+	min-width: 140px;
+	font-weight:bold;
+	text-align:right;
+	padding-right: 10px;
+}
+.new-translation .field-holder .input-holder {
+	float:left;
+}
+.new-translation .field-holder.button-holder {
+	border-top: 1px solid #DADADA;
+	text-align:right;
+}
