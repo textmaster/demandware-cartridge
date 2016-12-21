@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: showproductds.isml --->
+<isdecorate template="application/MenuFrame.isml">
+<style>
+.button
+	{
+		cursor: pointer;
+	    padding: 3px 7px;
+		background-color: #D9D9D9;
+	    border: 1px solid #D9D9D9;
+	    border-radius: 3px;
+	    color: #00629B;
+	    margin: 0;
+	}
+	
+	.table_header {
+		background-color: #eee;
+		color: #54585a;
+		font-weight: bold;
+		padding: 3px 5px;
+		white-space: initial;
+		}
+</style>
+<iscontent type="text/html" charset="UTF-8" />
+<link rel="stylesheet" href="${URLUtils.staticURL('css/style.css')}" />
+<isinclude template="custom/modules.isml"/>
+<isbreadcrumbs bcurl1="${URLUtils.url('Translation-FollowUp')}" bctext1="Follow Up" />
+<h2 class="h2">Follow Up On Translation</h2>
+	<table class="table" width="100%" border="0" cellspacing="0"
+		cellpadding="0">
+		<thead>
+		<tr>
+			<th class="table_header n w e s center">Item ID</th>
+			<th class="table_header n e s center">Item Name</th>
+			<th class="table_header n e s center " style="width:20%;">Status</th>
+			<th class="table_header n e s center">Link To TM</th>
+			<th class="table_header n e s center">Possible Action</th>
+		</tr>
+		</thead>
+		<tr class="contentslistentry" align="center">
+			<td class="table_detail w e s"><span class="spContentId">12345</span></td>
+			<td class="table_detail e s"><span class="spContentName">Item1</span></td>
+			<td class="table_detail e s">In progress</td>
+			<td class="table_detail e s"><a>Link</a></td>
+			<td class="table_detail e s">Check my Item</td>
+		</tr>
+	</table>
+</isdecorate>
