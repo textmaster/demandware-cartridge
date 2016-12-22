@@ -46,10 +46,13 @@
 			<div class="field-holder">
 				<div class="label-holder">Translate to: </div>
 				<div class="input-holder">
-					<input type="checkbox" id="to-eng"><label class="checkbox-label" for="to-eng">English</label>
-					<input type="checkbox" id="to-ger"><label class="checkbox-label" for="to-ger">German</label>
-					<input type="checkbox" id="to-fre"><label class="checkbox-label" for="to-fre">French</label>
-					<input type="checkbox" id="to-jap"><label class="checkbox-label" for="to-jap">Japanese</label>
+					<select multiple>
+						<option>Select</option>
+						<option>English</option>
+						<option>German</option>
+						<option>French</option>
+						<option>Japanese</option>
+					</select>
 				</div>
 			</div>
 		</div>
