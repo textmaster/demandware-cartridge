@@ -84,3 +84,19 @@
 	font-size: 26px;
 	padding: 0 0 10px 0;
 }
+.followup .button {
+	cursor: pointer;
+    padding: 3px 7px;
+	background-color: #D9D9D9;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    color: #00629B;
+    margin: 0;
+}
+.followup .table_header {
+	background-color: #eee;
+	color: #54585a;
+	font-weight: bold;
+	padding: 3px 5px;
+	white-space: initial;
+}
