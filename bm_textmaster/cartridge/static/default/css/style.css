@@ -1,3 +1,10 @@
+/* common translation module styles */
+.translation-module h1 {
+	padding: 0 0 10px 0;
+    font-size: 26px;
+	color: #84BD00;
+	border-bottom: 1px solid #DADADA;
+}
 /* New translation page */
 .new-translation {
 	max-width: 1000px;
@@ -33,12 +40,6 @@
 	position: relative;
     top: -2px;
     padding-right: 10px;
-}
-.new-translation h1 {
-	padding: 0 0 10px 0;
-    font-size: 26px;
-	color: #84BD00;
-	border-bottom: 1px solid #DADADA;
 }
 .new-translation  .field-holder.title-holder {
 	border-bottom: 1px solid #DADADA;
@@ -78,12 +79,6 @@
 }
 
 /* Follow up page */
-.followup .h2 {
-	border: none;
-	color: #84BD00;
-	font-size: 26px;
-	padding: 0 0 10px 0;
-}
 .followup .button {
 	cursor: pointer;
     padding: 3px 7px;

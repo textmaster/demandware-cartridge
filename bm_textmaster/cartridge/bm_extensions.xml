@@ -23,7 +23,7 @@
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
 		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
+		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction2" menupath="textmastermenuitem1" position="1000" site="true">
@@ -38,9 +38,6 @@
 		<sub-pipelines>
 			<pipeline name="Translation-FollowUp" />
 		</sub-pipelines>
-		<parameters>
-			<parameter name="mainmenuname" value="DEMO Site Menu Extension"/>
-		</parameters>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>
 </extensions>
