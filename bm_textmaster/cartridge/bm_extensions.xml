@@ -40,4 +40,19 @@
 		</sub-pipelines>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>
+	
+	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1000" site="true">
+		<name xml:lang="x-default">[Place Order]</name>
+		<short_description xml:lang="x-default">
+			Place translation order
+		</short_description>
+		<description xml:lang="x-default">
+			Place translation order
+		</description>
+		<exec pipeline="Translation" node="PlaceOrder"/>
+		<sub-pipelines>
+			<pipeline name="Translation-PlaceOrder" />
+		</sub-pipelines>
+		<icon>icons/star_yellow_new.gif</icon>
+	</menuaction>
 </extensions>
