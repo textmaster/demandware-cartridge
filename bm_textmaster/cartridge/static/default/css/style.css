@@ -1,3 +1,4 @@
+/* New translation page */
 .new-translation {
 	max-width: 1000px;
     margin: 0 auto;
@@ -74,4 +75,12 @@
 .new-translation .field-holder.button-holder {
 	border-top: 1px solid #DADADA;
 	text-align:right;
+}
+
+/* Follow up page */
+.followup .h2 {
+	border: none;
+	color: #84BD00;
+	font-size: 26px;
+	padding: 0 0 10px 0;
 }
