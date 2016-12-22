@@ -1,0 +1,175 @@
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+	<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+	<div class="new-translation">
+		<h1>New Translation</h1>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>Determine the scope</h2>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Translate from: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>English</option>
+						<option>German</option>
+						<option>French</option>
+						<option>Japanese</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Item: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Products</option>
+						<option>Category</option>
+						<option>Content Asset</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Catalog of products: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Electronics</option>
+						<option>Apparels</option>
+						<option>Machinery</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Translate to: </div>
+				<div class="input-holder">
+					<input type="checkbox" id="to-eng"><label class="checkbox-label" for="to-eng">English</label>
+					<input type="checkbox" id="to-ger"><label class="checkbox-label" for="to-ger">German</label>
+					<input type="checkbox" id="to-fre"><label class="checkbox-label" for="to-fre">French</label>
+					<input type="checkbox" id="to-jap"><label class="checkbox-label" for="to-jap">Japanese</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>Select Attributes</h2>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder">
+					<input type="checkbox" id="attr-name" checked><label class="checkbox-label" for="attr-name">Name</label>
+					<input type="checkbox" id="attr-brand"><label class="checkbox-label" for="attr-brand">Brand</label>
+					<input type="checkbox" id="attr-manufacturer"><label class="checkbox-label" for="attr-manufacturer">Manufacturer</label>
+					<input type="checkbox" id="attr-description" checked><label class="checkbox-label" for="attr-description">Description</label>
+					<input type="checkbox" id="attr-details"><label class="checkbox-label" for="attr-details">Product Details</label>
+					<input type="checkbox" id="attr-page-title" checked><label class="checkbox-label" for="attr-page-title">Page Title</label>
+					<input type="checkbox" id="attr-page-description" checked><label class="checkbox-label" for="attr-page-description">Page Description</label>
+					<input type="checkbox" id="attr-page-keywords"><label class="checkbox-label" for="attr-page-keywords">Page Keywords</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>Filter the items</h2>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Online Flag: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Yes</option>
+						<option>No</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Search Status: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Yes</option>
+						<option>No</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Category Assignment: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Category 1</option>
+						<option>Category 2</option>
+						<option>Category 3</option>
+						<option>Category 4</option>
+						<option>Category 5</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">Owner Catalog: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>Catalog 1</option>
+						<option>Catalog 2</option>
+						<option>Catalog 3</option>
+						<option>Catalog 4</option>
+						<option>Catalog 5</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">TextMasterTranslated: </div>
+				<div class="input-holder">
+					<select>
+						<option>Select</option>
+						<option>No</option>
+						<option>Yes</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder button-holder">
+				<input type="button" value="Search">
+			</div>
+		</div>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>Select items</h2>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product1"><label class="checkbox-label" for="product1">Product 1</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product2"><label class="checkbox-label" for="product2">Product 2</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product3"><label class="checkbox-label" for="product3">Product 3</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product4"><label class="checkbox-label" for="product4">Product 4</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product5"><label class="checkbox-label" for="product5">Product 5</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product6"><label class="checkbox-label" for="product6">Product 6</label></div>
+			</div>
+			<div class="field-holder">
+				<div class="input-holder"><input type="checkbox" id="product7"><label class="checkbox-label" for="product7">Product 7</label></div>
+			</div>
+			<div class="field-holder button-holder">
+				<input type="button" value="Select All">
+				<input type="button" value="Deselect All">
+			</div>
+		</div>
+		<div class="form-holder">
+			<div class="field-holder title-holder no-fields">
+				<h2>Order</h2>
+			</div>
+			<div class="field-holder button-holder">
+				<input type="button" value="Send to TextMaster">
+			</div>
+		</div>
+	</div>
+</isdecorate>

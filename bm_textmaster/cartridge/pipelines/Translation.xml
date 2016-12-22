@@ -2,22 +2,61 @@
 <?demandware-pipeline version="2.0"?>
 
 <pipeline>
-  <branch basename="FollowUp">
+  <branch basename="_ANONYMOUS_BRANCH_1">
     <segment>
       <node>
-        <start-node name="FollowUp" secure="false"/>
+        <text-node>
+          <description>Form to show filter options for translation</description>
+        </text-node>
         <node-display x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_2">
+    <segment>
+      <node>
+        <text-node>
+          <description>Show translation follow up status</description>
+        </text-node>
+        <node-display x="3" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="New">
+    <segment>
+      <node>
+        <start-node name="New" secure="false"/>
+        <node-display x="1" y="1"/>
       </node>
       <simple-transition>
         <transition-display>
-          <bend-point relative-to="target" x="0" y="-1"/>
+          <bend-point relative-to="source" x="0" y="1"/>
         </transition-display>
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="custom/followUp"/>
+          <template buffered="true" dynamic="false" name="translation/FilterItems"/>
         </interaction-node>
-        <node-display x="0" y="2"/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="FollowUp">
+    <segment>
+      <node>
+        <start-node name="FollowUp" secure="false"/>
+        <node-display x="3" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/followUp"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
       </node>
     </segment>
   </branch>
