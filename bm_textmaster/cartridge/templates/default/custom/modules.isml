@@ -18,3 +18,13 @@
     name="minishippingaddress"
     attribute="p_shipment"
 >
+
+<ismodule template="application/breadcrumbs.isml"
+	name="breadcrumbs"
+	attribute="bctext1"
+	attribute="bcurl1"
+	attribute="bctext2"
+	attribute="bcurl2"
+	attribute="bctext3"
+	attribute="bcurl3"
+/>
