@@ -60,4 +60,33 @@
       </node>
     </segment>
   </branch>
+  <branch basename="_ANONYMOUS_BRANCH_5">
+    <segment>
+      <node>
+        <text-node>
+          <description>This pipeline needs to be joined with the pipeline of start node 'New' by changing Interaction Node to Interaction Continue Node</description>
+        </text-node>
+        <node-display x="1" y="3"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="PlaceOrder">
+    <segment>
+      <node>
+        <start-node name="PlaceOrder" secure="false"/>
+        <node-display x="1" y="4"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/PlaceTranslationOrder"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
 </pipeline>
