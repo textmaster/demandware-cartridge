@@ -5,6 +5,13 @@
 	color: #84BD00;
 	border-bottom: 1px solid #DADADA;
 }
+#bm_header_row .sod_select:after {
+	bottom: 0;
+}
+#bm_header_row .bm-dropdown-menu .menu-overview-link-icon img {
+	position: relative;
+    top: 20px;
+}
 /* New translation page */
 .new-translation {
 	max-width: 1000px;
