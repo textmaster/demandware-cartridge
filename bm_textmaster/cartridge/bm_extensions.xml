@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <extensions xmlns="http://www.demandware.com/xml/bmmodules/2007-12-11" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.demandware.com/xml/bmmodules/2007-12-11 bmext.xsd">
 	<menuitem id="textmastermenuitem1" position="99999" site="true">
-		<name xml:lang="x-default">Text Master</name>
+		<name xml:lang="x-default">TextMaster</name>
 		<short_description xml:lang="x-default">
-			Text Master Translation
+			TextMaster Translation
 		</short_description>
 		<description xml:lang="x-default">
-			Text Master Translation tools
+			TextMaster Translation tools
 		</description>
 		<icon>icons/textmaster-small.png</icon>
 	</menuitem>
@@ -67,6 +67,21 @@
 		<exec pipeline="Translation" node="Notification"/>
 		<sub-pipelines>
 			<pipeline name="Translation-Notification" />
+		</sub-pipelines>
+		<icon>icons/star_yellow_new.gif</icon>
+	</menuaction>
+	
+	<menuaction id="textmastermenumenuaction5" menupath="textmastermenuitem1" position="1003" site="true">
+		<name xml:lang="x-default">Register</name>
+		<short_description xml:lang="x-default">
+			Register new account in TextMaster
+		</short_description>
+		<description xml:lang="x-default">
+			Go to TextMaster and create new account to use the translation feature
+		</description>
+		<exec pipeline="Translation" node="Register"/>
+		<sub-pipelines>
+			<pipeline name="Translation-Register" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>
