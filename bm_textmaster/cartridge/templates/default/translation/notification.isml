@@ -1,0 +1,14 @@
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+    <isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+    <h1>Notification Page</h1>
+    <div class="notification">
+        <div class="form-holder">
+            The project(s) has(ve) been created into TextMaster and will be launched automatically as soon as it is ready
+        </div>
+        <div class="form-holder">
+            You will receive a quote by email as soon as the project as been created into TextMaster
+        </div>
+    </div>
+</isdecorate>
