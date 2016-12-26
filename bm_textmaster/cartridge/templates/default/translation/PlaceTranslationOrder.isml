@@ -8,7 +8,8 @@
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th class="table_header n w e s center">Number of items</th>
+				<th class="table_header n w e s center">Source Locale</th>
+				<th class="table_header n e s center">Number of items</th>
 				<th class="table_header n e s center">Attributes</th>
 				<th class="table_header n e s center">Target Locale</th>
 				<th class="table_header n e s center">Select Template</th>
@@ -16,7 +17,8 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td class="table_detail w e s center">25</td>
+				<td class="table_detail w e s center">English</td>
+				<td class="table_detail e s center">25</td>
 				<td class="table_detail e s center">
 					<ul class="attribute-list">
 						<li>Attribute 1</li>
@@ -38,7 +40,8 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="table_detail w e s center">18</td>
+				<td class="table_detail w e s center">English</td>
+				<td class="table_detail e s center">18</td>
 				<td class="table_detail e s center">
 					<ul class="attribute-list">
 						<li>Attribute 1</li>
