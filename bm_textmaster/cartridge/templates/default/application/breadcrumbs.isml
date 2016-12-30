@@ -7,7 +7,7 @@
 </iscomment>
 <div class="breadcrumb">
 <a class="breadcrumb-element" href="${URLUtils.url('ViewApplication-CompressMenuGroup','MenuGroupID','','OverviewPage','SiteNavigationBar-ShowSiteOverview')}">Merchant Tools</a>
-> <a class="breadcrumb-element" href="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview','CurrentMenuItemId','textmastermenuitem1')}">Text Master</a>
+> <a class="breadcrumb-element" href="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview','CurrentMenuItemId','textmastermenuitem1')}">TextMaster</a>
 
 	<iscomment>FIRST BREADCRUMB</iscomment>
 	<isif condition="${pdict.bctext1 != null}">

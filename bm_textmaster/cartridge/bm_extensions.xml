@@ -22,6 +22,8 @@
 		<exec pipeline="Translation" node="New"/>
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
+			<pipeline name="Translation-ItemList" />
+			<pipeline name="Translation-CategoryList" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>

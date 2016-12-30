@@ -51,4 +51,101 @@ Utils.getFileNameExtension = function(fileName : String){
 	return fileNameExtension;
 }
 
+/*
+*	Gets Demandware languages in JSON
+*/
+Utils.getDWLanguages = function(){
+	return [
+		{id:"zh",name:"Chinese"},
+		{id:"zh_CN",name:"Chinese (China)"},
+		{id:"nl",name:"Dutch"},
+		{id:"en",name:"English"},
+		{id:"en_CA",name:"English (Canada)"},
+		{id:"en_GB",name:"English (United Kingdom)"},
+		{id:"en_US",name:"English (United States)"},
+		{id:"fr",name:"French"},
+		{id:"fr_CA",name:"French (Canada)"},
+		{id:"fr_FR",name:"French (France)"},
+		{id:"de",name:"German"},
+		{id:"de_DE",name:"German (Germany)"},
+		{id:"it",name:"Italian"},
+		{id:"it_IT",name:"Italian (Italy)"},
+		{id:"ja",name:"Japanese"},
+		{id:"ja_JP",name:"Japanese (Japan)"},
+		{id:"es",name:"Spanish"}
+	];
+}
+
+/*
+*	Gets attribute of all required item types (product, content asset, category)
+*/
+Utils.getAllItemsAttributes = function(){
+	var itemsAttrs = [], attrs;
+	
+	attrs = Utils.getAttributes("Product");
+	itemsAttrs.push(attrs);
+	attrs = Utils.getAttributes("Category");
+	itemsAttrs.push(attrs);
+	attrs = Utils.getAttributes("Content");
+	itemsAttrs.push(attrs);
+	
+	return itemsAttrs;
+}
+
+/*
+*	Gets attributes of specific item type (product, category, content asset)
+*/
+Utils.getAttributes = function(itemType){
+	var attrDefinitions, attr, attrDef,
+		attributes = [],
+		defaultAttributes = dw.system.Site.getCurrent().getCustomPreferenceValue('TM'+ itemType +'Attributes');
+	
+	try{
+		defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
+	}
+	catch(ex){
+		Utils.log.error("Exception on getting default attribute list for "+ itemType +" from Site Preferences: " + ex.message);
+	}
+	
+	try{
+		attrDefinitions = dw.object.SystemObjectMgr.describe(itemType).getAttributeDefinitions().toArray();
+		
+		for each(attrDef in attrDefinitions){
+			attr = {};
+			attr.ID = attrDef.ID;
+			attr.name = attrDef.displayName;
+			attr.tmDefault = Utils.getTMDefault(attrDef.ID, attrDef.displayName, defaultAttributes);
+			
+			attributes.push(attr);
+		}
+	}
+	catch(ex){
+		Utils.log.error("Exception on dealing with attributeDefinitions for "+ itemType +": " + ex.message);
+	}
+	
+	return {
+		itemType: itemType.toLowerCase(),
+		attributes: attributes
+	};
+}
+
+/*
+*	Gets flag by checking attribute in default attribute list that set in preference
+*/
+Utils.getTMDefault = function(ID, name, defaultAttributes){
+	var attr,
+		result = false;
+			
+	if(defaultAttributes && defaultAttributes.length > 0){
+		for each(attr in defaultAttributes){
+			if(attr == ID || attr == name){
+				result = true;
+				break;
+			}
+		}
+	}
+	
+	return result;
+}
+
 module.exports = Utils;

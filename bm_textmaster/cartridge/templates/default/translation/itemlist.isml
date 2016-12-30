@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: itemlist.isml --->
+<div class="item-list">
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product1"><label class="checkbox-label" for="product1">Product 1</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product2"><label class="checkbox-label" for="product2">Product 2</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product3"><label class="checkbox-label" for="product3">Product 3</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product4"><label class="checkbox-label" for="product4">Product 4</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product5"><label class="checkbox-label" for="product5">Product 5</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product6"><label class="checkbox-label" for="product6">Product 6</label></div>
+	</div>
+	<div class="field-holder">
+		<div class="input-holder"><input type="checkbox" id="product7"><label class="checkbox-label" for="product7">Product 7</label></div>
+	</div>
+</div>
