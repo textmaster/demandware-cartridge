@@ -163,7 +163,53 @@
         <text-node>
           <description>Gets category list of a catalog</description>
         </text-node>
-        <node-display x="1" y="6"/>
+        <node-display x="1" y="7"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="ItemList">
+    <segment>
+      <node>
+        <start-node name="ItemList" secure="false"/>
+        <node-display x="5" y="4"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetItemList.ds"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="Catalog"/>
+          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="Category"/>
+          <key-binding alias="CurrentHttpParameterMap.onlineFlag.stringValue" key="OnlineFlag"/>
+          <key-binding alias="CurrentHttpParameterMap.searchStatus.stringValue" key="SearchStatus"/>
+          <key-binding alias="CurrentHttpParameterMap.translatedFlag.stringValue" key="TranslatedFlag"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="ItemList" key="ItemList"/>
+          <key-binding alias="ItemType" key="Type"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/itemlist"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
       </node>
     </segment>
   </branch>
@@ -171,7 +217,7 @@
     <segment>
       <node>
         <start-node name="CategoryList" secure="false"/>
-        <node-display x="1" y="7"/>
+        <node-display x="1" y="8"/>
       </node>
       <simple-transition/>
       <node>
@@ -202,25 +248,6 @@
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/categorylist"/>
-        </interaction-node>
-        <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="ItemList">
-    <segment>
-      <node>
-        <start-node name="ItemList" secure="false"/>
-        <node-display x="5" y="4"/>
-      </node>
-      <simple-transition>
-        <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
-        </transition-display>
-      </simple-transition>
-      <node>
-        <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/itemlist"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>

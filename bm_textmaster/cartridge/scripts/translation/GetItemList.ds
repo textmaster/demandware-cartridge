@@ -1,0 +1,92 @@
+/**
+*	Gets category list of a catalog
+*
+*	@input ItemType: String
+*	@input Catalog: String
+*	@input OnlineFlag: String
+*	@input SearchStatus: String
+*	@input Category: String
+*	@input TranslatedFlag: String
+*
+*	@output ItemList: Array
+*	@output Type: String
+*
+*/
+
+// API Includes
+var ProductMgr = require('dw/catalog/ProductMgr'),
+	CatalogMgr = require('dw/catalog/CatalogMgr');
+	
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number {
+	var itemType = pdict.ItemType,
+		catalog = CatalogMgr.getCatalog(pdict.Catalog),
+		onlineFlag = pdict.OnlineFlag,
+		searchStatus = pdict.SearchStatus,
+		category = pdict.Category,
+		translatedFlag = pdict.TranslatedFlag,
+		items, item, filter, output = [];
+	
+	log = LogUtils.getLogger("GetItemList");
+	pdict.Type = pdict.ItemType;
+		
+	switch(itemType){
+		case "product":
+			items = ProductMgr.queryProductsInCatalog(catalog);
+			break;
+	}
+	
+	while(items.hasNext()){
+		item = items.next();
+		filter = true;
+		
+		/* Filter item: select if all choosen filters are satisfied */
+		if(onlineFlag != ""){
+			filter = item.online && onlineFlag == 'yes' || !item.online && onlineFlag == 'no' ? true : false;
+		}
+		
+		if(filter && searchStatus != ""){
+			filter = item.searchable && searchStatus == 'yes' || !item.searchable && searchStatus == 'no' ? true : false;
+		}
+		
+		if(filter && itemType == "product" && category != ""){
+			filter = isProductInCategory(item, category);
+		}
+		
+		if(filter && translatedFlag != "" && ('textMasterTranslated' in item.custom)){
+			filter = item.textMasterTranslated && translatedFlag == 'yes' || !item.textMasterTranslated && translatedFlag == 'no' ? true : false;
+		}
+		
+		/* Add to output array if item selected */
+		if(filter){
+			output.push(item);
+		}
+	}
+	
+	pdict.ItemList = output;
+	
+	return PIPELET_NEXT;
+}
+
+/*
+*	Checks whether the product is in specified category or not
+*/
+function isProductInCategory(product, selectedCategory){
+	var categories = product.allCategories,
+		result = false;
+	
+	for each(var category in categories){
+		if(category.ID == selectedCategory){
+			result = true;
+			break;
+		}
+	}
+	
+	return result;
+}

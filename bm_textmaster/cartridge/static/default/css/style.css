@@ -141,6 +141,19 @@
 	min-width:300px;
 	padding-left: 10px;
 }
+.new-translation #items-holder {
+	padding: 0 5px 5px;
+	overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 270px;
+}
+.new-translation #items-holder .item-label {
+	display:block;
+}
+.new-translation #items-holder tr:hover td {
+    background-color: #f9f9f9;
+}
+
 /* Follow up page */
 .followup .button {
 	cursor: pointer;

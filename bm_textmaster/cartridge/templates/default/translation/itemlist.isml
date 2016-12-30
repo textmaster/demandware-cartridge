@@ -1,24 +1,18 @@
 <!--- TEMPLATENAME: itemlist.isml --->
-<div class="item-list">
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product1"><label class="checkbox-label" for="product1">Product 1</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product2"><label class="checkbox-label" for="product2">Product 2</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product3"><label class="checkbox-label" for="product3">Product 3</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product4"><label class="checkbox-label" for="product4">Product 4</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product5"><label class="checkbox-label" for="product5">Product 5</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product6"><label class="checkbox-label" for="product6">Product 6</label></div>
-	</div>
-	<div class="field-holder">
-		<div class="input-holder"><input type="checkbox" id="product7"><label class="checkbox-label" for="product7">Product 7</label></div>
-	</div>
-</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <thead>
+    	<th class="table_header center n e s w" width="10%"></th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="40%">${Resource.msg('general.id','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="50%">${Resource.msg('general.name','textmaster',null)}</th>
+    </thead>
+    <tbody>
+    	<isloop items="${pdict.ItemList}" var="item" status="loopstate">
+	    	<tr>
+	        	<td class="table_detail center e s w" nowrap="nowrap"><input type="checkbox" name="item" id="${pdict.ItemType+'-'+item.ID}" value="${item.ID}"></td>
+	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.ID}</label></td>
+	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.name}</label></td>
+	        </tr>
+	    </isloop>
+    </tbody>
+</table>

@@ -41,9 +41,24 @@
 				});
 				
 				$('#filter-search').on("click", function(){
-					var searchText = $(this).val();
+					var searchText = $(this).val(),
+						itemType = $('select[name=item-type]').val(),
+						catalog = $('select[name=catalog]').val(),
+						onlineFlag = $('select[name=filter-online-flag]').val(),
+						searchStatus = $('select[name=filter-search-status]').val(),
+						category = $('select[name=filter-category]').val(),
+						translatedFlag = $('select[name=filter-translated]').val(),
+						postData = {
+							itemType: itemType,
+							catalog: catalog,
+							onlineFlag: onlineFlag,
+							searchStatus: searchStatus,
+							category: category,
+							translatedFlag: translatedFlag
+						};
+					
 					$(this).prop("disabled",true).val("Please wait...");
-					$.get(app.urls.translationItemList, function(data){
+					$.post(app.urls.translationItemList, postData, function(data){
 						$('#items-holder').html(data);
 						$('#filter-search').prop("disabled",false).val(searchText);
 					});
