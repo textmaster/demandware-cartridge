@@ -161,7 +161,7 @@
     <segment>
       <node>
         <text-node>
-          <description>Gets category list of a catalog</description>
+          <description>Gets category dropdown options of a catalog</description>
         </text-node>
         <node-display x="1" y="7"/>
       </node>
@@ -213,10 +213,10 @@
       </node>
     </segment>
   </branch>
-  <branch basename="CategoryList">
+  <branch basename="CategoryDropdown">
     <segment>
       <node>
-        <start-node name="CategoryList" secure="false"/>
+        <start-node name="CategoryDropdown" secure="false"/>
         <node-display x="1" y="8"/>
       </node>
       <simple-transition/>
@@ -247,7 +247,7 @@
       <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/categorylist"/>
+          <template buffered="true" dynamic="false" name="translation/categorydropdown"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>

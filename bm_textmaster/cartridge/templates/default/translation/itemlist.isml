@@ -11,7 +11,7 @@
 	    	<tr>
 	        	<td class="table_detail center e s w" nowrap="nowrap"><input type="checkbox" name="item" id="${pdict.ItemType+'-'+item.ID}" value="${item.ID}"></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.ID}</label></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.name}</label></td>
+	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}</label></td>
 	        </tr>
 	    </isloop>
     </tbody>

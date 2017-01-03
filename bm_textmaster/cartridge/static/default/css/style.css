@@ -70,6 +70,10 @@
 	padding:2px;
 	border: 1px solid #A5AEB5;
 }
+.new-translation input[type=text].error-field,
+.new-translation select.error-field {
+	border-color: #f00;
+}
 .new-translation .checkbox-label {
 	position: relative;
     top: -2px;
@@ -145,13 +149,29 @@
 	padding: 0 5px 5px;
 	overflow-x: hidden;
     overflow-y: auto;
-    max-height: 270px;
+    max-height: 260px;
 }
 .new-translation #items-holder .item-label {
 	display:block;
+	margin:0;
+	padding: 5;
+}
+.new-translation #items-holder .table_detail {
+	padding:0;
 }
 .new-translation #items-holder tr:hover td {
     background-color: #f9f9f9;
+}
+.new-translation .common-error {
+	color: #f00;
+    padding-left: 10px;
+    display: none;
+}
+.new-translation .common-error.show {
+	display: inline;
+}
+.new-translation .filter-items .field-holder.hide {
+	display: none;
 }
 
 /* Follow up page */

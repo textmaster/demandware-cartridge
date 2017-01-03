@@ -1,5 +1,5 @@
 /**
-*	Gets category list of a catalog
+*	Gets category dropdown list of a catalog
 *
 *	@input CatalogID: String
 *
@@ -26,29 +26,9 @@ function execute( pdict : PipelineDictionary ) : Number {
 	if(pdict.CatalogID){
 		catalog = CatalogMgr.getCatalog(pdict.CatalogID);
 		rootCategory = catalog.getRoot();
-		subCategories = getAllSubCategories(rootCategory);
+		subCategories = Utils.getAllSubCategories(rootCategory);
 		pdict.CategoryList = subCategories;
 	}
 	
 	return PIPELET_NEXT;
-}
-
-/*
-*	Gets all underlying subcategories in a single array
-*/
-function getAllSubCategories(root){
-	var subCategories, category, nextLevelCategories,
-		output = [];
-	
-	subCategories = root.getSubCategories();
-	for each(category in subCategories){
-		output.push(category);
-	}
-	
-	for each(category in subCategories){
-		nextLevelCategories = getAllSubCategories(category);
-		output.push.apply(output, nextLevelCategories);
-	}
-	
-	return output;
 }

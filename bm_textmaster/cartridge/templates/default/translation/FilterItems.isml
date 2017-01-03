@@ -75,7 +75,7 @@
 				</isloop>
 			</div>
 		</div>
-		<div class="form-holder">
+		<div class="form-holder filter-items">
 			<div class="field-holder title-holder">
 				<h2>${Resource.msg('translation.filter.items','textmaster',null)}</h2>
 			</div>
@@ -89,7 +89,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="field-holder">
+			<div class="field-holder search-status">
 				<div class="label-holder">${Resource.msg('translation.search.status','textmaster',null)}: </div>
 				<div class="input-holder">
 					<select name="filter-search-status">
@@ -99,7 +99,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="field-holder">
+			<div class="field-holder category">
 				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
 				<div class="input-holder">
 					<select name="filter-category">
@@ -118,7 +118,7 @@
 				</div>
 			</div>
 			<div class="field-holder button-holder left">
-				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search">
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
 			</div>
 		</div>
 		<div class="form-holder">

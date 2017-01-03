@@ -148,4 +148,24 @@ Utils.getTMDefault = function(ID, name, defaultAttributes){
 	return result;
 }
 
+/*
+*	Gets all underlying subcategories of a root category, in a single array
+*/
+Utils.getAllSubCategories = function(root){
+	var subCategories, category, nextLevelCategories,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		output.push(category);
+	}
+	
+	for each(category in subCategories){
+		nextLevelCategories = Utils.getAllSubCategories(category);
+		output.push.apply(output, nextLevelCategories);
+	}
+	
+	return output;
+}
+
 module.exports = Utils;

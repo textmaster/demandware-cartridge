@@ -23,7 +23,7 @@
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
 			<pipeline name="Translation-ItemList" />
-			<pipeline name="Translation-CategoryList" />
+			<pipeline name="Translation-CategoryDropdown" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>
