@@ -64,7 +64,7 @@
     <segment>
       <node>
         <text-node>
-          <description>This pipeline needs to be joined with the pipeline of start node 'New' by changing Interaction Node to Interaction Continue Node</description>
+          <description>Subpipeline New post data to this subpipeline</description>
         </text-node>
         <node-display x="1" y="3"/>
       </node>

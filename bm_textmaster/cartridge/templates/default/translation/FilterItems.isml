@@ -10,6 +10,7 @@
 			itemsAttrs = Utils.getAllItemsAttributes();
 	</isscript>
 	<div class="new-translation">
+		<form method="post" action="${URLUtils.url('Translation-PlaceOrder')}" id="filter-item-form">
 		<h1>${Resource.msg('translation.title','textmaster',null)}</h1>
 		<div class="form-holder">
 			<div class="field-holder title-holder">
@@ -68,7 +69,8 @@
 					<ul class="attributes-holder ${attrItem.itemType}">
 						<isloop items="${attrItem.attributes}" var="itemAttribute" status="attrloopstate">
 							<li>
-								<input type="checkbox" id="${attrItem.item}-attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" ${itemAttribute.tmDefault ? 'checked' :''}><label class="checkbox-label" for="${attrItem.item}-attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
+								<input type="checkbox" id="${attrItem.itemType}-attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" name="${attrItem.itemType}-attribute" ${itemAttribute.tmDefault ? 'checked' :''}>
+								<label class="checkbox-label" for="${attrItem.itemType}-attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
 							</li>
 						</isloop>
 					</ul>
@@ -127,17 +129,19 @@
 			</div>
 			<div id="items-holder"></div>
 			<div class="field-holder button-holder">
-				<input type="button" value="${Resource.msg('general.select.all','textmaster',null)}">
-				<input type="button" value="${Resource.msg('general.deselect.all','textmaster',null)}">
+				<input type="button" id="button-select-all" value="${Resource.msg('general.select.all','textmaster',null)}">
+				<input type="button" id="button-deselect-all" value="${Resource.msg('general.deselect.all','textmaster',null)}">
 			</div>
 		</div>
+		<div class="submit-error"></div>
 		<div class="form-holder">
 			<div class="field-holder title-holder no-fields">
 				<h2>${Resource.msg('general.order','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder button-holder">
-				<input type="button" value="${Resource.msg('translation.send.textmaster','textmaster',null)}">
+				<input type="submit" class="button" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">
 			</div>
 		</div>
+		</form>
 	</div>
 </isdecorate>

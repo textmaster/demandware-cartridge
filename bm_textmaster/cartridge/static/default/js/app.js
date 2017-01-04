@@ -92,6 +92,51 @@
 						$('#filter-search').prop("disabled",false).val(searchText);
 					});
 				});
+				
+				$('#button-select-all').on('click',function(){
+					$('input[type=checkbox][name=item]').prop("checked",true);
+				});
+				
+				$('#button-deselect-all').on('click',function(){
+					$('input[type=checkbox][name=item]').prop("checked",false);
+				});
+				
+				$('#filter-item-form').on('submit',function(){
+					var errors = ["Fix following errors"], message = "", ul = $('<ul>'), itemType;
+					
+					if($('select[name=locale-from]').val() == ""){
+						errors.push("- Select source language");
+					}
+					
+					itemType = $('select[name=item-type]').val();
+					if(itemType == ""){
+						errors.push("- Select item type");
+					}
+					
+					if($('input[name=locale-to]:checked').length == 0){
+						errors.push("- Select target language(s)");
+					}
+					
+					if(itemType != "" && $('input[type=checkbox][name='+ itemType +'-attribute]:checked').length == 0){
+						errors.push("- Select attribute(s)");
+					}
+					
+					if($('input[type=checkbox][name=item]:checked').length == 0){
+						errors.push("- Select item(s)");
+					}
+					
+					if(errors.length > 1){
+						errors.forEach(function(error){
+							ul.append('<li>'+ error +'</li>');
+						});
+						
+						$('.submit-error').html(ul);
+						return false;
+					}
+					
+					$('.submit-error').html("");
+					$('#filter-item-submit').prop("disabled",true).val("Please wait...");
+				});
 			}
 	};
 	

@@ -164,7 +164,7 @@
 }
 .new-translation .common-error {
 	color: #f00;
-    padding-left: 10px;
+    padding: 0 10px;
     display: none;
 }
 .new-translation .common-error.show {
@@ -172,6 +172,16 @@
 }
 .new-translation .filter-items .field-holder.hide {
 	display: none;
+}
+.new-translation .submit-error {
+	margin: 10px;
+    color: #f00;
+    overflow: hidden;
+    padding-right: 50px;
+}
+.new-translation .submit-error ul {
+	float: right;
+    text-align: left;
 }
 
 /* Follow up page */
