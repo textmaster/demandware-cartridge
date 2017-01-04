@@ -64,7 +64,7 @@
     <segment>
       <node>
         <text-node>
-          <description>Subpipeline New post data to this subpipeline</description>
+          <description>Subpipeline 'New' posts data to this subpipeline</description>
         </text-node>
         <node-display x="1" y="3"/>
       </node>
