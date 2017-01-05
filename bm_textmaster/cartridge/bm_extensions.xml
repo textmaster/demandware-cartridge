@@ -17,13 +17,14 @@
 			New translation project
 		</short_description>
 		<description xml:lang="x-default">
-			Start with a new translation project
+			Start a new translation project
 		</description>
 		<exec pipeline="Translation" node="New"/>
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
 			<pipeline name="Translation-ItemList" />
 			<pipeline name="Translation-CategoryDropdown" />
+			<pipeline name="Translation-PlaceOrder" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>
@@ -39,36 +40,6 @@
 		<exec pipeline="Translation" node="FollowUp"/>
 		<sub-pipelines>
 			<pipeline name="Translation-FollowUp" />
-		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
-	</menuaction>
-	
-	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
-		<name xml:lang="x-default">[Place Order]</name>
-		<short_description xml:lang="x-default">
-			Place translation order
-		</short_description>
-		<description xml:lang="x-default">
-			Place translation order
-		</description>
-		<exec pipeline="Translation" node="PlaceOrder"/>
-		<sub-pipelines>
-			<pipeline name="Translation-PlaceOrder" />
-		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
-	</menuaction>
-	
-	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
-		<name xml:lang="x-default">[Notification]</name>
-		<short_description xml:lang="x-default">
-			Notification page
-		</short_description>
-		<description xml:lang="x-default">
-			Notification page
-		</description>
-		<exec pipeline="Translation" node="Notification"/>
-		<sub-pipelines>
-			<pipeline name="Translation-Notification" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>

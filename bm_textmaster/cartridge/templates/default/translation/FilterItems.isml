@@ -68,11 +68,14 @@
 				<isloop items="${itemsAttrs}" var="attrItem" status="loopstate">
 					<ul class="attributes-holder ${attrItem.itemType}">
 						<isloop items="${attrItem.attributes}" var="itemAttribute" status="attrloopstate">
-							<li>
+							<li class="${itemAttribute.tmDefault ? 'default' :''}">
 								<input type="checkbox" id="${attrItem.itemType}-attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" name="${attrItem.itemType}-attribute" ${itemAttribute.tmDefault ? 'checked' :''}>
 								<label class="checkbox-label" for="${attrItem.itemType}-attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
 							</li>
 						</isloop>
+						<isif condition="${attrItem.attributes.length > 0}">
+							<li class="add-attribute"><input type="button" value="${Resource.msg('translation.add.attributes','textmaster',null)}"></li>
+						</isif>
 					</ul>
 				</isloop>
 			</div>
