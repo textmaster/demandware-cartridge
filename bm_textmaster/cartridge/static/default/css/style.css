@@ -151,7 +151,7 @@
 .new-translation .attributes-main .attributes-holder > li:not(.default) {
 	display: none;
 }
-.new-translation .attributes-main .attributes-holder > li.add-attribute {
+.new-translation .attributes-main .attributes-holder > li.show-all-attributes {
 	display: block;
 	width: 100%;
     padding-top: 10px;
@@ -160,7 +160,7 @@
 .new-translation .attributes-main .attributes-holder.show-all > li {
 	display: block;
 }
-.new-translation .attributes-main .attributes-holder.show-all > li.add-attribute {
+.new-translation .attributes-main .attributes-holder.show-all > li.show-all-attributes {
 	display: none;
 }
 .new-translation #items-holder {
@@ -200,6 +200,14 @@
 .new-translation .submit-error ul {
 	float: right;
     text-align: left;
+}
+.new-translation .show-default-attributes {
+	display: none;
+	text-align: right;
+	padding-top: 10px;
+}
+.new-translation .show-default-attributes.show {
+	display: block;
 }
 
 /* Follow up page */

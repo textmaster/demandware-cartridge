@@ -45,6 +45,7 @@
 						$('.attributes-holder.'+ itemType).removeClass("show-all");
 					}
 					
+					$('.show-default-attributes').removeClass("show");
 					$('.attributes-holder > li:not(.default) input[type=checkbox]:checked').prop("checked", false);
 					$('.attributes-main').removeClass("product").removeClass("category").removeClass("content");
 					$('.attributes-main').addClass(itemType);
@@ -61,8 +62,15 @@
 					$(this).removeClass('error-field');
 				});
 				
-				$('.add-attribute input[type=button]').on('click', function(){
+				$('.show-all-attributes input[type=button]').on('click', function(){
 					$(this).closest('.attributes-holder').addClass("show-all");
+					$('.show-default-attributes').addClass("show");
+				});
+				
+				$('.show-default-attributes input[type=button]').on("click", function(){
+					var itemType = $('select[name=item-type]').val();
+					$('.attributes-holder.'+ itemType).removeClass("show-all");
+					$('.show-default-attributes').removeClass("show");
 				});
 				
 				$('#filter-search').on("click", function(){

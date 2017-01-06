@@ -74,10 +74,13 @@
 							</li>
 						</isloop>
 						<isif condition="${attrItem.attributes.length > 0}">
-							<li class="add-attribute"><input type="button" value="${Resource.msg('translation.add.attributes','textmaster',null)}"></li>
+							<li class="show-all-attributes"><input type="button" value="${Resource.msg('translation.add.attributes','textmaster',null)}"></li>
 						</isif>
 					</ul>
 				</isloop>
+				<div class="show-default-attributes">
+					<input type="button" value="${Resource.msg('translation.show.default.attributes','textmaster',null)}">
+				</div>
 			</div>
 		</div>
 		<div class="form-holder filter-items">
