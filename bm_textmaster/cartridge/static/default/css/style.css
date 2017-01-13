@@ -129,19 +129,9 @@
 	display: block;
 }
 .new-translation .attributes-main .attributes-holder {
-	display: none;
 	overflow-x: hidden;
     max-height: 270px;
     overflow-y: auto;
-}
-.new-translation .attributes-main.product .attributes-holder.product {
-	display: block;
-}
-.new-translation .attributes-main.category .attributes-holder.category {
-	display: block;
-}
-.new-translation .attributes-main.content .attributes-holder.content {
-	display: block;
 }
 .new-translation .attributes-main .attributes-holder > li {
 	float: left;

@@ -25,6 +25,7 @@
 			<pipeline name="Translation-ItemList" />
 			<pipeline name="Translation-CategoryDropdown" />
 			<pipeline name="Translation-PlaceOrder" />
+			<pipeline name="Translation-AttributeList" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>

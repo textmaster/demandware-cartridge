@@ -6,8 +6,7 @@
 	<isscript>
 		var Utils = require('~/cartridge/scripts/utils/Utils'),
 			languages = Utils.getDWLanguages(),
-			catalog = dw.catalog.CatalogMgr.getSiteCatalog(),
-			itemsAttrs = Utils.getAllItemsAttributes();
+			catalog = dw.catalog.CatalogMgr.getSiteCatalog();
 	</isscript>
 	<div class="new-translation">
 		<form method="post" action="${URLUtils.url('Translation-PlaceOrder')}" id="filter-item-form">
@@ -64,24 +63,7 @@
 			<div class="field-holder title-holder">
 				<h2>${Resource.msg('translation.select.attributes','textmaster',null)}</h2>
 			</div>
-			<div class="field-holder attributes-main">
-				<isloop items="${itemsAttrs}" var="attrItem" status="loopstate">
-					<ul class="attributes-holder ${attrItem.itemType}">
-						<isloop items="${attrItem.attributes}" var="itemAttribute" status="attrloopstate">
-							<li class="${itemAttribute.tmDefault ? 'default' :''}">
-								<input type="checkbox" id="${attrItem.itemType}-attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" name="${attrItem.itemType}-attribute" ${itemAttribute.tmDefault ? 'checked' :''}>
-								<label class="checkbox-label" for="${attrItem.itemType}-attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
-							</li>
-						</isloop>
-						<isif condition="${attrItem.attributes.length > 0}">
-							<li class="show-all-attributes"><input type="button" value="${Resource.msg('translation.add.attributes','textmaster',null)}"></li>
-						</isif>
-					</ul>
-				</isloop>
-				<div class="show-default-attributes">
-					<input type="button" value="${Resource.msg('translation.show.default.attributes','textmaster',null)}">
-				</div>
-			</div>
+			<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
 		</div>
 		<div class="form-holder filter-items">
 			<div class="field-holder title-holder">

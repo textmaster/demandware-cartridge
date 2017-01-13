@@ -7,10 +7,11 @@
 			},
 			urls:{
 				categoryDropdown: "Translation-CategoryDropdown",
-				translationItemList: "Translation-ItemList"
+				translationItemList: "Translation-ItemList",
+				attributeList: "Translation-AttributeList"
 			},
 			newTranslation: function(){
-				var localeFrom, item, catalog, url;
+				var localeFrom, itemType, catalog, url, postData;
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
@@ -38,17 +39,19 @@
 						$('.filter-items .search-status').removeClass('hide');
 					}
 					
-					if($('input[type=checkbox][name='+ itemType +'-attribute]:checked').length == 0){
-						$('.attributes-holder.'+ itemType).addClass("show-all");
-					}
-					else{
-						$('.attributes-holder.'+ itemType).removeClass("show-all");
-					}
+					postData = {itemType: app.utils.firstLetterCapital(itemType)};
+					$('.attributes-main').html("");
+					$.post(app.urls.attributeList, postData, function(data){
+						$('.attributes-main').html(data);
+						
+						if($('input[type=checkbox][name="attribute[]"]:checked').length == 0){
+							$('.attributes-holder').addClass("show-all");
+						}
+						else{
+							$('.attributes-holder').removeClass("show-all");
+						}
+					});
 					
-					$('.show-default-attributes').removeClass("show");
-					$('.attributes-holder > li:not(.default) input[type=checkbox]:checked').prop("checked", false);
-					$('.attributes-main').removeClass("product").removeClass("category").removeClass("content");
-					$('.attributes-main').addClass(itemType);
 					$(this).removeClass('error-field');
 					$('#items-holder').html('');
 				});
@@ -62,15 +65,15 @@
 					$(this).removeClass('error-field');
 				});
 				
-				$('.show-all-attributes input[type=button]').on('click', function(){
-					$(this).closest('.attributes-holder').addClass("show-all");
+				$('.new-translation').on('click', '.show-all-attributes input[type=button]', function(){
+					$('.attributes-holder').addClass("show-all");
 					$('.show-default-attributes').addClass("show");
 				});
 				
-				$('.show-default-attributes input[type=button]').on("click", function(){
-					var itemType = $('select[name=item-type]').val();
-					$('.attributes-holder.'+ itemType).removeClass("show-all");
+				$('.new-translation').on("click", '.show-default-attributes input[type=button]', function(){
+					$('.attributes-holder').removeClass("show-all");
 					$('.show-default-attributes').removeClass("show");
+					$('.attributes-holder > li:not(.default) input[type=checkbox]:checked').prop("checked", false);
 				});
 				
 				$('#filter-search').on("click", function(){
@@ -137,7 +140,7 @@
 						errors.push("- Select target language(s)");
 					}
 					
-					if(itemType != "" && $('input[type=checkbox][name='+ itemType +'-attribute]:checked').length == 0){
+					if(itemType != "" && $('input[type="checkbox"][name="attribute[]"]:checked').length == 0){
 						errors.push("- Select attribute(s)");
 					}
 					
@@ -157,6 +160,11 @@
 					$('.submit-error').html("");
 					$('#filter-item-submit').prop("disabled",true).val("Please wait...");
 				});
+			},
+			utils: {
+				firstLetterCapital: function(str){
+					return str.charAt(0).toUpperCase() + str.slice(1);
+				}
 			}
 	};
 	

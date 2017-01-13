@@ -1,0 +1,30 @@
+/**
+*	Reads translation parameters from previous form, build and generate a JSON
+*
+*	@input LocaleFrom: String
+*	@input Attributes: Object
+*
+*	@output TransParams: String
+*
+*/
+
+// API Includes
+var CatalogMgr = require('dw/catalog/CatalogMgr');
+	
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number {
+	var localeFrom = pdict.LocaleFrom,
+		attributes = pdict.Attributes.toArray();
+	
+	log = LogUtils.getLogger("setupTranslationParameters");
+	
+	pdict.TransParams = JSON.stringify(attributes);
+	
+	return PIPELET_NEXT;
+}

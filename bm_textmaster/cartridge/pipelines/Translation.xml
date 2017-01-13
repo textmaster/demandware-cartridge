@@ -125,11 +125,34 @@
         <start-node name="PlaceOrder" secure="false"/>
         <node-display x="1" y="4"/>
       </node>
-      <simple-transition>
-        <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
-        </transition-display>
-      </simple-transition>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/SetupTranslationParameters.ds"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-from&quot;).stringValue" key="LocaleFrom"/>
+          <key-binding alias="TransParams" key="TransParams"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="ContentAttribute"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="Attributes"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/placetranslationorder"/>
@@ -213,6 +236,16 @@
       </node>
     </segment>
   </branch>
+  <branch basename="_ANONYMOUS_BRANCH_14">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets attribute list</description>
+        </text-node>
+        <node-display x="4" y="7"/>
+      </node>
+    </segment>
+  </branch>
   <branch basename="CategoryDropdown">
     <segment>
       <node>
@@ -248,6 +281,47 @@
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/categorydropdown"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="AttributeList">
+    <segment>
+      <node>
+        <start-node name="AttributeList" secure="false"/>
+        <node-display x="4" y="8"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetAttributeList.ds"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="Attributes" key="Attributes"/>
+          <key-binding alias="Item" key="Item"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/attributelist"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
