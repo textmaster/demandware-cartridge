@@ -12,7 +12,8 @@
 .translation-module ul li {
 	list-style-type: none;
 }
-.translation-module input[type=button]{
+.translation-module input[type=button],
+.translation-module a.button {
 	background-color: #d9d9d9;
     border: 1px solid #d9d9d9;
     border-radius: 3px;
@@ -21,13 +22,20 @@
     margin: 0;
     white-space: nowrap;
 }
-.translation-module input[type=button]:hover{
+.translation-module input[type=button]:hover,
+.translation-module a.button:hover {
 	background-color: #eee;
     border: 1px solid #ccc;
     white-space: nowrap;
 }
 .translation-module table {
 	margin-bottom:5px;
+}
+.translation-module .table_title_description {
+	padding-top: 0;
+}
+.translation-module .input-holder {
+	padding:5px;
 }
 #bm_header_row .sod_select:after {
 	bottom: 0;
