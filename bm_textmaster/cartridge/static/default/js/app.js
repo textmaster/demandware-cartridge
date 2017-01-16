@@ -15,7 +15,7 @@
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
-					$('input[name=locale-to]').prop("disabled",false);
+					$('input[name="locale-to[]"]').prop("disabled",false);
 					$('#locale-to-' + localeFrom).prop("checked",false);
 					$('#locale-to-' + localeFrom).prop("disabled",true);
 				});
@@ -117,11 +117,11 @@
 				});
 				
 				$('#button-select-all').on('click',function(){
-					$('input[type=checkbox][name=item]').prop("checked",true);
+					$('input[type="checkbox"][name="item[]"]').prop("checked",true);
 				});
 				
 				$('#button-deselect-all').on('click',function(){
-					$('input[type=checkbox][name=item]').prop("checked",false);
+					$('input[type="checkbox"][name="item[]"]').prop("checked",false);
 				});
 				
 				$('#filter-item-form').on('submit',function(){
@@ -136,7 +136,7 @@
 						errors.push("- Select item type");
 					}
 					
-					if($('input[name=locale-to]:checked').length == 0){
+					if($('input[name="locale-to[]"]:checked').length == 0){
 						errors.push("- Select target language(s)");
 					}
 					
@@ -144,7 +144,7 @@
 						errors.push("- Select attribute(s)");
 					}
 					
-					if($('input[type=checkbox][name=item]:checked').length == 0){
+					if($('input[type="checkbox"][name="item[]"]:checked').length == 0){
 						errors.push("- Select item(s)");
 					}
 					

@@ -2,7 +2,7 @@
 <ul class="attributes-holder">
 	<isloop items="${pdict.Attributes}" var="itemAttribute" status="attrloopstate">
 		<li class="${itemAttribute.tmDefault ? 'default' :''}">
-			<input type="checkbox" id="attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" name="attribute[]" ${itemAttribute.tmDefault ? 'checked' :''}>
+			<input type="checkbox" id="attribute-${itemAttribute.ID}" value="${itemAttribute.ID +'|'+ itemAttribute.name}" name="attribute[]" ${itemAttribute.tmDefault ? 'checked' :''}>
 			<label class="checkbox-label" for="attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
 		</li>
 	</isloop>

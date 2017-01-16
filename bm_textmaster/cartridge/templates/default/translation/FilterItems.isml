@@ -52,7 +52,7 @@
 					<ul class="multi-select select-locale-to">
 						<isloop items="${languages}" var="lang" status="loopstate">
 							<li>
-								<input type="checkbox" name="locale-to" id="locale-to-${lang.id}" value="${lang.id}"><label class="checkbox-label" for="locale-to-${lang.id}">${lang.name}</label>
+								<input type="checkbox" name="locale-to[]" id="locale-to-${lang.id}" value="${lang.id}"><label class="checkbox-label" for="locale-to-${lang.id}">${lang.name}</label>
 							</li>
 						</isloop>
 					</ul>

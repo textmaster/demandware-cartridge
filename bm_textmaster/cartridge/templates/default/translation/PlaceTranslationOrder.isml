@@ -3,7 +3,6 @@
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
 <isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
-${pdict.TransParams}
 <div class="place-order">
 	<h1>Place Translation Order</h1>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -17,50 +16,28 @@ ${pdict.TransParams}
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td class="table_detail w e s center">English</td>
-				<td class="table_detail e s center">25</td>
-				<td class="table_detail e s center">
-					<ul class="attribute-list">
-						<li>Attribute 1</li>
-						<li>Attribute 2</li>
-						<li>Attribute 3</li>
-						<li>Attribute 4</li>
-						<li>Attribute 5</li>
-						<li>Attribute 6</li>
-					</ul>
-				</td>
-				<td class="table_detail e s center">German</td>
-				<td class="table_detail e s center">
-					<select multiple>
-						<option>Template 1</option>
-						<option>Template 2</option>
-						<option>Template 3</option>
-						<option>Template 4</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td class="table_detail w e s center">English</td>
-				<td class="table_detail e s center">18</td>
-				<td class="table_detail e s center">
-					<ul class="attribute-list">
-						<li>Attribute 1</li>
-						<li>Attribute 2</li>
-						<li>Attribute 4</li>
-						<li>Attribute 6</li>
-						<li>Attribute 8</li>
-					</ul>
-				</td>
-				<td class="table_detail e s center">French</td>
-				<td class="table_detail e s center">
-					<select multiple>
-						<option>Template 2</option>
-						<option>Template 4</option>
-						<option>Template 5</option>
-					</select>
-				</td>
-			</tr>
+			<isloop items="${pdict.TransParams.localeTo}" var="localeTo" status="loopstate">
+				<tr>
+					<td class="table_detail w e s center">${pdict.TransParams.localeFrom.name}</td>
+					<td class="table_detail e s center">${Number(pdict.TransParams.items.length).toFixed()}</td>
+					<td class="table_detail e s center">
+						<ul class="attribute-list">
+							<isloop items="${pdict.TransParams.attributes}" var="attribute" status="attrstate">
+								<li>${attribute.name}</li>
+							</isloop>
+						</ul>
+					</td>
+					<td class="table_detail e s center">${localeTo.name}</td>
+					<td class="table_detail e s center">
+						<select multiple>
+							<option>Template 1</option>
+							<option>Template 2</option>
+							<option>Template 3</option>
+							<option>Template 4</option>
+						</select>
+					</td>
+				</tr>
+			</isloop>
 		</tbody>
 	</table>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -83,5 +60,6 @@ ${pdict.TransParams}
 			</tr>
 		</tbody>
 	</table>
+	<span class="hidden">${JSON.stringify(pdict.TransParams)}</span>
 </div>
 </isdecorate>

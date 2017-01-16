@@ -96,4 +96,22 @@ Utils.getAllSubCategories = function(root){
 	return output;
 }
 
+/*
+*	Gets name of the locale if locale ID is passed
+*/
+Utils.getLocaleName = function(localeID){
+	var localeName = "",
+		locales = Utils.getDWLanguages(),
+		locale;
+	
+	for each(locale in locales){
+		if(locale.id == localeID){
+			localeName = locale.name;
+			break;
+		}
+	}
+	
+	return localeName;
+}
+
 module.exports = Utils;

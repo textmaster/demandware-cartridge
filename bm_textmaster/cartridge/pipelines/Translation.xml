@@ -136,6 +136,9 @@
           <key-binding alias="TransParams" key="TransParams"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="ContentAttribute"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="Attributes"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;item[]&quot;).stringValues.toArray()" key="Items"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-to[]&quot;).stringValues.toArray()" key="LocaleTo"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;item-type&quot;).stringValue" key="ItemType"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
