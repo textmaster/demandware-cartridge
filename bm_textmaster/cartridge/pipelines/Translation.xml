@@ -35,7 +35,7 @@
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/filteritems"/>
+          <template buffered="true" dynamic="false" name="translation/FilterItems"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
@@ -53,8 +53,38 @@
         </transition-display>
       </simple-transition>
       <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetFollowUpList.ds"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="Projects" key="Projects"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in1" target-path="./+1">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+              <bend-point relative-to="target" x="1" y="0"/>
+            </transition-display>
+          </transition>
+        </branch>
+      </node>
+      <transition target-connector="in1" target-path="./+1"/>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/followup"/>
+          <template buffered="true" dynamic="false" name="translation/followUp"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
@@ -71,16 +101,6 @@
     </segment>
   </branch>
   <branch basename="_ANONYMOUS_BRANCH_6">
-    <segment>
-      <node>
-        <text-node>
-          <description>Notification page on project creation</description>
-        </text-node>
-        <node-display x="3" y="3"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_7">
     <segment>
       <node>
         <text-node>
@@ -103,13 +123,13 @@
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/register"/>
+          <template buffered="true" dynamic="false" name="translation/Register"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
     </segment>
   </branch>
-  <branch basename="_ANONYMOUS_BRANCH_9">
+  <branch basename="_ANONYMOUS_BRANCH_8">
     <segment>
       <node>
         <text-node>
@@ -155,9 +175,29 @@
       <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/placetranslationorder"/>
+          <template buffered="true" dynamic="false" name="translation/PlaceTranslationOrder"/>
         </interaction-node>
         <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_10">
+    <segment>
+      <node>
+        <text-node>
+          <description>Notification page on project creation</description>
+        </text-node>
+        <node-display x="3" y="6"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_11">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets category dropdown options of a catalog</description>
+        </text-node>
+        <node-display x="1" y="7"/>
       </node>
     </segment>
   </branch>
@@ -165,7 +205,7 @@
     <segment>
       <node>
         <start-node name="Notification" secure="false"/>
-        <node-display x="3" y="4"/>
+        <node-display x="3" y="7"/>
       </node>
       <simple-transition>
         <transition-display>
@@ -177,16 +217,6 @@
           <template buffered="true" dynamic="false" name="translation/notification"/>
         </interaction-node>
         <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_12">
-    <segment>
-      <node>
-        <text-node>
-          <description>Gets category dropdown options of a catalog</description>
-        </text-node>
-        <node-display x="1" y="7"/>
       </node>
     </segment>
   </branch>
