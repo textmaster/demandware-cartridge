@@ -2,10 +2,13 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.js')}"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
+
 <isbreadcrumbs bcurl1="${URLUtils.url('Translation-FollowUp')}" bctext1="Follow Up" />
 <div class="followup">
 	<h1>Follow Up On Translation</h1>
-	<table class="table" width="100%" border="0" cellspacing="0"
+	<table class="table" id="filtertableProjects" width="100%" border="0" cellspacing="0"
 		cellpadding="0">
 		<thead>
 		<tr>
@@ -16,13 +19,28 @@
 			<th class="table_header n e s center">Possible Action</th>
 		</tr>
 		</thead>
-		<tr class="contentslistentry" align="center">
-			<td class="table_detail w e s"><span class="spContentId">12345</span></td>
-			<td class="table_detail e s"><span class="spContentName">Item1</span></td>
-			<td class="table_detail e s">In progress</td>
-			<td class="table_detail e s"><a>Link</a></td>
-			<td class="table_detail e s">Check my Item</td>
-		</tr>
+		<isif condition="${pdict.Projects != null}">
+			<isloop items="${pdict.Projects.projects}" var="project" status="innerloopstate">
+				    <tr class="contentslistentry" align="center">
+					<td class="table_detail w e s"><span class="spContentId">${project.id}</span></td>
+					<td class="table_detail e s"><span class="spContentName">${project.name}</span></td>
+					<td class="table_detail e s">${project.status}</td>
+					<td class="table_detail e s"><a href="https://www.app.textmaster.com/clients/project_wizards/standard/${project.id}/edit">Link</a></td>
+					<td class="table_detail e s">Check my Item</td>
+				</tr>
+			</isloop>
+		</isif>
 	</table>
-<div>
+</div>
+
+<script>
+(function($){
+	$(document).ready(function(){
+		$('${'#'}filtertableProjects').dataTable( {
+	        stateSave: true
+	    } );
+	})
+})(jQuery);
+</script>
+
 </isdecorate>
