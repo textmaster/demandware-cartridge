@@ -22,7 +22,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td class="table_detail e s right input-holder">
+				<td class="table_detail e s w right input-holder">
 					<a class="button" href="https://www.app.textmaster.com/sign_up" target="_blank">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
 				</td>
 			</tr>
@@ -36,7 +36,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td class="table_detail e s right input-holder">
+				<td class="table_detail e s w right input-holder">
 					<a class="button" href="${URLUtils.url('ViewApplication-BM','SelectedMenuItem','site-prefs','CurrentMenuItemId','site-prefs','screen','preference%23site_preference_groups')}">${Resource.msg('register.go.preference.link', 'textmaster',null)}</a>
 				</td>
 			</tr>

@@ -51,4 +51,49 @@ Utils.getFileNameExtension = function(fileName : String){
 	return fileNameExtension;
 }
 
+/*
+*	Gets Demandware languages in JSON
+*/
+Utils.getDWLanguages = function(){
+	return [
+		{id:"zh",name:"Chinese"},
+		{id:"zh_CN",name:"Chinese (China)"},
+		{id:"nl",name:"Dutch"},
+		{id:"en",name:"English"},
+		{id:"en_CA",name:"English (Canada)"},
+		{id:"en_GB",name:"English (United Kingdom)"},
+		{id:"en_US",name:"English (United States)"},
+		{id:"fr",name:"French"},
+		{id:"fr_CA",name:"French (Canada)"},
+		{id:"fr_FR",name:"French (France)"},
+		{id:"de",name:"German"},
+		{id:"de_DE",name:"German (Germany)"},
+		{id:"it",name:"Italian"},
+		{id:"it_IT",name:"Italian (Italy)"},
+		{id:"ja",name:"Japanese"},
+		{id:"ja_JP",name:"Japanese (Japan)"},
+		{id:"es",name:"Spanish"}
+	];
+}
+
+/*
+*	Gets all underlying subcategories of a root category, in a single array
+*/
+Utils.getAllSubCategories = function(root){
+	var subCategories, category, nextLevelCategories,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		output.push(category);
+	}
+	
+	for each(category in subCategories){
+		nextLevelCategories = Utils.getAllSubCategories(category);
+		output.push.apply(output, nextLevelCategories);
+	}
+	
+	return output;
+}
+
 module.exports = Utils;

@@ -1,0 +1,70 @@
+/**
+*	Gets attribute list for a particular item type (product, content, category)
+*
+*	@input ItemType: String
+*
+*	@output Attributes: Object
+*
+*/
+importPackage( dw.system );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var attrDefinitions, attr, attrDef,
+		attributes = [],
+		defaultAttributes = dw.system.Site.getCurrent().getCustomPreferenceValue('TM'+ pdict.ItemType +'Attributes');
+		
+	log = LogUtils.getLogger("GetAttributeList");
+	
+	try{
+		defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
+	}
+	catch(ex){
+		log.error("Exception on getting default attribute list for "+ pdict.ItemType +" from Site Preferences: " + ex.message);
+	}
+	
+	try{
+		attrDefinitions = dw.object.SystemObjectMgr.describe(pdict.ItemType).getAttributeDefinitions().toArray();
+		
+		for each(attrDef in attrDefinitions){
+			attr = {};
+			attr.ID = attrDef.ID;
+			attr.name = attrDef.displayName;
+			attr.tmDefault = getTMDefault(attrDef.ID, attrDef.displayName, defaultAttributes);
+			
+			attributes.push(attr);
+		}
+	}
+	catch(ex){
+		log.error("Exception on dealing with attributeDefinitions for "+ pdict.ItemType +": " + ex.message);
+	}
+	
+	pdict.Attributes = attributes;
+	
+   	return PIPELET_NEXT;
+}
+
+/*
+*	Gets flag by checking attribute in default attribute list that set in preference
+*/
+function getTMDefault(ID, name, defaultAttributes){
+	var attr,
+		result = false;
+			
+	if(defaultAttributes && defaultAttributes.length > 0){
+		for each(attr in defaultAttributes){
+			if(attr == ID || attr == name){
+				result = true;
+				break;
+			}
+		}
+	}
+	
+	return result;
+}

@@ -1,0 +1,15 @@
+<!--- TEMPLATENAME: attributelist.isml --->
+<ul class="attributes-holder">
+	<isloop items="${pdict.Attributes}" var="itemAttribute" status="attrloopstate">
+		<li class="${itemAttribute.tmDefault ? 'default' :''}">
+			<input type="checkbox" id="attribute-${itemAttribute.ID}" value="${itemAttribute.ID}" name="attribute[]" ${itemAttribute.tmDefault ? 'checked' :''}>
+			<label class="checkbox-label" for="attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
+		</li>
+	</isloop>
+	<isif condition="${pdict.Attributes.length > 0}">
+		<li class="show-all-attributes"><input type="button" value="${Resource.msg('translation.add.attributes','textmaster',null)}"></li>
+	</isif>
+</ul>
+<div class="show-default-attributes">
+	<input type="button" value="${Resource.msg('translation.show.default.attributes','textmaster',null)}">
+</div>

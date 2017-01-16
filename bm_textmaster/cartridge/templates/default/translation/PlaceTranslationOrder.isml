@@ -3,6 +3,7 @@
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
 <isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+${pdict.TransParams}
 <div class="place-order">
 	<h1>Place Translation Order</h1>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">

@@ -1,0 +1,34 @@
+/**
+*	Gets category dropdown list of a catalog
+*
+*	@input CatalogID: String
+*
+*	@output CategoryList: Array
+*
+*/
+
+// API Includes
+var CatalogMgr 		= require('dw/catalog/CatalogMgr');
+	
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number {
+	var catalog, rootCategory, subCategories;
+	
+	log = LogUtils.getLogger("GetCategoryList");
+	pdict.CategoryList = [];
+	
+	if(pdict.CatalogID){
+		catalog = CatalogMgr.getCatalog(pdict.CatalogID);
+		rootCategory = catalog.getRoot();
+		subCategories = Utils.getAllSubCategories(rootCategory);
+		pdict.CategoryList = subCategories;
+	}
+	
+	return PIPELET_NEXT;
+}

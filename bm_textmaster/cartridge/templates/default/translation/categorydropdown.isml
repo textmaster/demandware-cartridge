@@ -1,0 +1,8 @@
+<!--- TEMPLATENAME: categorylist.isml --->
+<!-- For ajax call on getting category list of a catalog -->
+
+<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+
+<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
+	<option value="${category.ID}">${category.displayName}</option>
+</isloop>

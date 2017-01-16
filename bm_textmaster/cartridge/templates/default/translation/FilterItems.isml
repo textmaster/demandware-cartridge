@@ -1,179 +1,135 @@
-<!--- TEMPLATENAME: FilterItems.isml --->
+<!--- TEMPLATENAME: filteritems.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
 	<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+	<isscript>
+		var Utils = require('~/cartridge/scripts/utils/Utils'),
+			languages = Utils.getDWLanguages(),
+			catalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	</isscript>
 	<div class="new-translation">
-		<h1>New Translation</h1>
+		<form method="post" action="${URLUtils.url('Translation-PlaceOrder')}" id="filter-item-form">
+		<h1>${Resource.msg('translation.title','textmaster',null)}</h1>
 		<div class="form-holder">
 			<div class="field-holder title-holder">
-				<h2>Determine the scope</h2>
+				<h2>${Resource.msg('translation.scope','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder">
-				<div class="label-holder">Translate from: </div>
+				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
 				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>English</option>
-						<option>German</option>
-						<option>French</option>
-						<option>Japanese</option>
+					<select name="locale-from">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<isloop items="${languages}" var="lang" status="loopstate">
+							<option value="${lang.id}">${lang.name}</option>
+						</isloop>
 					</select>
 				</div>
 			</div>
 			<div class="field-holder">
-				<div class="label-holder">Item: </div>
+				<div class="label-holder">${Resource.msg('translation.itemtype','textmaster',null)}: </div>
 				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Products</option>
-						<option>Category</option>
-						<option>Content Asset</option>
+					<select name="item-type">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="product">${Resource.msg('general.product','textmaster',null)}</option>
+						<option value="category">${Resource.msg('general.category','textmaster',null)}</option>
+						<option value="content">${Resource.msg('general.contentasset','textmaster',null)}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder catalog-list">
+				<div class="label-holder">${Resource.msg('translation.catalog','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="catalog">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="${catalog.ID}">${catalog.displayName}</option>
 					</select>
 				</div>
 			</div>
 			<div class="field-holder">
-				<div class="label-holder">Catalog of products: </div>
+				<div class="label-holder">${Resource.msg('translation.to','textmaster',null)}: </div>
 				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Electronics</option>
-						<option>Apparels</option>
-						<option>Machinery</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">Translate to: </div>
-				<div class="input-holder">
-					<select multiple>
-						<option>Select</option>
-						<option>English</option>
-						<option>German</option>
-						<option>French</option>
-						<option>Japanese</option>
-					</select>
+					<ul class="multi-select select-locale-to">
+						<isloop items="${languages}" var="lang" status="loopstate">
+							<li>
+								<input type="checkbox" name="locale-to" id="locale-to-${lang.id}" value="${lang.id}"><label class="checkbox-label" for="locale-to-${lang.id}">${lang.name}</label>
+							</li>
+						</isloop>
+					</ul>
 				</div>
 			</div>
 		</div>
 		<div class="form-holder">
 			<div class="field-holder title-holder">
-				<h2>Select Attributes</h2>
+				<h2>${Resource.msg('translation.select.attributes','textmaster',null)}</h2>
+			</div>
+			<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
+		</div>
+		<div class="form-holder filter-items">
+			<div class="field-holder title-holder">
+				<h2>${Resource.msg('translation.filter.items','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.online.flag','textmaster',null)}: </div>
 				<div class="input-holder">
-					<input type="checkbox" id="attr-name" checked><label class="checkbox-label" for="attr-name">Name</label>
-					<input type="checkbox" id="attr-brand"><label class="checkbox-label" for="attr-brand">Brand</label>
-					<input type="checkbox" id="attr-manufacturer"><label class="checkbox-label" for="attr-manufacturer">Manufacturer</label>
-					<input type="checkbox" id="attr-description" checked><label class="checkbox-label" for="attr-description">Description</label>
-					<input type="checkbox" id="attr-details"><label class="checkbox-label" for="attr-details">Product Details</label>
-					<input type="checkbox" id="attr-page-title" checked><label class="checkbox-label" for="attr-page-title">Page Title</label>
-					<input type="checkbox" id="attr-page-description" checked><label class="checkbox-label" for="attr-page-description">Page Description</label>
-					<input type="checkbox" id="attr-page-keywords"><label class="checkbox-label" for="attr-page-keywords">Page Keywords</label>
+					<select name="filter-online-flag">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
+						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
+					</select>
 				</div>
+			</div>
+			<div class="field-holder search-status">
+				<div class="label-holder">${Resource.msg('translation.search.status','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="filter-search-status">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
+						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder category">
+				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="filter-category">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.translated.flag','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="filter-translated">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
+						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder button-holder left">
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
 			</div>
 		</div>
 		<div class="form-holder">
 			<div class="field-holder title-holder">
-				<h2>Filter the items</h2>
+				<h2>${Resource.msg('translation.select.items','textmaster',null)}</h2>
 			</div>
-			<div class="field-holder">
-				<div class="label-holder">Online Flag: </div>
-				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Yes</option>
-						<option>No</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">Search Status: </div>
-				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Yes</option>
-						<option>No</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">Category Assignment: </div>
-				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Category 1</option>
-						<option>Category 2</option>
-						<option>Category 3</option>
-						<option>Category 4</option>
-						<option>Category 5</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">Owner Catalog: </div>
-				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>Catalog 1</option>
-						<option>Catalog 2</option>
-						<option>Catalog 3</option>
-						<option>Catalog 4</option>
-						<option>Catalog 5</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">TextMasterTranslated: </div>
-				<div class="input-holder">
-					<select>
-						<option>Select</option>
-						<option>No</option>
-						<option>Yes</option>
-					</select>
-				</div>
-			</div>
+			<div id="items-holder"></div>
 			<div class="field-holder button-holder">
-				<input type="button" value="Search">
+				<input type="button" id="button-select-all" value="${Resource.msg('general.select.all','textmaster',null)}">
+				<input type="button" id="button-deselect-all" value="${Resource.msg('general.deselect.all','textmaster',null)}">
 			</div>
 		</div>
-		<div class="form-holder">
-			<div class="field-holder title-holder">
-				<h2>Select items</h2>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product1"><label class="checkbox-label" for="product1">Product 1</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product2"><label class="checkbox-label" for="product2">Product 2</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product3"><label class="checkbox-label" for="product3">Product 3</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product4"><label class="checkbox-label" for="product4">Product 4</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product5"><label class="checkbox-label" for="product5">Product 5</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product6"><label class="checkbox-label" for="product6">Product 6</label></div>
-			</div>
-			<div class="field-holder">
-				<div class="input-holder"><input type="checkbox" id="product7"><label class="checkbox-label" for="product7">Product 7</label></div>
-			</div>
-			<div class="field-holder button-holder">
-				<input type="button" value="Select All">
-				<input type="button" value="Deselect All">
-			</div>
-		</div>
+		<div class="submit-error"></div>
 		<div class="form-holder">
 			<div class="field-holder title-holder no-fields">
-				<h2>Order</h2>
+				<h2>${Resource.msg('general.order','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder button-holder">
-				<input type="button" value="Send to TextMaster">
+				<input type="submit" class="button" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">
 			</div>
 		</div>
+		</form>
 	</div>
 </isdecorate>
