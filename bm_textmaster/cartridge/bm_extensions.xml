@@ -22,10 +22,13 @@
 		<exec pipeline="Translation" node="New"/>
 		<sub-pipelines>
 			<pipeline name="Translation-New" />
-			<pipeline name="Translation-ItemList" />
-			<pipeline name="Translation-CategoryDropdown" />
 			<pipeline name="Translation-PlaceOrder" />
-			<pipeline name="Translation-AttributeList" />
+			<pipeline name="Translation-Notification" />
+			<pipeline name="Components-ItemList" />
+			<pipeline name="Components-CategoryDropdown" />
+			<pipeline name="Components-AttributeList" />
+			<pipeline name="Components-GetTemplatesResponse" />
+			<pipeline name="Components-CreateTranslation" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuaction>

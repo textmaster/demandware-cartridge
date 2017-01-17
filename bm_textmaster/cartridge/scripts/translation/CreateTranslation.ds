@@ -1,0 +1,111 @@
+/**
+*	Creates translation documents
+*
+*	@input LocaleFrom: String
+*	@input LocaleTo: String
+*	@input ItemType: String
+*	@input Attributes: String
+*	@input Items: String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+
+importClass( dw.web.Resource );
+importClass( dw.content.ContentMgr );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var localeFrom = JSON.parse(JSON.parse(pdict.LocaleFrom)),
+		localeTo = JSON.parse(JSON.parse(pdict.LocaleTo)),
+		itemType = pdict.ItemType,
+		attributes = JSON.parse(JSON.parse(pdict.Attributes)),
+		items = JSON.parse(JSON.parse(pdict.Items)),
+		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
+		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "", documents, document, documentPostData,
+		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr;
+	
+	log = LogUtils.getLogger("CreateTranslation");
+	
+	/*for each(langTo in localeTo){
+		projectPostData = {};
+		project = {};
+		
+		project.name = itemType +"-from-"+ localeFrom.id +"-to-"+ langTo.id;
+		project.ctype = Resource.msg("constant.translation","textmaster",null);
+		project.language_from = localeFrom.id;
+		project.language_to = langTo.id;
+		project.category = categoryCode;
+		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
+		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
+		
+		projectPostData.project = project;
+		projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
+		
+		projectResult = Utils.TextMasterClient("POST",projectEndPoint, JSON.stringify(projectPostData));
+		
+		if(projectResult && projectResult.id != undefined){
+			projectID = projectResult.id;
+		}
+	}*/
+	
+	projectID = "587e42de0f6c0e003f4ebe8b";
+	
+	documentPostData = {};
+	documents = [];
+	
+	for each(i in items){
+		itemData = {};
+		document = {};
+		
+		switch(itemType){
+			case "product":
+				item = ProductMgr.getProduct(i);
+				itemAttrs = dw.object.SystemObjectMgr.describe("Product").getAttributeDefinitions().toArray();
+				break;
+			case "content":
+				item = ContentMgr.getContent(i);
+				break;
+			case "category":
+				
+				break;
+		}
+		
+		for each(attr in attributes){
+			switch(itemType){
+				case "product":
+					for each(itemAttr in itemAttrs){
+						if(attr.id == itemAttr.ID){
+							itemData[attr.id] = item.AttributeModel.getValue(itemAttr);
+						}
+					}
+					break;
+				case "content":
+				case "category":
+					itemData[attr.id] = item[attr.id] || "";
+					break;
+			}
+		}
+		
+		document.title = itemType +"-"+ i;
+		document.original_content = JSON.stringify(itemData);
+		document.word_count = Utils.getWordCount(document.original_content);
+		
+		documents.push(document);
+	}
+	
+	documentPostData.documents = documents;
+	documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
+	documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
+	
+	response.getWriter().println(JSON.stringify(documentResult));
+	
+   	return PIPELET_NEXT;
+}

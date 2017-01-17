@@ -1,0 +1,25 @@
+/**
+*	Gets templates response from TextMaster API
+*
+*/
+importPackage( dw.system );
+
+importClass( dw.web.Resource );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var templatesEndPoint = Resource.msg("api.get.templates","textmaster",null),
+		result;
+	log = LogUtils.getLogger("GetTemplateList");
+	result = Utils.TextMasterClient("GET", templatesEndPoint);
+	response.getWriter().println(JSON.stringify(result));
+	
+   	return PIPELET_NEXT;
+}

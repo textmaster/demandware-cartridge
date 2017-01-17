@@ -35,7 +35,7 @@
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/FilterItems"/>
+          <template buffered="true" dynamic="false" name="translation/filtertranslationitems"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
@@ -84,23 +84,13 @@
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/followUp"/>
+          <template buffered="true" dynamic="false" name="translation/followupontranslation"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>
     </segment>
   </branch>
   <branch basename="_ANONYMOUS_BRANCH_5">
-    <segment>
-      <node>
-        <text-node>
-          <description>Subpipeline 'New' posts data to this subpipeline</description>
-        </text-node>
-        <node-display x="1" y="3"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_6">
     <segment>
       <node>
         <text-node>
@@ -123,9 +113,19 @@
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/Register"/>
+          <template buffered="true" dynamic="false" name="translation/entertextmaster"/>
         </interaction-node>
         <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_7">
+    <segment>
+      <node>
+        <text-node>
+          <description>Subpipeline 'New' posts data to this subpipeline</description>
+        </text-node>
+        <node-display x="1" y="5"/>
       </node>
     </segment>
   </branch>
@@ -133,9 +133,9 @@
     <segment>
       <node>
         <text-node>
-          <description>Gets item list in ajax call</description>
+          <description>Notification page on project creation</description>
         </text-node>
-        <node-display x="5" y="3"/>
+        <node-display x="3" y="5"/>
       </node>
     </segment>
   </branch>
@@ -143,7 +143,7 @@
     <segment>
       <node>
         <start-node name="PlaceOrder" secure="false"/>
-        <node-display x="1" y="4"/>
+        <node-display x="1" y="6"/>
       </node>
       <simple-transition/>
       <node>
@@ -154,10 +154,9 @@
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-from&quot;).stringValue" key="LocaleFrom"/>
           <key-binding alias="TransParams" key="TransParams"/>
-          <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="ContentAttribute"/>
-          <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).stringValues.toArray()" key="Attributes"/>
-          <key-binding alias="CurrentHttpParameterMap.get(&quot;item[]&quot;).stringValues.toArray()" key="Items"/>
-          <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-to[]&quot;).stringValues.toArray()" key="LocaleTo"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).values.toArray()" key="Attributes"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;item[]&quot;).values.toArray()" key="Items"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-to[]&quot;).values.toArray()" key="LocaleTo"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;item-type&quot;).stringValue" key="ItemType"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
@@ -178,29 +177,9 @@
       <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/PlaceTranslationOrder"/>
+          <template buffered="true" dynamic="false" name="translation/placeorder"/>
         </interaction-node>
         <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_10">
-    <segment>
-      <node>
-        <text-node>
-          <description>Notification page on project creation</description>
-        </text-node>
-        <node-display x="3" y="6"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_11">
-    <segment>
-      <node>
-        <text-node>
-          <description>Gets category dropdown options of a catalog</description>
-        </text-node>
-        <node-display x="1" y="7"/>
       </node>
     </segment>
   </branch>
@@ -208,153 +187,39 @@
     <segment>
       <node>
         <start-node name="Notification" secure="false"/>
-        <node-display x="3" y="7"/>
+        <node-display x="3" y="6"/>
       </node>
-      <simple-transition>
-        <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
-        </transition-display>
-      </simple-transition>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;autoLaunchCount&quot;).intValue" key="From_0"/>
+          <key-binding alias="autoLaunchCount" key="To_0"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;noAutoLaunchCount&quot;).intValue" key="From_1"/>
+          <key-binding alias="noAutoLaunchCount" key="To_1"/>
+          <key-binding alias="null" key="From_2"/>
+          <key-binding alias="null" key="To_2"/>
+          <key-binding alias="null" key="From_3"/>
+          <key-binding alias="null" key="To_3"/>
+          <key-binding alias="null" key="From_4"/>
+          <key-binding alias="null" key="To_4"/>
+          <key-binding alias="null" key="From_5"/>
+          <key-binding alias="null" key="To_5"/>
+          <key-binding alias="null" key="From_6"/>
+          <key-binding alias="null" key="To_6"/>
+          <key-binding alias="null" key="From_7"/>
+          <key-binding alias="null" key="To_7"/>
+          <key-binding alias="null" key="From_8"/>
+          <key-binding alias="null" key="To_8"/>
+          <key-binding alias="null" key="From_9"/>
+          <key-binding alias="null" key="To_9"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/notification"/>
-        </interaction-node>
-        <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="ItemList">
-    <segment>
-      <node>
-        <start-node name="ItemList" secure="false"/>
-        <node-display x="5" y="4"/>
-      </node>
-      <simple-transition/>
-      <node>
-        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
-          <config-property key="Transactional" value="false"/>
-          <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetItemList.ds"/>
-          <key-binding alias="null" key="ScriptLog"/>
-          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="Catalog"/>
-          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="Category"/>
-          <key-binding alias="CurrentHttpParameterMap.onlineFlag.stringValue" key="OnlineFlag"/>
-          <key-binding alias="CurrentHttpParameterMap.searchStatus.stringValue" key="SearchStatus"/>
-          <key-binding alias="CurrentHttpParameterMap.translatedFlag.stringValue" key="TranslatedFlag"/>
-          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
-          <key-binding alias="ItemList" key="ItemList"/>
-          <key-binding alias="ItemType" key="Type"/>
-        </pipelet-node>
-        <node-display x="0" y="1"/>
-        <branch basename="b2" source-connector="error">
-          <transition target-connector="in">
-            <transition-display>
-              <bend-point relative-to="source" x="1" y="0"/>
-            </transition-display>
-          </transition>
-          <segment>
-            <node>
-              <end-node name="Error"/>
-              <node-display orientation="horizontal" x="1" y="0"/>
-            </node>
-          </segment>
-        </branch>
-      </node>
-      <simple-transition/>
-      <node>
-        <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/itemlist"/>
-        </interaction-node>
-        <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="_ANONYMOUS_BRANCH_14">
-    <segment>
-      <node>
-        <text-node>
-          <description>Gets attribute list</description>
-        </text-node>
-        <node-display x="4" y="7"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="CategoryDropdown">
-    <segment>
-      <node>
-        <start-node name="CategoryDropdown" secure="false"/>
-        <node-display x="1" y="8"/>
-      </node>
-      <simple-transition/>
-      <node>
-        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
-          <config-property key="Transactional" value="false"/>
-          <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetCategoryList.ds"/>
-          <key-binding alias="null" key="ScriptLog"/>
-          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="CatalogID"/>
-          <key-binding alias="CategoryList" key="CategoryList"/>
-        </pipelet-node>
-        <node-display x="0" y="1"/>
-        <branch basename="b2" source-connector="error">
-          <transition target-connector="in">
-            <transition-display>
-              <bend-point relative-to="source" x="1" y="0"/>
-            </transition-display>
-          </transition>
-          <segment>
-            <node>
-              <end-node name="Error"/>
-              <node-display orientation="horizontal" x="1" y="0"/>
-            </node>
-          </segment>
-        </branch>
-      </node>
-      <simple-transition/>
-      <node>
-        <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/categorydropdown"/>
-        </interaction-node>
-        <node-display x="0" y="1"/>
-      </node>
-    </segment>
-  </branch>
-  <branch basename="AttributeList">
-    <segment>
-      <node>
-        <start-node name="AttributeList" secure="false"/>
-        <node-display x="4" y="8"/>
-      </node>
-      <simple-transition/>
-      <node>
-        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
-          <config-property key="Transactional" value="false"/>
-          <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetAttributeList.ds"/>
-          <key-binding alias="null" key="ScriptLog"/>
-          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
-          <key-binding alias="Attributes" key="Attributes"/>
-          <key-binding alias="Item" key="Item"/>
-        </pipelet-node>
-        <node-display x="0" y="1"/>
-        <branch basename="b2" source-connector="error">
-          <transition target-connector="in">
-            <transition-display>
-              <bend-point relative-to="source" x="1" y="0"/>
-            </transition-display>
-          </transition>
-          <segment>
-            <node>
-              <end-node name="Error"/>
-              <node-display orientation="horizontal" x="1" y="0"/>
-            </node>
-          </segment>
-        </branch>
-      </node>
-      <simple-transition/>
-      <node>
-        <interaction-node transaction-required="false">
-          <template buffered="true" dynamic="false" name="translation/attributelist"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>

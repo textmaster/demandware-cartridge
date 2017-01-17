@@ -4,11 +4,17 @@
 				if($('.new-translation').length){
 					this.newTranslation();
 				}
+				
+				if($('.place-order').length){
+					this.placeOrder();
+				}
 			},
 			urls:{
-				categoryDropdown: "Translation-CategoryDropdown",
-				translationItemList: "Translation-ItemList",
-				attributeList: "Translation-AttributeList"
+				categoryDropdown: "Components-CategoryDropdown",
+				translationItemList: "Components-ItemList",
+				attributeList: "Components-AttributeList",
+				getTemplatesResponse: "Components-GetTemplatesResponse",
+				createTranslation: "Components-CreateTranslation"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData;
@@ -160,6 +166,106 @@
 					$('.submit-error').html("");
 					$('#filter-item-submit').prop("disabled",true).val("Please wait...");
 				});
+			},
+			placeOrder: function(){
+				var result, transParams, localeFrom, localeTo, templates, listHolder, postData, select, count, autoLaunchCount, noAutoLaunchCount;
+				
+				transParams = JSON.parse($('#hidden-values').text());
+				
+				$('#reload-templates').on('click',function(){
+					$.get(app.urls.getTemplatesResponse, function(data){
+						result = JSON.parse(data);
+						$('.template-list-holder').each(function(){
+							listHolder = $(this);
+							templates = [];
+							localeFrom = $(this).attr('data-locale-from');
+							localeTo = $(this).attr('data-locale-to');
+							
+							if(result.api_templates != undefined && result.api_templates.length > 0){
+								result.api_templates.forEach(function(temp){
+									if(temp.language_from == localeFrom && temp.language_to == localeTo){
+										templates.push({
+											id: temp.id,
+											name: temp.name,
+											autoLaunch: temp.auto_launch
+										});
+									}
+								});
+							}
+							
+							if(templates.length > 0){
+								select = $('<select multiple></select>');
+								
+								templates.forEach(function(temp) {
+									select.append($('<option value="'+ temp.id +'" data-auto-launch="'+ temp.autoLaunch +'">'+ temp.name +'</option>'));
+								});
+								
+								listHolder.append(select);
+							}
+						});
+					});
+				});
+				
+				$('#place-order').on("click", function(){
+					var error = "";
+					
+					if($('.template-list-holder select').length == 0){
+						error = "Templates could not be found";
+					}
+					else{
+						$('.template-list-holder select').each(function(){
+							if($(this).find('option:selected').length == 0){
+								error = "Select template";
+							}
+						});
+					}
+					
+					if(error != ""){
+						$('.submit-error').text("Error: " + error);
+					}
+					else{
+						//$(this).prop("disabled", true);
+						//$(this).val("Please wait...");
+						
+						$('.submit-error').text("");
+						autoLaunchCount = 0;
+						noAutoLaunchCount = 0;
+						
+						for(count = 0;count < transParams.localeTo.length; count++){
+							localeTo = transParams.localeTo[count];
+							templates = [];
+							
+							$('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find('select option:selected').each(function(){
+								templates.push($(this).val());
+								if($(this).attr('data-auto-launch') == "true"){
+									autoLaunchCount++;
+								}
+								else{
+									noAutoLaunchCount++;
+								}
+							});
+							
+							transParams.localeTo[count].templates = templates;
+						}
+						
+						postData = {
+							localeFrom: JSON.stringify(JSON.stringify(transParams.localeFrom)),
+							localeTo: JSON.stringify(transParams.localeTo),
+							itemType: transParams.itemType,
+							attributes: JSON.stringify(transParams.attributes),
+							items: JSON.stringify(transParams.items)
+						};
+						
+						$.post(app.urls.createTranslation, postData, function(data){
+							$('input[name=autoLaunchCount]').val(autoLaunchCount);
+							$('input[name=noAutoLaunchCount]').val(noAutoLaunchCount);
+							//$('#notification-form').submit();
+							console.log(data);
+						});
+					}
+				});
+				
+				$('#reload-templates').trigger("click");
 			},
 			utils: {
 				firstLetterCapital: function(str){
