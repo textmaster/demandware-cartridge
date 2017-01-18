@@ -48,7 +48,24 @@
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>
 	
-	<menuaction id="textmastermenumenuaction5" menupath="textmastermenuitem1" position="1003" site="true">
+	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
+		<name xml:lang="x-default">Default Attributes</name>
+		<short_description xml:lang="x-default">
+			Default attributes settings
+		</short_description>
+		<description xml:lang="x-default">
+			Set attributes those are need to be translated frequently
+		</description>
+		<exec pipeline="Translation" node="DefaultAttributes"/>
+		<sub-pipelines>
+			<pipeline name="Translation-DefaultAttributes" />
+			<pipeline name="Components-AttributeList" />
+			<pipeline name="Components-SaveDefaultAttributes" />
+		</sub-pipelines>
+		<icon>icons/star_yellow_new.gif</icon>
+	</menuaction>
+	
+	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
 		<name xml:lang="x-default">Register</name>
 		<short_description xml:lang="x-default">
 			Register new account in TextMaster

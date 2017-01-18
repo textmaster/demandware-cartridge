@@ -8,13 +8,18 @@
 				if($('.place-order').length){
 					this.placeOrder();
 				}
+				
+				if($('.default-attributes').length){
+					this.setDefaultAttributes();
+				}
 			},
 			urls:{
 				categoryDropdown: "Components-CategoryDropdown",
 				translationItemList: "Components-ItemList",
 				attributeList: "Components-AttributeList",
 				getTemplatesResponse: "Components-GetTemplatesResponse",
-				createTranslation: "Components-CreateTranslation"
+				createTranslation: "Components-CreateTranslation",
+				saveDefaultAttributes: "Components-SaveDefaultAttributes"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData;
@@ -270,6 +275,70 @@
 				});
 				
 				$('#reload-templates').trigger("click");
+			},
+			setDefaultAttributes: function(){
+				$('select[name=attribute-item-type]').on('change',function(){
+					itemType = this.value;
+					
+					postData = {itemType: app.utils.firstLetterCapital(itemType)};
+					$('.attributes-main').html("");
+					$.post(app.urls.attributeList, postData, function(data){
+						$('.attributes-main').html(data);
+					});
+					
+					$(this).removeClass('error-field');
+					$('.submit-error').text("");
+				});
+				
+				$('#attributes-save').on('click', function(){
+					var error = "", postData = {}, attributes = [], defaultValueString = "", checkedValueString = "",
+						errorHolder = $('.submit-error'),
+						button = $(this),
+						buttonCaption = button.val();
+					
+					if($('input[name="attribute[]"]:checked').length == 0){
+						error = "Select attributes";
+					}
+					else{
+						$('li.default input[name="attribute[]"]').each(function(){
+							defaultValueString += this.value.split("|")[0];
+						});
+						
+						$('input[name="attribute[]"]:checked').each(function(){
+							checkedValueString += this.value.split("|")[0];
+						});
+						
+						if(defaultValueString == checkedValueString){
+							error = "Change attribute selection";
+						}
+					}
+					
+					errorHolder.text(error);
+					
+					if(error == ""){
+						button.val("Please wait...");
+						button.prop("disabled", true);
+						
+						$('input[name="attribute[]"]:checked').each(function(){
+							attributes.push(this.value);
+						});
+						
+						postData.itemType = $('select[name=attribute-item-type]').val();
+						postData.attributes = attributes;
+						
+						$.post(app.urls.saveDefaultAttributes, postData, function(data){
+							$('.success-message').addClass('show');
+							$('.attributes-holder li.default').removeClass('default');
+							$('input[name="attribute[]"]:checked').closest('li').addClass('default');
+							button.val(buttonCaption);
+							button.prop("disabled", false);
+							
+							setTimeout(function(){
+								$('.success-message').removeClass('show');
+							}, 3000);
+						});
+					}
+				});
 			},
 			utils: {
 				firstLetterCapital: function(str){
