@@ -34,25 +34,15 @@ function execute( pdict : PipelineDictionary ) : Number
    		if(documentResult && documentResult.documents){
    			for each(document in documentResult.documents){
    				doc = document;
-   				actions = [];
+   				actions = [Resource.msg("constant.action.view","textmaster",null)];
    				
    				switch(doc.status.toLowerCase()){
-   					case "in_creation":
-   					case "waiting_assignment":
-   						actions = [Resource.msg("constant.action.view","textmaster",null)];
-   						break;
    					case "in_progress":
-   						actions = [
-   							Resource.msg("constant.action.view","textmaster",null),
-   							Resource.msg("constant.action.communicate","textmaster",null)
-   						];
+   						actions.push(Resource.msg("constant.action.communicate","textmaster",null));
    						break;
    					case "in_review":
-   						actions = [
-   							Resource.msg("constant.action.view","textmaster",null),
-   							Resource.msg("constant.action.validate","textmaster",null),
-   							Resource.msg("constant.action.revision","textmaster",null)
-   						];
+   						actions.push(Resource.msg("constant.action.validate","textmaster",null));
+   						actions.push(Resource.msg("constant.action.revision","textmaster",null));
    						break;
    				}
    				
