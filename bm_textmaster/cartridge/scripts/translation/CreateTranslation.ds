@@ -45,6 +45,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		project.category = categoryCode;
 		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
 		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
+		project.api_template_id = langTo.templates[0];
 		
 		projectPostData.project = project;
 		projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
