@@ -1,5 +1,5 @@
 <!--- TEMPLATENAME: categorylist.isml --->
-<!-- For ajax call on getting category list of a catalog -->
+<!--- For ajax call on getting category list of a catalog --->
 
 <option value="">${Resource.msg('general.select','textmaster',null)}</option>
 

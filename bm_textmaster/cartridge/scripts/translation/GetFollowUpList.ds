@@ -1,43 +1,30 @@
 /**
-* Demandware Script File
-* Return Projects data to Follow up:    
-*   @output Projects : Array
+* 	Return Projects data to Follow up:    
+*   
+*	@output Projects : Array
+*
 */
 
 importPackage(dw.system);
-importPackage(dw.net);
-importPackage(dw.util);
-importPackage(dw.crypto);
+
+importClass( dw.web.Resource );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
 
 function execute( args : PipelineDictionary ) : Number
 {
-   var apiKey : String = Site.getCurrent().getCustomPreferenceValue('TMApiKey');
-   var apiSecret : String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret');
-   var date : String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss");
+   	var projects,
+		projectsEndPoint = Resource.msg("api.get.projects","textmaster",null);
+
+   	log = LogUtils.getLogger("getFollowUpList");
    
-   var messageDigest : MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1);
-   var signature : Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")); 
-   var signatureString : String = signature.toString();
+   	projects = Utils.TextMasterClient("GET", projectsEndPoint);
    
-   var endpointurl = "http://api.textmaster.com/v1/clients/projects";
-   var httpClient : HTTPClient = new HTTPClient();
-   
-   httpClient.setRequestHeader('Apikey', apiKey);
-   httpClient.setRequestHeader('Date', date);
-   httpClient.setRequestHeader('Signature', signatureString);
-   httpClient.setTimeout(5000);
-   httpClient.open('GET', endpointurl);
-   httpClient.send(request);
-   
-   if (httpClient.statusCode == 200) {
-   	   var projects : JSON = JSON.parse(httpClient.getText());
-   } else {
-       var projects = null;
-   }
-   			
-   var log = Logger.getLogger("CustomExport", "");
-   log.error("statusCode : " + httpClient.statusCode + ", errorText : " + httpClient.errorText);
-   
-   args.Projects = projects;
-   return PIPELET_NEXT;
+   	args.Projects = projects;
+   	return PIPELET_NEXT;
 }

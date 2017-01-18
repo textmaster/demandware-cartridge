@@ -1,0 +1,71 @@
+<!--- TEMPLATENAME: PlaceTranslationOrder.isml --->
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+<isscript>
+	var transParams = JSON.parse(pdict.TransParams);
+</isscript>
+<div class="place-order">
+	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
+	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th class="table_header n w e s center">${Resource.msg('order.source.locale','textmaster',null)}</th>
+				<th class="table_header n e s center">${Resource.msg('order.item.count','textmaster',null)}</th>
+				<th class="table_header n e s center">${Resource.msg('general.attributes','textmaster',null)}</th>
+				<th class="table_header n e s center">${Resource.msg('order.target.locale','textmaster',null)}</th>
+				<th class="table_header n e s center">${Resource.msg('order.select.template','textmaster',null)}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<isloop items="${transParams.localeTo}" var="localeTo" status="loopstate">
+				<tr>
+					<td class="table_detail w e s center">${transParams.localeFrom.name}</td>
+					<td class="table_detail e s center">${Number(transParams.items.length).toFixed()}</td>
+					<td class="table_detail e s center">
+						<ul class="attribute-list">
+							<isloop items="${transParams.attributes}" var="attribute" status="attrstate">
+								<li>${attribute.name}</li>
+							</isloop>
+						</ul>
+					</td>
+					<td class="table_detail e s center">${localeTo.name}</td>
+					<td class="table_detail e s center">
+						<div class="template-list-holder" data-locale-from="${transParams.localeFrom.id}" data-locale-to="${localeTo.id}" id="template-list-holder-${transParams.localeFrom.id +'-'+ localeTo.id}"></div>
+					</td>
+				</tr>
+			</isloop>
+		</tbody>
+	</table>
+	<div class="submit-error"></div>
+	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th colspan="4" class="table_header n w e s left">${Resource.msg('order.manage.templates','textmaster',null)}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="table_detail w e s center">
+					<a href="https://www.textmaster.com/" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
+				</td>
+				<td class="table_detail e s center">
+					<a href="https://www.textmaster.com/" target="_blank">${Resource.msg('order.edit.templates','textmaster',null)}</a>
+				</td>
+				<td class="table_detail e s center">
+					<input type="button" id="reload-templates" value="${Resource.msg('order.reload.templates','textmaster',null)}">
+				</td>
+				<td class="table_detail e s right">
+					<input type="button" id="place-order" value="${Resource.msg('order.place.order','textmaster',null)}">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<form method="post" action="${URLUtils.url('Translation-Notification')}" id="notification-form">
+		<input type="hidden" name="autoLaunchCount" value="0">
+		<input type="hidden" name="noAutoLaunchCount" value="0">
+	</form>
+	<span class="hidden" id="hidden-values">${JSON.stringify(transParams)}</span>
+</div>
+</isdecorate>

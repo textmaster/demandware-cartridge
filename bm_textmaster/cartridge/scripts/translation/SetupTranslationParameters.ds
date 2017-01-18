@@ -1,8 +1,11 @@
 /**
 *	Reads translation parameters from previous form, build and generate a JSON
 *
-*	@input LocaleFrom: String
+*	@input LocaleFrom: Object
+*	@input ItemType: String
+*	@input LocaleTo: Object
 *	@input Attributes: Object
+*	@input Items: Object
 *
 *	@output TransParams: String
 *
@@ -20,11 +23,48 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number {
 	var localeFrom = pdict.LocaleFrom,
-		attributes = pdict.Attributes.toArray();
+		itemType = pdict.ItemType,
+		localeTo = pdict.LocaleTo.toArray(),
+		attributes = pdict.Attributes.toArray(),
+		items = pdict.Items.toArray(),
+		localeFromName, localeTo, locale, localeName, attribute, attr, count = 0, output;
 	
 	log = LogUtils.getLogger("setupTranslationParameters");
+	localeFromName = Utils.getLocaleName(localeFrom);
 	
-	pdict.TransParams = JSON.stringify(attributes);
+	for each(locale in localeTo){
+		localeName = Utils.getLocaleName(locale);
+		localeTo[count] = {
+			id: Utils.toTextMasterLocaleID(locale),
+			name: localeName,
+			templates: []
+		};
+		count++;
+	}
+	
+	count = 0;
+	for each(attribute in attributes){
+		attr = attribute.split("|");
+		attributes[count] = {
+			id: attr[0],
+			name: attr[1],
+			type: attr[2]
+		};
+		count++;
+	}
+	
+	output = {
+		localeFrom: {
+				id: Utils.toTextMasterLocaleID(localeFrom),
+				name: localeFromName
+			},
+		localeTo: localeTo,
+		itemType: itemType,
+		attributes: attributes,
+		items: items
+	};
+	
+	pdict.TransParams = JSON.stringify(output);
 	
 	return PIPELET_NEXT;
 }

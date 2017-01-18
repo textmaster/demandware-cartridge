@@ -4,6 +4,9 @@
 importPackage( dw.system );
 importPackage( dw.catalog );
 importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.util );
+importPackage( dw.crypto );
 
 importClass( dw.web.Resource );
 
@@ -17,6 +20,31 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
 var Utils = {};
 
 Utils.log = LogUtils.getLogger("Utils");
+
+/*
+*	Accessible attributes of Content
+*/
+Utils.attributes = {};
+Utils.attributes.content = [
+	"description","name","pageDescription","pageKeywords","pageMetaTags","pageTitle","pageURL"
+];
+
+/*
+*	Accessible attributes of Category
+*/
+Utils.attributes.category = [
+	"displayName","pageDescription","pageKeywords","pageTitle","pageURL"
+];
+
+/*
+*	Checks whether the attribute is accessible or not
+*/
+Utils.isAttributeAccessible = function(itemType, attribute){
+	var attrList = Utils.attributes[itemType],
+		strAttrs = attrList.join("|");
+	
+	return (strAttrs.indexOf("|"+ attribute) > -1 || strAttrs.indexOf(attribute +"|") > -1);
+}
 
 /**
 *	Gets folder path from absolute path of file
@@ -94,6 +122,96 @@ Utils.getAllSubCategories = function(root){
 	}
 	
 	return output;
+}
+
+/*
+*	Gets name of the locale if locale ID is passed
+*/
+Utils.getLocaleName = function(localeID){
+	var localeName = "",
+		locales = Utils.getDWLanguages(),
+		locale;
+	
+	for each(locale in locales){
+		if(locale.id == localeID){
+			localeName = locale.name;
+			break;
+		}
+	}
+	
+	return localeName;
+}
+
+/*
+*	Communicates with TextMaster APIs
+*/
+Utils.TextMasterClient = function(method, endPoint, request){
+	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
+		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
+		date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
+		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
+		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
+		signatureString: String = signature.toString(),
+		endPointUrl: String = Resource.msg("api.base","textmaster",null) + endPoint,
+		httpClient: HTTPClient = new HTTPClient(),
+		response: Object;
+
+	httpClient.setRequestHeader('Apikey', apiKey);
+	httpClient.setRequestHeader('Date', date);
+	httpClient.setRequestHeader('Signature', signatureString);
+	httpClient.setRequestHeader('Content-Type', 'application/json');
+	
+	httpClient.setTimeout(5000);
+	httpClient.open(method, endPointUrl);
+	httpClient.send(request);
+	   
+	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		response = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		response = null;
+	}
+	
+	return response;
+}
+
+/*
+*	Converts Demandware locale ID format (eg:- en_US) to TextMaster locale ID format (eg:- en-us)
+*/
+Utils.toTextMasterLocaleID = function(locale){
+	locale = locale.toLowerCase().replace("_", "-");
+	
+	return locale;
+}
+
+/*
+*	Converts TextMaster locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en_US)
+*/
+Utils.toDemandwareLocaleID = function(locale){
+	var localePart = locale.split("-");
+	
+	locale = localePart[0];
+	
+	if(localePart[1] != undefined){
+		locale += ("_" + localePart[1].toUpperCase);
+	}
+	
+	return locale;
+}
+
+/*
+*	Convert first letter to uppercase
+*/
+Utils.firstLetterCapital = function(str){
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/*
+*	Gets word count
+*/
+Utils.getWordCount = function(str){
+	return str.split(" ").length;
 }
 
 module.exports = Utils;
