@@ -155,7 +155,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 		endPointUrl: String = Resource.msg("api.base","textmaster",null) + endPoint,
 		httpClient: HTTPClient = new HTTPClient(),
 		response: Object;
-
+	
 	httpClient.setRequestHeader('Apikey', apiKey);
 	httpClient.setRequestHeader('Date', date);
 	httpClient.setRequestHeader('Signature', signatureString);

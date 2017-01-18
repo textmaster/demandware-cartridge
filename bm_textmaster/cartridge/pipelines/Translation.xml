@@ -58,7 +58,7 @@
           <config-property key="OnError" value="PIPELET_ERROR"/>
           <config-property key="ScriptFile" value="translation/GetFollowUpList.ds"/>
           <key-binding alias="null" key="ScriptLog"/>
-          <key-binding alias="Projects" key="Projects"/>
+          <key-binding alias="Documents" key="Documents"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
