@@ -1,7 +1,7 @@
 /**
 * 	Return Projects data to Follow up:    
 *   
-*	@output Projects : Array
+*	@output Documents : Array
 *
 */
 
@@ -16,15 +16,53 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 // Global variables
 var log;
 
-function execute( args : PipelineDictionary ) : Number
+function execute( pdict : PipelineDictionary ) : Number
 {
-   	var projects,
-		projectsEndPoint = Resource.msg("api.get.projects","textmaster",null);
+   	var projects, project, projectResult, documentResult, documentEndPoint,
+		projectsEndPoint = Resource.msg("api.get.projects","textmaster",null),
+		documents = [], document, doc, actions;
 
    	log = LogUtils.getLogger("getFollowUpList");
    
-   	projects = Utils.TextMasterClient("GET", projectsEndPoint);
-   
-   	args.Projects = projects;
+   	projectResult = Utils.TextMasterClient("GET", projectsEndPoint);
+   	projects = (projectResult && projectResult.projects) ? projectResult.projects : [];
+   	
+   	for each(project in projects){
+   		documentEndPoint = projectsEndPoint + "/" + project.id +"/"+ Resource.msg("api.get.documents","textmaster",null);
+   		documentResult = Utils.TextMasterClient("GET", documentEndPoint);
+   		
+   		if(documentResult && documentResult.documents){
+   			for each(document in documentResult.documents){
+   				doc = document;
+   				actions = [];
+   				
+   				switch(doc.status.toLowerCase()){
+   					case "in_creation":
+   					case "waiting_assignment":
+   						actions = [Resource.msg("constant.action.view","textmaster",null)];
+   						break;
+   					case "in_progress":
+   						actions = [
+   							Resource.msg("constant.action.view","textmaster",null),
+   							Resource.msg("constant.action.communicate","textmaster",null)
+   						];
+   						break;
+   					case "in_review":
+   						actions = [
+   							Resource.msg("constant.action.view","textmaster",null),
+   							Resource.msg("constant.action.validate","textmaster",null),
+   							Resource.msg("constant.action.revision","textmaster",null)
+   						];
+   						break;
+   				}
+   				
+   				doc.actions = actions;
+   				documents.push(doc);
+   			}
+   		}
+   	}
+	
+   	pdict.Documents = documents;
+   	
    	return PIPELET_NEXT;
 }
