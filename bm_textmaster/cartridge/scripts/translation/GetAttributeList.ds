@@ -9,7 +9,8 @@
 importPackage( dw.system );
 
 // Lib Includes
-var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
 
 // Global variables
 var log;
@@ -33,12 +34,19 @@ function execute( pdict : PipelineDictionary ) : Number
 		attrDefinitions = dw.object.SystemObjectMgr.describe(pdict.ItemType).getAttributeDefinitions().toArray();
 		
 		for each(attrDef in attrDefinitions){
-			attr = {};
-			attr.ID = attrDef.ID;
-			attr.name = attrDef.displayName;
-			attr.tmDefault = getTMDefault(attrDef.ID, attrDef.displayName, defaultAttributes);
+			if(pdict.ItemType.toLowerCase() != "product" && attrDef.system && !Utils.isAttributeAccessible(pdict.ItemType.toLowerCase(), attrDef.ID)){
+				continue;
+			}
 			
-			attributes.push(attr);
+			if(attrDef.valueTypeCode == 3 || attrDef.valueTypeCode == 4 || attrDef.valueTypeCode == 5){
+				attr = {};
+				attr.ID = attrDef.ID;
+				attr.name = attrDef.displayName;
+				attr.tmDefault = getTMDefault(attrDef.ID, attrDef.displayName, defaultAttributes);
+				attr.type = attrDef.system ? 'system' : 'custom';
+				
+				attributes.push(attr);
+			}
 		}
 	}
 	catch(ex){

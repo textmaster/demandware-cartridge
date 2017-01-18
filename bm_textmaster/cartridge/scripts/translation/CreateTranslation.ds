@@ -34,7 +34,7 @@ function execute( pdict : PipelineDictionary ) : Number
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
-	/*for each(langTo in localeTo){
+	for each(langTo in localeTo){
 		projectPostData = {};
 		project = {};
 		
@@ -53,59 +53,57 @@ function execute( pdict : PipelineDictionary ) : Number
 		
 		if(projectResult && projectResult.id != undefined){
 			projectID = projectResult.id;
-		}
-	}*/
-	
-	projectID = "587e42de0f6c0e003f4ebe8b";
-	
-	documentPostData = {};
-	documents = [];
-	
-	for each(i in items){
-		itemData = {};
-		document = {};
-		
-		switch(itemType){
-			case "product":
-				item = ProductMgr.getProduct(i);
-				itemAttrs = dw.object.SystemObjectMgr.describe("Product").getAttributeDefinitions().toArray();
-				break;
-			case "content":
-				item = ContentMgr.getContent(i);
-				break;
-			case "category":
+			
+			documentPostData = {};
+			documents = [];
+			
+			for each(i in items){
+				itemData = {};
+				document = {};
 				
-				break;
-		}
-		
-		for each(attr in attributes){
-			switch(itemType){
-				case "product":
-					for each(itemAttr in itemAttrs){
-						if(attr.id == itemAttr.ID){
-							itemData[attr.id] = item.AttributeModel.getValue(itemAttr);
-						}
+				switch(itemType){
+					case "product":
+						item = ProductMgr.getProduct(i);
+						itemAttrs = dw.object.SystemObjectMgr.describe("Product").getAttributeDefinitions().toArray();
+						break;
+					case "content":
+						item = ContentMgr.getContent(i);
+						break;
+					case "category":
+						item = CatalogMgr.getCategory(i);
+						break;
+				}
+				
+				for each(attr in attributes){
+					switch(itemType){
+						case "product":
+							for each(itemAttr in itemAttrs){
+								if(attr.id == itemAttr.ID){
+									itemData[attr.id] = item.attributeModel.getValue(itemAttr);
+								}
+							}
+							break;
+						case "content":
+						case "category":
+							itemData[attr.id] = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
+							break;
 					}
-					break;
-				case "content":
-				case "category":
-					itemData[attr.id] = item[attr.id] || "";
-					break;
+				}
+				
+				document.title = itemType +"-"+ i;
+				document.original_content = JSON.stringify(itemData);
+				document.word_count = Utils.getWordCount(document.original_content);
+				
+				documents.push(document);
 			}
+			
+			documentPostData.documents = documents;
+			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
+			documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
 		}
-		
-		document.title = itemType +"-"+ i;
-		document.original_content = JSON.stringify(itemData);
-		document.word_count = Utils.getWordCount(document.original_content);
-		
-		documents.push(document);
 	}
 	
-	documentPostData.documents = documents;
-	documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
-	documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
-	
-	response.getWriter().println(JSON.stringify(documentResult));
+	response.getWriter().println("success");
 	
    	return PIPELET_NEXT;
 }

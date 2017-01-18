@@ -71,6 +71,10 @@
 					$(this).removeClass('error-field');
 				});
 				
+				$('select[name=filter-category]').on('change',function(){
+					$(this).removeClass('error-field');
+				});
+				
 				$('.new-translation').on('click', '.show-all-attributes input[type=button]', function(){
 					$('.attributes-holder').addClass("show-all");
 					$('.show-default-attributes').addClass("show");
@@ -106,6 +110,7 @@
 					}
 					else if(itemType != "content" && catalog == ""){
 						$('select[name=catalog]').addClass('error-field');
+						$('select[name=filter-category]').addClass('error-field');
 						error = true;
 					}
 					
@@ -224,8 +229,8 @@
 						$('.submit-error').text("Error: " + error);
 					}
 					else{
-						//$(this).prop("disabled", true);
-						//$(this).val("Please wait...");
+						$(this).prop("disabled", true);
+						$(this).val("Please wait...");
 						
 						$('.submit-error').text("");
 						autoLaunchCount = 0;
@@ -259,8 +264,7 @@
 						$.post(app.urls.createTranslation, postData, function(data){
 							$('input[name=autoLaunchCount]').val(autoLaunchCount);
 							$('input[name=noAutoLaunchCount]').val(noAutoLaunchCount);
-							//$('#notification-form').submit();
-							console.log(data);
+							$('#notification-form').submit();
 						});
 					}
 				});

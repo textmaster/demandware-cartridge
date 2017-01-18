@@ -21,6 +21,31 @@ var Utils = {};
 
 Utils.log = LogUtils.getLogger("Utils");
 
+/*
+*	Accessible attributes of Content
+*/
+Utils.attributes = {};
+Utils.attributes.content = [
+	"description","name","pageDescription","pageKeywords","pageMetaTags","pageTitle","pageURL"
+];
+
+/*
+*	Accessible attributes of Category
+*/
+Utils.attributes.category = [
+	"displayName","pageDescription","pageKeywords","pageTitle","pageURL"
+];
+
+/*
+*	Checks whether the attribute is accessible or not
+*/
+Utils.isAttributeAccessible = function(itemType, attribute){
+	var attrList = Utils.attributes[itemType],
+		strAttrs = attrList.join("|");
+	
+	return (strAttrs.indexOf("|"+ attribute) > -1 || strAttrs.indexOf(attribute +"|") > -1);
+}
+
 /**
 *	Gets folder path from absolute path of file
 */

@@ -47,7 +47,8 @@ function execute( pdict : PipelineDictionary ) : Number {
 		attr = attribute.split("|");
 		attributes[count] = {
 			id: attr[0],
-			name: attr[1]
+			name: attr[1],
+			type: attr[2]
 		};
 		count++;
 	}
