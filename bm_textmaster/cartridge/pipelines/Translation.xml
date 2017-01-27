@@ -323,7 +323,7 @@
                   <node>
                     <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
                       <config-property key="Transactional" value="false"/>
-                      <key-binding alias="&quot;elisabeth.s@ideatarmac.com&quot;" key="From_0"/>
+                      <key-binding alias="MailInfos.to" key="From_0"/>
                       <key-binding alias="MailTo" key="To_0"/>
                       <key-binding alias="MailInfos.from" key="From_1"/>
                       <key-binding alias="MailFrom" key="To_1"/>
