@@ -252,7 +252,6 @@
           <config-property key="OnError" value="PIPELET_ERROR"/>
           <config-property key="ScriptFile" value="translation/GetProjects.ds"/>
           <key-binding alias="null" key="ScriptLog"/>
-          <key-binding alias="&quot;createJob&quot;" key="Status"/>
           <key-binding alias="TMProjects" key="TMProjects"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
@@ -298,11 +297,26 @@
               </pipelet-node>
               <node-display x="0" y="1"/>
               <branch basename="b2" source-connector="error">
-                <transition target-connector="in1" target-path="../+1">
+                <transition target-connector="in">
                   <transition-display>
-                    <bend-point relative-to="source" x="2" y="0"/>
+                    <bend-point relative-to="source" x="1" y="0"/>
                   </transition-display>
                 </transition>
+                <segment>
+                  <node>
+                    <pipelet-node pipelet-name="RemoveCustomObject" pipelet-set-identifier="bc_api">
+                      <key-binding alias="TMProject" key="CustomObject"/>
+                    </pipelet-node>
+                    <node-display orientation="horizontal" x="1" y="0"/>
+                  </node>
+                  <transition target-connector="in1" target-path="../../+1">
+                    <transition-display>
+                      <bend-point relative-to="source" x="1" y="0"/>
+                      <bend-point relative-to="source" x="1" y="-1"/>
+                      <bend-point relative-to="source" x="0" y="-1"/>
+                    </transition-display>
+                  </transition>
+                </segment>
               </branch>
             </node>
             <simple-transition>
@@ -323,7 +337,6 @@
                   <node>
                     <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
                       <config-property key="Transactional" value="false"/>
-                      <key-binding alias="MailInfos.to" key="From_0"/>
                       <key-binding alias="MailTo" key="To_0"/>
                       <key-binding alias="MailInfos.from" key="From_1"/>
                       <key-binding alias="MailFrom" key="To_1"/>
@@ -341,6 +354,7 @@
                       <key-binding alias="null" key="To_8"/>
                       <key-binding alias="null" key="From_9"/>
                       <key-binding alias="null" key="To_9"/>
+                      <key-binding alias="MailInfos.to" key="From_0"/>
                     </pipelet-node>
                     <node-display x="0" y="1"/>
                   </node>

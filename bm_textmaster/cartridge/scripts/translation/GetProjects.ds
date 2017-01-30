@@ -2,7 +2,6 @@
 * GetProjectsByStatus.ds
 * Returns custom objects TextMasterProject with status createJob.
 *
-*   @input Status : String status to list jobs
 *   @output TMProjects : dw.util.List existing jobs of desired status
 *
 */
@@ -20,7 +19,6 @@ function execute( pdict : PipelineDictionary ) : Number
 {  
   var objectMgr : CustomObjectMgr = dw.object.CustomObjectMgr;
   try{
-	  var desired_status : String = pdict.Status;
 	  var projects : SeekableIterator = objectMgr.getAllCustomObjects('TextMasterProject');
 	  pdict.TMProjects = projects.asList();
 	  projects.close();
