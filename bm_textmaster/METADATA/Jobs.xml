@@ -7,7 +7,7 @@
             <step step-id="Job-1" type="ExecutePipeline" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">Translation-AskForQuote</parameter>
+                    <parameter name="ExecutePipeline.Pipeline">AskForQuote-AskForQuote</parameter>
                 </parameters>
             </step>
         </flow>
