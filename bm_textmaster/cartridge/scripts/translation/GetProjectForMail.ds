@@ -1,0 +1,48 @@
+/**
+* GetProjectForMail.ds
+* Returns Mail object with Information about the Project.
+*
+*   @input TMProject : Object
+*   @output MailInfos : Object
+*
+*/
+importPackage( dw.system );
+importPackage(dw.net);
+importPackage( dw.object);
+importPackage( dw.util);
+importClass( dw.web.Resource );
+
+
+/* Script Modules */
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+function execute( pdict : PipelineDictionary ) : Number
+{  
+    var projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + pdict.TMProject.custom.projectid;
+    var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
+    var mail = null, costs = 0, currency="";
+  
+    if (projectResult != null) {
+  	  var userEndPoint = Resource.msg("api.get.user","textmaster",null);
+  	  var userResult = Utils.TextMasterClient("GET", userEndPoint);
+  	  
+  	  if (projectResult.total_costs != null && projectResult.total_costs[0] != null) {
+  	    costs = projectResult.total_costs[0].amount;
+  	    currency = projectResult.total_costs[0].currency;
+  	  }
+ 
+      mail = {};
+  	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
+  	  mail.to = userResult.email;
+  	  mail.subject = "TextMaster: Quotation for " + projectResult.name; 
+  	  mail.text = "Project " + projectResult.name + " (" + projectResult.id + ") will cost you " 
+  	      + costs.toFixed(2) + currency
+  	      + ". Please goto " + Resource.msg("link.edit.project","textmaster",null) + "/"
+  	      + projectResult.id + "/edit and approve the project."; 
+    }      	  
+  	
+    pdict.MailInfos = mail;
+
+    return PIPELET_NEXT;
+}
