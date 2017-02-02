@@ -1,0 +1,24 @@
+/**
+*	Imports translation data from textMaster projects
+*
+*	@input ProjectID: String
+*/
+importPackage( dw.system );
+
+
+/* Script Modules */
+var logUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+/* Global variables */
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var projectID = pdict.ProjectID;
+	
+	log = logUtils.getLogger("ImportScript");
+	
+	log.error("projectID: "+ projectID);
+	
+	return PIPELET_ERROR;
+}

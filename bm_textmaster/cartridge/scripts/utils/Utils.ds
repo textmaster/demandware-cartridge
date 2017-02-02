@@ -9,6 +9,7 @@ importPackage( dw.util );
 importPackage( dw.crypto );
 
 importClass( dw.web.Resource );
+importClass( dw.object.CustomObjectMgr );
 
 // API Includes
 var StringUtils = require('dw/util/StringUtils');
@@ -212,6 +213,27 @@ Utils.firstLetterCapital = function(str){
 */
 Utils.getWordCount = function(str){
 	return str.split(" ").length;
+}
+
+/**
+* Get custom object to keep job triggering settings
+*/
+ Utils.getJobDataHolder = function(){
+	var customObjectName = Resource.msg("import.customobject.name","textmaster",null),
+		customObjectInstanceID = Resource.msg("import.customobject.instanceid","textmaster",null);
+	try{
+		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+		if(dataHolder == null){
+			Transaction.begin();
+			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+			Transaction.commit();
+		}
+		return dataHolder;
+	}
+	catch(ex){
+		Utils.log.error(ex.message + " - No custom object found.");
+		return null;
+	}
 }
 
 module.exports = Utils;

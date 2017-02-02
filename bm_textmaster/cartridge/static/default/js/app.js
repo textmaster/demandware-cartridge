@@ -210,7 +210,7 @@
 									select.append($('<option value="'+ temp.id +'" data-auto-launch="'+ temp.autoLaunch +'">'+ temp.name +'</option>'));
 								});
 								
-								listHolder.append(select);
+								listHolder.html(select);
 							}
 						});
 					});
