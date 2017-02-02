@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="AskForQuote" priority="0">
+        <description/>
+        <flow>
+            <context site-id="SiteGenesis"/>
+            <step step-id="Job-1" type="ExecutePipeline" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecutePipeline.Pipeline">AskForQuote-AskForQuote</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-01-13Z</date>
+                <time>16:38:10.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+</jobs>
