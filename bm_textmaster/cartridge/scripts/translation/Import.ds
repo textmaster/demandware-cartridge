@@ -1,0 +1,172 @@
+/**
+*	Imports translation data from textMaster projects
+*
+*	@input ProjectID: String
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+
+importClass( dw.web.Resource );
+
+
+/* Script Modules */
+var logUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	utils = require('~/cartridge/scripts/utils/Utils');
+
+/* Global variables */
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var projectID = pdict.ProjectID,
+		projectEndPoint = Resource.msg("api.get.projects","textmaster",null) +"/"+ projectID,
+		allDocsEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null),
+		project, docs, doc, content, baseFolder, relativeFolder, fileName,
+		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode,
+		pageAttrs = {
+			pageTitle: {},
+			pageDescription: {},
+			pageKeywords: {},
+			pageURL: {}
+		};
+	
+	log = logUtils.getLogger("ImportScript");
+	
+	project = utils.TextMasterClient("GET", projectEndPoint, "");
+	
+	if(project && project.custom_data.itemType){
+		itemType = project.custom_data.itemType;
+		catalogID = project.custom_data.catalogID;
+		language = utils.toDemandwareLocaleID(project.language_to_code);
+		
+		try{
+			baseFolder = File.IMPEX + File.SEPARATOR + "src";
+			relativeFolder = "textmaster" + File.SEPARATOR + itemType;
+			fileName = projectID +".xml";
+			
+			var importDir : File = new File(baseFolder + File.SEPARATOR + relativeFolder);
+			
+			if(!importDir.exists()){
+				importDir.mkdirs();
+			}
+			
+			//xml file
+			var importXML : File = new File(baseFolder + File.SEPARATOR + relativeFolder + File.SEPARATOR + fileName);
+			
+			if(importXML.exists()) {
+				importXML.remove();
+		    }
+		    
+		    importXML.createNewFile();
+			
+			swriter= new FileWriter(importXML);
+		    writer = new XMLIndentingStreamWriter(swriter);
+		    writer.writeStartDocument("UTF-8","1.0");
+		    
+		    startElement = itemType == "product" || itemType == "category" ? "catalog" : "library";
+		    writer.writeStartElement(startElement);
+		    writer.writeAttribute("xmlns","http://www.demandware.com/xml/impex/catalog/2006-10-31");
+		    
+		    if(itemType == "product" || itemType == "category"){
+		    	writer.writeAttribute("catalog-id",catalogID);
+		    }
+			
+			docs = utils.TextMasterClient("GET", allDocsEndPoint, "");
+			docs = docs.documents || [];
+			
+			if(itemType == "category"){
+				writer.writeStartElement("categories");
+			}
+			
+			// each document
+			for each (doc in docs){
+				content = doc.original_content ? JSON.parse(doc.original_content) : [];
+	
+				writer.writeStartElement(itemType);
+				
+				if(itemType == "product" || itemType == "content"){
+			    	writer.writeAttribute(itemType+"-id", doc.custom_data.id || "");
+			    }
+				
+				// each system attribute without page attributes
+				for each (attr in content){
+					if(attr.type == "system" && attr.id.indexOf("page") != 0 && attr.value){
+						writer.writeStartElement(utils.idToXMLTag(attr.id));
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(attr.value);
+						writer.writeEndElement();
+					}
+				}
+				
+				// keep each system page attribute ordered list
+				for each (attr in content){
+					if(attr.type == "system" && attr.id.indexOf("page") == 0 && attr.value){
+						pageAttrs[attr.id] = attr;
+					}
+				}
+				
+				// each system attribute
+				writer.writeStartElement("page-attributes");
+				
+				for each(pageAttr in pageAttrs){
+					if(pageAttr.id){
+						writer.writeStartElement(utils.idToXMLTag(pageAttr.id));
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(pageAttr.value);
+						writer.writeEndElement();
+					}
+				}
+				
+				writer.writeEndElement();
+				
+				// each custom attribute
+				writer.writeStartElement("custom-attributes");
+				
+				for each (attr in content){
+					if(attr.type == "custom" && attr.value){
+						writer.writeStartElement("custom-attribute");
+						writer.writeAttribute("attribute-id",attr.id);
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(attr.value);
+						writer.writeEndElement();
+					}
+				}
+				
+				writer.writeEndElement();//custom-attributes
+				
+				writer.writeEndElement();//itemType
+			}
+			
+			if(itemType == "category"){
+				writer.writeEndElement();//category
+			}
+			
+			writer.writeEndElement();//catalog
+			writer.writeEndDocument();
+		}
+		catch(ex){
+			log.error(ex.message);
+		}
+		finally{
+			if(writer != null){
+				writer.flush();
+				writer.close();
+			}
+		}
+		
+		importStartNode = itemType == "product" || itemType == "category" ? "Catalog" : "Content";
+		
+		Pipeline.execute("Import-"+ importStartNode, {
+			ImportFile: relativeFolder + File.SEPARATOR + fileName
+		});
+		
+	}
+		
+	/*Transaction.begin();
+	var logHolder = dw.object.CustomObjectMgr.getCustomObject("Log", "TMLog1"),
+		exValue = logHolder.custom.Error || "";
+	logHolder.custom.Error = exValue + "projectID: "+ projectID +'\n';
+	Transaction.commit();*/
+	
+	return PIPELET_NEXT;
+}

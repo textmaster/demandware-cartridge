@@ -1,0 +1,6 @@
+<!--- TEMPLATENAME: import.isml --->
+<isif condition="${pdict.success}">
+	Project import started
+<iselse>
+	Some error occured. Please refer log file to get more details
+</isif>

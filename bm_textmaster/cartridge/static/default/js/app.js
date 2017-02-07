@@ -210,7 +210,7 @@
 									select.append($('<option value="'+ temp.id +'" data-auto-launch="'+ temp.autoLaunch +'">'+ temp.name +'</option>'));
 								});
 								
-								listHolder.append(select);
+								listHolder.html(select);
 							}
 						});
 					});
@@ -262,6 +262,7 @@
 							localeFrom: JSON.stringify(JSON.stringify(transParams.localeFrom)),
 							localeTo: JSON.stringify(transParams.localeTo),
 							itemType: transParams.itemType,
+							catalogID: transParams.catalogID,
 							attributes: JSON.stringify(transParams.attributes),
 							items: JSON.stringify(transParams.items)
 						};
