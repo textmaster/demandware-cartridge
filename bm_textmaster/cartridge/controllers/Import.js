@@ -28,7 +28,7 @@ function data(){
 	log = logUtils.getLogger("ImportController");
 	projectid = request.httpParameterMap.get("projectid").value;
 	jobRunning = setProjectID(projectid);
-	dw.system.Logger.getLogger("TextMaster").error("Error");
+	
 	if(jobRunning == false){
 		RunJobNow = new Pipelet('RunJobNow').execute({
 			JobName: Resource.msg("import.job.name","textmaster",null)

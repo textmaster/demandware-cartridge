@@ -262,6 +262,7 @@
 							localeFrom: JSON.stringify(JSON.stringify(transParams.localeFrom)),
 							localeTo: JSON.stringify(transParams.localeTo),
 							itemType: transParams.itemType,
+							catalogID: transParams.catalogID,
 							attributes: JSON.stringify(transParams.attributes),
 							items: JSON.stringify(transParams.items)
 						};

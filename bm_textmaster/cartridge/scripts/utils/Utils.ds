@@ -157,6 +157,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 		httpClient: HTTPClient = new HTTPClient(),
 		response: Object;
 	
+	request = request || "";
 	httpClient.setRequestHeader('Apikey', apiKey);
 	httpClient.setRequestHeader('Date', date);
 	httpClient.setRequestHeader('Signature', signatureString);
@@ -165,7 +166,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	httpClient.setTimeout(5000);
 	httpClient.open(method, endPointUrl);
 	httpClient.send(request);
-	   
+	
 	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
 		response = JSON.parse(httpClient.getText());
 	}
@@ -195,7 +196,7 @@ Utils.toDemandwareLocaleID = function(locale){
 	locale = localePart[0];
 	
 	if(localePart[1] != undefined){
-		locale += ("_" + localePart[1].toUpperCase);
+		locale += ("-" + localePart[1].toUpperCase());
 	}
 	
 	return locale;
@@ -234,6 +235,30 @@ Utils.getWordCount = function(str){
 		Utils.log.error(ex.message + " - No custom object found.");
 		return null;
 	}
+}
+
+/*
+*	convert an ID text to XML tag format
+*/
+Utils.idToXMLTag = function(str){
+	var i = 1,
+		tagName = str[0].toLowerCase();
+	
+	while(i < str.length){
+		if(str[i - 1] == str[i - 1].toUpperCase()){
+			tagName += str[i].toLowerCase();
+		}
+		else if(str[i] == str[i].toUpperCase()){
+				tagName += "-" + str[i].toLowerCase();
+			}
+			else{
+				tagName += str[i];
+			}
+		
+		i++;
+	}
+	
+	return tagName;
 }
 
 module.exports = Utils;

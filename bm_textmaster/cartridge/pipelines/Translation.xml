@@ -158,6 +158,7 @@
           <key-binding alias="CurrentHttpParameterMap.get(&quot;item[]&quot;).values.toArray()" key="Items"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-to[]&quot;).values.toArray()" key="LocaleTo"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;item-type&quot;).stringValue" key="ItemType"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;catalog&quot;).stringValue" key="CatalogID"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

@@ -15,7 +15,7 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
-	var projectID, query, queryObj,
+	var projectID = "", query, queryObj,
 		jobDataHolder = utils.getJobDataHolder();
 		
 	log = logUtils.getLogger("GetQueuedProjectID");
@@ -30,7 +30,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		Transaction.commit();
 	}
 	
-	pdict.ProjectID = projectID;
+	pdict.ProjectID = projectID || "";
 	
 	return PIPELET_NEXT;
 }

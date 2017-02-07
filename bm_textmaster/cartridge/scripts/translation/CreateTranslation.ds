@@ -4,6 +4,7 @@
 *	@input LocaleFrom: String
 *	@input LocaleTo: String
 *	@input ItemType: String
+*	@input CatalogID: String
 *	@input Attributes: String
 *	@input Items: String
 *
@@ -26,11 +27,12 @@ function execute( pdict : PipelineDictionary ) : Number
 	var localeFrom = JSON.parse(JSON.parse(pdict.LocaleFrom)),
 		localeTo = JSON.parse(JSON.parse(pdict.LocaleTo)),
 		itemType = pdict.ItemType,
+		catalogID = pdict.CatalogID,
 		attributes = JSON.parse(JSON.parse(pdict.Attributes)),
 		items = JSON.parse(JSON.parse(pdict.Items)),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "", documents, document, documentPostData,
-		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr;
+		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData;
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
@@ -46,6 +48,10 @@ function execute( pdict : PipelineDictionary ) : Number
 		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
 		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
 		project.api_template_id = langTo.templates[0];
+		project.custom_data = {
+			itemType: itemType,
+			catalogID: catalogID
+		};
 		
 		projectPostData.project = project;
 		projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
@@ -59,7 +65,7 @@ function execute( pdict : PipelineDictionary ) : Number
 			documents = [];
 			
 			for each(i in items){
-				itemData = {};
+				itemData = [];
 				document = {};
 				
 				switch(itemType){
@@ -76,24 +82,31 @@ function execute( pdict : PipelineDictionary ) : Number
 				}
 				
 				for each(attr in attributes){
+					attrData = {};
+					
 					switch(itemType){
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									itemData[attr.id] = item.attributeModel.getValue(itemAttr);
+									attrData.value = item.attributeModel.getValue(itemAttr);
 								}
 							}
 							break;
 						case "content":
 						case "category":
-							itemData[attr.id] = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
+							attrData.value = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
 							break;
 					}
+					
+					attrData.id = attr.id;
+					attrData.type = attr.type;
+					itemData.push(attrData);
 				}
 				
 				document.title = itemType +"-"+ i;
 				document.original_content = JSON.stringify(itemData);
 				document.word_count = Utils.getWordCount(document.original_content);
+				document.custom_data = {id: item.ID};
 				
 				documents.push(document);
 			}
