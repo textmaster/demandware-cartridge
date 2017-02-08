@@ -65,28 +65,24 @@ function execute( pdict : PipelineDictionary ) : Number
 		    
 		    startElement = itemType == "product" || itemType == "category" ? "catalog" : "library";
 		    writer.writeStartElement(startElement);
-		    writer.writeAttribute("xmlns","http://www.demandware.com/xml/impex/catalog/2006-10-31");
+		    writer.writeAttribute("xmlns","http://www.demandware.com/xml/impex/"+ startElement +"/2006-10-31");
 		    
 		    if(itemType == "product" || itemType == "category"){
 		    	writer.writeAttribute("catalog-id",catalogID);
 		    }
+		    else{
+		    	writer.writeAttribute("library-id",dw.content.ContentMgr.getSiteLibrary().ID);
+		    }
 			
 			docs = utils.TextMasterClient("GET", allDocsEndPoint, "");
 			docs = docs.documents || [];
-			
-			if(itemType == "category"){
-				writer.writeStartElement("categories");
-			}
 			
 			// each document
 			for each (doc in docs){
 				content = doc.original_content ? JSON.parse(doc.original_content) : [];
 	
 				writer.writeStartElement(itemType);
-				
-				if(itemType == "product" || itemType == "content"){
-			    	writer.writeAttribute(itemType+"-id", doc.custom_data.id || "");
-			    }
+			    writer.writeAttribute(itemType+"-id", doc.custom_data.id || "");
 				
 				// each system attribute without page attributes
 				for each (attr in content){
@@ -135,10 +131,6 @@ function execute( pdict : PipelineDictionary ) : Number
 				writer.writeEndElement();//custom-attributes
 				
 				writer.writeEndElement();//itemType
-			}
-			
-			if(itemType == "category"){
-				writer.writeEndElement();//category
 			}
 			
 			writer.writeEndElement();//catalog
