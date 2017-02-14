@@ -76,6 +76,7 @@
 		<exec pipeline="Translation" node="Register"/>
 		<sub-pipelines>
 			<pipeline name="Translation-Register" />
+			<pipeline name="Components-SaveAPIConfigurations" />
 		</sub-pipelines>
 		<icon>icons/star_yellow_new.gif</icon>
 	</menuaction>

@@ -144,7 +144,7 @@ Utils.getLocaleName = function(localeID){
 }
 
 /*
-*	Communicates with TextMaster APIs
+*	Communicates with TextMaster clients APIs
 */
 Utils.TextMasterClient = function(method, endPoint, request){
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
@@ -161,6 +161,32 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	httpClient.setRequestHeader('Apikey', apiKey);
 	httpClient.setRequestHeader('Date', date);
 	httpClient.setRequestHeader('Signature', signatureString);
+	httpClient.setRequestHeader('Content-Type', 'application/json');
+	
+	httpClient.setTimeout(5000);
+	httpClient.open(method, endPointUrl);
+	httpClient.send(request);
+	
+	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		response = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		response = null;
+	}
+	
+	return response;
+}
+
+/*
+*	Communicates with TextMaster public APIs
+*/
+Utils.TextMasterPublic = function(method, endPoint, request){
+	var endPointUrl: String = Resource.msg("api.public.base","textmaster",null) + endPoint,
+		httpClient: HTTPClient = new HTTPClient(),
+		response: Object;
+	
+	request = request || "";
 	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
 	httpClient.setTimeout(5000);
