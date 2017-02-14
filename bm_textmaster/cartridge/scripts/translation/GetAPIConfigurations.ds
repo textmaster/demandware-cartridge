@@ -1,0 +1,37 @@
+/**
+* 	Get API configurations 
+*
+*	@output APIKey: String
+*	@output APISecret: String
+*	@output APICategories: Array
+*
+*/
+importPackage( dw.system );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variable
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var site = Site.current,
+		categories = [],
+		catResponse;
+		
+	log = LogUtils.getLogger("GetAPIConfiguration");
+	catResponse = Utils.TextMasterPublic("GET",dw.web.Resource.msg("api.get.categories","textmaster",null));
+		
+	pdict.APIKey = site.getCustomPreferenceValue("TMApiKey") || "";
+	pdict.APISecret = site.getCustomPreferenceValue("TMApiSecret") || "";
+	
+	if(catResponse && catResponse.categories){
+		categories = catResponse.categories;
+	}
+	
+	pdict.APICategories = categories;
+	
+	return PIPELET_NEXT;
+}

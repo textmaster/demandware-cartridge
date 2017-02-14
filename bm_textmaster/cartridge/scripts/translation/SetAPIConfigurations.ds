@@ -1,0 +1,32 @@
+/**
+* 	set API configurations 
+*
+*	@input APIKey: String
+*	@input APISecret: String
+*	@input APICategory: String
+*
+*/
+importPackage( dw.system );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var site = Site.current;
+		
+	log = LogUtils.getLogger("SetAPIConfiguration");
+	log.error("pdict.APIKey: "+ pdict.APIKey);
+
+	Transaction.begin();
+	site.setCustomPreferenceValue("TMApiKey",pdict.APIKey);
+	site.setCustomPreferenceValue("TMApiSecret",pdict.APISecret);
+	site.setCustomPreferenceValue("TMCategoryCode",pdict.APICategory);
+	Transaction.commit();
+	
+	return PIPELET_NEXT;
+}
