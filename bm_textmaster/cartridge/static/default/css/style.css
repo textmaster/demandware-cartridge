@@ -166,7 +166,7 @@
 	padding: 0 5px 5px;
 	overflow-x: hidden;
     overflow-y: auto;
-    max-height: 260px;
+    max-height: 500px;
 }
 .new-translation #items-holder .item-label {
 	display:block;
@@ -189,6 +189,10 @@
 }
 .new-translation .filter-items .field-holder.hide {
 	display: none;
+}
+.ms-options-wrap > .ms-options > ul label {
+	text-align: left;
+	padding-left:10px;
 }
 .new-translation .submit-error {
     overflow: hidden;

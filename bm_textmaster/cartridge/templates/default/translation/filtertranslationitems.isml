@@ -67,9 +67,9 @@
 		</div>
 		<div class="form-holder filter-items">
 			<div class="field-holder title-holder">
-				<h2>${Resource.msg('translation.filter.items','textmaster',null)}</h2>
+				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
 			</div>
-			<div class="field-holder">
+			<!-- <div class="field-holder">
 				<div class="label-holder">${Resource.msg('translation.online.flag','textmaster',null)}: </div>
 				<div class="input-holder">
 					<select name="filter-online-flag">
@@ -106,7 +106,7 @@
 						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
 					</select>
 				</div>
-			</div>
+			</div> -->
 			<div class="field-holder button-holder left">
 				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
 			</div>
