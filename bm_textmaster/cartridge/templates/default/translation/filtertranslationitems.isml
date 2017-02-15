@@ -16,17 +16,6 @@
 				<h2>${Resource.msg('translation.scope','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder">
-				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="locale-from">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<isloop items="${languages}" var="lang" status="loopstate">
-							<option value="${lang.id}">${lang.name}</option>
-						</isloop>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
 				<div class="label-holder">${Resource.msg('translation.itemtype','textmaster',null)}: </div>
 				<div class="input-holder">
 					<select name="item-type">
@@ -43,6 +32,17 @@
 					<select name="catalog">
 						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
 						<option value="${catalog.ID}">${catalog.displayName}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="locale-from">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<isloop items="${languages}" var="lang" status="loopstate">
+							<option value="${lang.id}">${lang.name}</option>
+						</isloop>
 					</select>
 				</div>
 			</div>
