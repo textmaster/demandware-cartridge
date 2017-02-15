@@ -3,6 +3,7 @@
 *
 *	@output APIKey: String
 *	@output APISecret: String
+*	@output APICategory: String
 *	@output APICategories: Array
 *
 */
@@ -26,6 +27,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		
 	pdict.APIKey = site.getCustomPreferenceValue("TMApiKey") || "";
 	pdict.APISecret = site.getCustomPreferenceValue("TMApiSecret") || "";
+	pdict.APICategory = site.getCustomPreferenceValue("TMCategoryCode") || "";
 	
 	if(catResponse && catResponse.categories){
 		categories = catResponse.categories;

@@ -60,7 +60,7 @@
 					<select name="api-category">
 						<option value="">${Resource.msg('general.select', 'textmaster',null)}</option>
 						<isloop items="${pdict.APICategories}" var="category" status="loopstate">
-							<option value="${category.code}">${category.value}</option>
+							<option value="${category.code}" ${category.code == pdict.APICategory ? 'selected' :''}>${category.value}</option>
 						</isloop>
 					</select>
 				</td>

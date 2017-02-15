@@ -116,6 +116,7 @@
           <key-binding alias="APIKey" key="APIKey"/>
           <key-binding alias="APISecret" key="APISecret"/>
           <key-binding alias="APICategories" key="APICategories"/>
+          <key-binding alias="APICategory" key="APICategory"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
