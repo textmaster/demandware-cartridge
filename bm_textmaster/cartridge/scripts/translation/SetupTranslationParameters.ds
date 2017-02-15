@@ -6,6 +6,7 @@
 *	@input LocaleTo: Object
 *	@input Attributes: Object
 *	@input Items: Object
+*	@input CatalogID: String
 *
 *	@output TransParams: String
 *
@@ -24,6 +25,7 @@ var log;
 function execute( pdict : PipelineDictionary ) : Number {
 	var localeFrom = pdict.LocaleFrom,
 		itemType = pdict.ItemType,
+		catalogID = pdict.CatalogID,
 		localeTo = pdict.LocaleTo.toArray(),
 		attributes = pdict.Attributes.toArray(),
 		items = pdict.Items.toArray(),
@@ -60,6 +62,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 			},
 		localeTo: localeTo,
 		itemType: itemType,
+		catalogID: catalogID,
 		attributes: attributes,
 		items: items
 	};

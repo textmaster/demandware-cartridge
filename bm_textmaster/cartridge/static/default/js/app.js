@@ -12,6 +12,10 @@
 				if($('.default-attributes').length){
 					this.setDefaultAttributes();
 				}
+				
+				if($('.registration').length){
+					this.registration();
+				}
 			},
 			urls:{
 				categoryDropdown: "Components-CategoryDropdown",
@@ -19,7 +23,8 @@
 				attributeList: "Components-AttributeList",
 				getTemplatesResponse: "Components-GetTemplatesResponse",
 				createTranslation: "Components-CreateTranslation",
-				saveDefaultAttributes: "Components-SaveDefaultAttributes"
+				saveDefaultAttributes: "Components-SaveDefaultAttributes",
+				saveAPIConfigurations: "Components-SaveAPIConfigurations"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData;
@@ -210,7 +215,7 @@
 									select.append($('<option value="'+ temp.id +'" data-auto-launch="'+ temp.autoLaunch +'">'+ temp.name +'</option>'));
 								});
 								
-								listHolder.append(select);
+								listHolder.html(select);
 							}
 						});
 					});
@@ -262,6 +267,7 @@
 							localeFrom: JSON.stringify(JSON.stringify(transParams.localeFrom)),
 							localeTo: JSON.stringify(transParams.localeTo),
 							itemType: transParams.itemType,
+							catalogID: transParams.catalogID,
 							attributes: JSON.stringify(transParams.attributes),
 							items: JSON.stringify(transParams.items)
 						};
@@ -338,6 +344,33 @@
 							}, 3000);
 						});
 					}
+				});
+			},
+			registration: function(){
+				$('#api-config-save').on("click",function(){
+					var apiKey = $('input[name=api-key]').val().trim(),
+						apiSecret = $('input[name=api-secret]').val().trim(),
+						apiCategory = $('select[name=api-category]').val(),
+						postData;
+					
+					if(apiKey == "" || apiSecret == "" || apiCategory == ""){
+						$('.error').text("All fields are required");
+						return false;
+					}
+					
+					$('.error').text("");
+					postData = {
+						apiKey: apiKey,
+						apiSecret: apiSecret,
+						apiCategory: apiCategory
+					};
+					$.post(app.urls.saveAPIConfigurations, postData, function(data){
+						$('.success-message').addClass('show');
+						
+						setTimeout(function(){
+							$('.success-message').removeClass('show');
+						}, 3000);
+					});
 				});
 			},
 			utils: {

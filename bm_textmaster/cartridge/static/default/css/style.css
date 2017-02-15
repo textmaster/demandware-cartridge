@@ -255,6 +255,7 @@
 .default-attributes .submit-error {
 	text-align:right;
 }
+.registration .success-message,
 .default-attributes .success-message {
 	color: #009900;
     border: 1px solid #009900;
@@ -265,6 +266,7 @@
     background-color: #efffef;
     display:none;
 }
+.registration .success-message.show,
 .default-attributes .success-message.show {
 	display:block;
 }
