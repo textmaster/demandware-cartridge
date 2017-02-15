@@ -1,0 +1,38 @@
+/**
+*	Remove imported file from Impex
+*
+*	@input ImportFile: String
+*	@input Status: dw.system.Status
+*
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var importFile = pdict.ImportFile,
+		status = pdict.Status,
+		baseFolder = File.IMPEX + File.SEPARATOR + "src",
+		importXML;
+	
+	log = LogUtils.getLogger("removeImportedFile");
+	
+	try{
+		importXML = new File(baseFolder + File.SEPARATOR + importFile);
+		
+		if(importXML.exists()) {
+			importXML.remove();
+	    }
+	}
+	catch(ex){
+		log.error(ex.message);
+	}
+	
+	return PIPELET_NEXT;
+}

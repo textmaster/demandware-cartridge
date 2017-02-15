@@ -247,14 +247,14 @@
       </node>
       <simple-transition>
         <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
+          <bend-point relative-to="target" x="0" y="-1"/>
         </transition-display>
       </simple-transition>
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
         </interaction-node>
-        <node-display x="0" y="1"/>
+        <node-display x="0" y="2"/>
       </node>
     </segment>
   </branch>
@@ -280,6 +280,7 @@
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
           <key-binding alias="CurrentHttpParameterMap.localeFrom.stringValue" key="LocaleFrom"/>
           <key-binding alias="CurrentHttpParameterMap.localeTo.stringValue" key="LocaleTo"/>
+          <key-binding alias="CurrentHttpParameterMap.catalogID.stringValue" key="CatalogID"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
@@ -349,6 +350,65 @@
           <segment>
             <node>
               <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_13">
+    <segment>
+      <node>
+        <text-node>
+          <description>Save API Configurations</description>
+        </text-node>
+        <node-display x="1" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="SaveAPIConfigurations">
+    <segment>
+      <node>
+        <start-node name="SaveAPIConfigurations" secure="false"/>
+        <node-display x="1" y="12"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/SetAPIConfigurations.ds"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiCategory').stringValue" key="APICategory"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiKey').stringValue" key="APIKey"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiSecret').stringValue" key="APISecret"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
               <node-display orientation="horizontal" x="1" y="0"/>
             </node>
           </segment>

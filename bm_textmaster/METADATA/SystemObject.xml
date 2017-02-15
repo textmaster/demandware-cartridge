@@ -8,10 +8,64 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+            <attribute-definition attribute-id="TMApiKey">
+                <display-name xml:lang="x-default">TextMaster API Key</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMApiSecret">
+                <display-name xml:lang="x-default">TextMaster API Secret</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMCategoryAttributes">
+                <display-name xml:lang="x-default">TextMaster Category Attributes</display-name>
+                <description xml:lang="x-default">TextMaster default category attributes for translation</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>[]</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMCategoryCode">
+                <display-name xml:lang="x-default">TextMaster Category Code</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMContentAttributes">
+                <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>
+                <description xml:lang="x-default">TextMaster default content asset attributes for translation</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>[]</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMProductAttributes">
+                <display-name xml:lang="x-default">TextMaster Product Attributes</display-name>
+                <description xml:lang="x-default">TextMaster default product attributes for translation</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>[]</default-value>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="TextMaster">
                 <display-name xml:lang="x-default">TextMaster</display-name>
+                <attribute attribute-id="TMApiSecret"/>
+                <attribute attribute-id="TMApiKey"/>
+                <attribute attribute-id="TMCategoryAttributes"/>
+                <attribute attribute-id="TMProductAttributes"/>
+                <attribute attribute-id="TMContentAttributes"/>
+                <attribute attribute-id="TMCategoryCode"/>
                 <attribute attribute-id="TMEmail"/>
             </attribute-group>
         </group-definitions>
