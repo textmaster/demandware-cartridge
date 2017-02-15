@@ -166,7 +166,7 @@
 	padding: 0 5px 5px;
 	overflow-x: hidden;
     overflow-y: auto;
-    max-height: 500px;
+    max-height: 800px;
 }
 .new-translation #items-holder .item-label {
 	display:block;
@@ -208,6 +208,9 @@
 }
 .new-translation .show-default-attributes.show {
 	display: block;
+}
+#filtertableProjects tfoot tr th select {
+	min-width:100px;
 }
 
 /* Follow up page */
