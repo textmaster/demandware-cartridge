@@ -2,6 +2,7 @@
 *	Get queued project id
 *
 *	@output ProjectID: String
+*	@output DocumentID: String
 */
 importPackage( dw.system );
 
@@ -15,22 +16,30 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
-	var projectID = "", query, queryObj,
-		jobDataHolder = utils.getJobDataHolder();
+	var projectID = "",
+		documentID = "",
+		jobDataHolder = utils.getJobDataHolder(),
+		query, queryObj, ids;
 		
 	log = logUtils.getLogger("GetQueuedProjectID");
 	
 	if(jobDataHolder){
-		query = jobDataHolder.custom.QueuedProjects || "[]";
+		query = jobDataHolder.custom.QueuedDocuments || "[]";
 		queryObj = JSON.parse(query);
-		projectID = queryObj.shift();
+		ids = queryObj.shift();
+		
+		if(ids){
+			projectID = ids.projectid;
+			documentID = ids.documentid;
+		}
 		
 		Transaction.begin();
-		jobDataHolder.custom.QueuedProjects = JSON.stringify(queryObj);
+		jobDataHolder.custom.QueuedDocuments = JSON.stringify(queryObj);
 		Transaction.commit();
 	}
 	
 	pdict.ProjectID = projectID || "";
+	pdict.DocumentID = documentID || "";
 	
 	return PIPELET_NEXT;
 }

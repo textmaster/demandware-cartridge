@@ -2,6 +2,7 @@
 *	Imports translation data from textMaster projects
 *
 *	@input ProjectID: String
+*	@input DocumentID: String
 */
 importPackage( dw.system );
 importPackage( dw.io );
@@ -19,10 +20,11 @@ var log;
 function execute( pdict : PipelineDictionary ) : Number
 {
 	var projectID = pdict.ProjectID,
+		documentID = pdict.DocumentID,
 		projectEndPoint = Resource.msg("api.get.projects","textmaster",null) +"/"+ projectID,
-		allDocsEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null),
-		project, docs, doc, content, baseFolder, relativeFolder, fileName,
-		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode,
+		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null) +"/"+ documentID,
+		project, doc, content, baseFolder, relativeFolder, fileName,
+		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, itemID,
 		pageAttrs = {
 			pageTitle: {},
 			pageDescription: {},
@@ -31,6 +33,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		};
 	
 	log = logUtils.getLogger("ImportScript");
+	
 	
 	project = utils.TextMasterClient("GET", projectEndPoint, "");
 	
@@ -42,7 +45,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		try{
 			baseFolder = File.IMPEX + File.SEPARATOR + "src";
 			relativeFolder = "textmaster" + File.SEPARATOR + itemType;
-			fileName = projectID +".xml";
+			fileName = documentID +".xml";
 			
 			var importDir : File = new File(baseFolder + File.SEPARATOR + relativeFolder);
 			
@@ -74,66 +77,62 @@ function execute( pdict : PipelineDictionary ) : Number
 		    	writer.writeAttribute("library-id",dw.content.ContentMgr.getSiteLibrary().ID);
 		    }
 			
-			docs = utils.TextMasterClient("GET", allDocsEndPoint, "");
-			docs = docs.documents || [];
-			
-			// each document
-			for each (doc in docs){
-				content = doc.original_content ? JSON.parse(doc.original_content) : [];
+			doc = utils.TextMasterClient("GET", docEndPoint, "");
+			itemID = doc.custom_data.id || "";
+			content = doc.original_content ? JSON.parse(doc.original_content) : [];
 	
-				writer.writeStartElement(itemType);
-			    writer.writeAttribute(itemType+"-id", doc.custom_data.id || "");
-				
-				// each system attribute without page attributes
-				for each (attr in content){
-					if(attr.type == "system" && attr.id.indexOf("page") != 0 && attr.value){
-						writer.writeStartElement(utils.idToXMLTag(attr.id));
-						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(attr.value);
-						writer.writeEndElement();
-					}
+			writer.writeStartElement(itemType);
+		    writer.writeAttribute(itemType+"-id", itemID);
+			
+			// each system attribute without page attributes
+			for each (attr in content){
+				if(attr.type == "system" && attr.id.indexOf("page") != 0 && attr.value){
+					writer.writeStartElement(utils.idToXMLTag(attr.id));
+					writer.writeAttribute("xml:lang",language);
+						writer.writeCharacters(attr.value);
+					writer.writeEndElement();
 				}
-				
-				// keep each system page attribute ordered list
-				for each (attr in content){
-					if(attr.type == "system" && attr.id.indexOf("page") == 0 && attr.value){
-						pageAttrs[attr.id] = attr;
-					}
-				}
-				
-				// each system attribute
-				writer.writeStartElement("page-attributes");
-				
-				for each(pageAttr in pageAttrs){
-					if(pageAttr.id){
-						writer.writeStartElement(utils.idToXMLTag(pageAttr.id));
-						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(pageAttr.value);
-						writer.writeEndElement();
-					}
-				}
-				
-				writer.writeEndElement();
-				
-				// each custom attribute
-				writer.writeStartElement("custom-attributes");
-				
-				for each (attr in content){
-					if(attr.type == "custom" && attr.value){
-						writer.writeStartElement("custom-attribute");
-						writer.writeAttribute("attribute-id",attr.id);
-						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(attr.value);
-						writer.writeEndElement();
-					}
-				}
-				
-				writer.writeEndElement();//custom-attributes
-				
-				writer.writeEndElement();//itemType
 			}
 			
-			writer.writeEndElement();//catalog
+			// keep each system page attribute ordered list
+			for each (attr in content){
+				if(attr.type == "system" && attr.id.indexOf("page") == 0 && attr.value){
+					pageAttrs[attr.id] = attr;
+				}
+			}
+			
+			// each system attribute
+			writer.writeStartElement("page-attributes");
+			
+			for each(pageAttr in pageAttrs){
+				if(pageAttr.id){
+					writer.writeStartElement(utils.idToXMLTag(pageAttr.id));
+					writer.writeAttribute("xml:lang",language);
+						writer.writeCharacters(pageAttr.value);
+					writer.writeEndElement();
+				}
+			}
+			
+			writer.writeEndElement();
+			
+			// each custom attribute
+			writer.writeStartElement("custom-attributes");
+			
+			for each (attr in content){
+				if(attr.type == "custom" && attr.value){
+					writer.writeStartElement("custom-attribute");
+					writer.writeAttribute("attribute-id",attr.id);
+					writer.writeAttribute("xml:lang",language);
+						writer.writeCharacters(attr.value);
+					writer.writeEndElement();
+				}
+			}
+			
+			writer.writeEndElement();//custom-attributes
+			
+			writer.writeEndElement();//itemType
+			
+			writer.writeEndElement();//startElement
 			writer.writeEndDocument();
 		}
 		catch(ex){
@@ -148,17 +147,43 @@ function execute( pdict : PipelineDictionary ) : Number
 		
 		importStartNode = itemType == "product" || itemType == "category" ? "Catalog" : "Content";
 		
+		// Call Standard import pipeline
 		Pipeline.execute("Import-"+ importStartNode, {
 			ImportFile: relativeFolder + File.SEPARATOR + fileName
 		});
 		
+		updateTranslatedLanguageList(itemType, itemID, language);
 	}
-		
-	/*Transaction.begin();
-	var logHolder = dw.object.CustomObjectMgr.getCustomObject("Log", "TMLog1"),
-		exValue = logHolder.custom.Error || "";
-	logHolder.custom.Error = exValue + "projectID: "+ projectID +'\n';
-	Transaction.commit();*/
 	
 	return PIPELET_NEXT;
+}
+
+/* update the custom attribute of item to keep list of translated languages */
+function updateTranslatedLanguageList(itemType, itemID, language){
+	var item;
+	
+	switch(itemType){
+		case "product":
+			item = dw.catalog.ProductMgr.getProduct(itemID);
+			break;
+		case "category":
+			item = dw.catalog.CatalogMgr.getCategory(itemID);
+			break;
+		case "content":
+			item = dw.content.ContentMgr.getContent(itemID);
+			break;
+	}
+	
+	Transaction.begin();
+	
+	if(item.custom.TranslatedLanguages != "" && item.custom.TranslatedLanguages != null){
+		if(item.custom.TranslatedLanguages.indexOf(language) < 0){
+			item.custom.TranslatedLanguages += "," + language;
+		}
+	}
+	else{
+		item.custom.TranslatedLanguages = language;
+	}
+
+	Transaction.commit();
 }
