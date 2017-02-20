@@ -23,25 +23,32 @@ var log;
 * Calls start method
 */
 function data(){
-	var RunJobNow, projectid, result = false, jobRunning;
+	var RunJobNow, projectid, documentid, result = false, jobRunning;
 	
 	log = logUtils.getLogger("ImportController");
 	projectid = request.httpParameterMap.get("projectid").value;
-	jobRunning = setProjectID(projectid);
+	documentid = request.httpParameterMap.get("documentid").value;
 	
-	if(jobRunning == false){
-		RunJobNow = new Pipelet('RunJobNow').execute({
-			JobName: Resource.msg("import.job.name","textmaster",null)
-		});
+	if(projectid && documentid){
+		jobRunning = setQuery(projectid, documentid);
 		
-		result = RunJobNow.result == 1;
-		
-		if(RunJobNow.result == 2){
-			log.error("Job '"+ Resource.msg("import.job.name","textmaster",null) +"' is not found or not enabled");
+		if(jobRunning == false){
+			RunJobNow = new Pipelet('RunJobNow').execute({
+				JobName: Resource.msg("import.job.name","textmaster",null)
+			});
+			
+			result = RunJobNow.result == 1;
+			
+			if(RunJobNow.result == 2){
+				log.error("Job '"+ Resource.msg("import.job.name","textmaster",null) +"' is not found or not enabled");
+			}
+		}
+		else{
+			result = true;
 		}
 	}
 	else{
-		result = true;
+		log.error("Parameters projectid and documentid are required in URL");
 	}
 	
 	app.getView({
@@ -52,20 +59,23 @@ function data(){
 /*
  * 	Save project id into custom object
  * */
-function setProjectID(projectid){
+function setQuery(projectid, documentid){
 	var dataHolder = utils.getJobDataHolder(),
 		result, queue, queueObj;
 	
 	if(dataHolder){
-		queue = dataHolder.custom.QueuedProjects || "[]";
+		queue = dataHolder.custom.QueuedDocuments || "[]";
 		queueObj = JSON.parse(queue);
-		queueObj.push(projectid);
+		queueObj.push({
+			projectid: projectid,
+			documentid: documentid
+		});
 	
 		Transaction.begin();
-		dataHolder.custom.QueuedProjects = JSON.stringify(queueObj);
+		dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
 		Transaction.commit();
 		
-		result = dataHolder.custom.RunningProject ? true : false;
+		result = dataHolder.custom.RunningDocument ? true : false;
 	}
 	
 	return result;

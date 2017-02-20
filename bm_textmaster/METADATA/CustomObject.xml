@@ -9,15 +9,15 @@
             <min-length>0</min-length>
         </key-definition>
         <attribute-definitions>
-            <attribute-definition attribute-id="QueuedProjects">
-                <display-name xml:lang="x-default">QueuedProjects</display-name>
+            <attribute-definition attribute-id="QueuedDocuments">
+                <display-name xml:lang="x-default">QueuedDocuments</display-name>
                 <type>text</type>
                 <localizable-flag>false</localizable-flag>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="RunningProject">
-                <display-name xml:lang="x-default">RunningProject</display-name>
+            <attribute-definition attribute-id="RunningDocument">
+                <display-name xml:lang="x-default">RunningDocument</display-name>
                 <type>string</type>
                 <localizable-flag>false</localizable-flag>
                 <mandatory-flag>false</mandatory-flag>
@@ -31,8 +31,8 @@
             </attribute-group>
             <attribute-group group-id="JobData">
                 <display-name xml:lang="x-default">JobData</display-name>
-                <attribute attribute-id="RunningProject"/>
-                <attribute attribute-id="QueuedProjects"/>
+                <attribute attribute-id="RunningDocument"/>
+                <attribute attribute-id="QueuedDocuments"/>
             </attribute-group>
         </group-definitions>
     </custom-type>

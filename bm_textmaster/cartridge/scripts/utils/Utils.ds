@@ -86,21 +86,21 @@ Utils.getFileNameExtension = function(fileName : String){
 Utils.getDWLanguages = function(){
 	return [
 		{id:"zh",name:"Chinese"},
-		{id:"zh_CN",name:"Chinese (China)"},
+		{id:"zh-CN",name:"Chinese (China)"},
 		{id:"nl",name:"Dutch"},
 		{id:"en",name:"English"},
-		{id:"en_CA",name:"English (Canada)"},
-		{id:"en_GB",name:"English (United Kingdom)"},
-		{id:"en_US",name:"English (United States)"},
+		{id:"en-CA",name:"English (Canada)"},
+		{id:"en-GB",name:"English (United Kingdom)"},
+		{id:"en-US",name:"English (United States)"},
 		{id:"fr",name:"French"},
-		{id:"fr_CA",name:"French (Canada)"},
-		{id:"fr_FR",name:"French (France)"},
+		{id:"fr-CA",name:"French (Canada)"},
+		{id:"fr-FR",name:"French (France)"},
 		{id:"de",name:"German"},
-		{id:"de_DE",name:"German (Germany)"},
+		{id:"de-DE",name:"German (Germany)"},
 		{id:"it",name:"Italian"},
-		{id:"it_IT",name:"Italian (Italy)"},
+		{id:"it-IT",name:"Italian (Italy)"},
 		{id:"ja",name:"Japanese"},
-		{id:"ja_JP",name:"Japanese (Japan)"},
+		{id:"ja-JP",name:"Japanese (Japan)"},
 		{id:"es",name:"Spanish"}
 	];
 }
@@ -169,6 +169,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	
 	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
 		response = JSON.parse(httpClient.getText());
+		//Utils.log.error(httpClient.getText());
 	}
 	else{
 		Utils.log.error("Error on http request: "+ httpClient.getErrorText());

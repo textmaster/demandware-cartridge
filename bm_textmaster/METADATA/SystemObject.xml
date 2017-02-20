@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="Category">
+        <custom-attribute-definitions>
+        	<attribute-definition attribute-id="TranslatedLanguages">
+                <display-name xml:lang="x-default">Translated Languages</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+    <type-extension type-id="Content">
+        <custom-attribute-definitions>
+        	<attribute-definition attribute-id="TranslatedLanguages">
+                <display-name xml:lang="x-default">Translated Languages</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <site-specific-flag>false</site-specific-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+    <type-extension type-id="Product">
+    	<custom-attribute-definitions>
+    		<attribute-definition attribute-id="TranslatedLanguages">
+                <display-name xml:lang="x-default">Translated Languages</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <site-specific-flag>false</site-specific-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <visible-flag>false</visible-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <order-required-flag>false</order-required-flag>
+                <externally-defined-flag>false</externally-defined-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+    	</custom-attribute-definitions>
+    </type-extension>
     <type-extension type-id="SitePreferences">
         <custom-attribute-definitions>
             <attribute-definition attribute-id="TMEmail">
