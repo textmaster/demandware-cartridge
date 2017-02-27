@@ -86,23 +86,184 @@ Utils.getFileNameExtension = function(fileName : String){
 Utils.getDWLanguages = function(){
 	return [
 		{id:"zh",name:"Chinese"},
-		{id:"zh-CN",name:"Chinese (China)"},
+		{id:"zh-cn",name:"Chinese (China)"},
 		{id:"nl",name:"Dutch"},
 		{id:"en",name:"English"},
-		{id:"en-CA",name:"English (Canada)"},
-		{id:"en-GB",name:"English (United Kingdom)"},
-		{id:"en-US",name:"English (United States)"},
+		{id:"en-ca",name:"English (Canada)"},
+		{id:"en-gb",name:"English (United Kingdom)"},
+		{id:"en-us",name:"English (United States)"},
 		{id:"fr",name:"French"},
-		{id:"fr-CA",name:"French (Canada)"},
-		{id:"fr-FR",name:"French (France)"},
+		{id:"fr-ca",name:"French (Canada)"},
+		{id:"fr-fr",name:"French (France)"},
 		{id:"de",name:"German"},
-		{id:"de-DE",name:"German (Germany)"},
+		{id:"de-de",name:"German (Germany)"},
 		{id:"it",name:"Italian"},
-		{id:"it-IT",name:"Italian (Italy)"},
+		{id:"it-it",name:"Italian (Italy)"},
 		{id:"ja",name:"Japanese"},
-		{id:"ja-JP",name:"Japanese (Japan)"},
+		{id:"ja-jp",name:"Japanese (Japan)"},
 		{id:"es",name:"Spanish"}
 	];
+}
+
+/*
+*	Gets Translation Languages - common languages in Demandware and TextMaster
+*/
+Utils.getTranslationLanguages = function(){
+	if(session.custom['TMTranslationLanguages'] && session.custom['TMTranslationLanguages'].length > 0){
+		return session.custom['TMTranslationLanguages'];
+	}
+	
+	var dwLanguages = Utils.getDWLanguages(),
+		tmLanguageEndPoint = Resource.msg("api.get.languages","textmaster",null),
+		tmLanguages, languages = [], dwLang, tmLang;
+		
+	tmLanguages = Utils.TextMasterPublic("GET",tmLanguageEndPoint,null);
+	tmLanguages = tmLanguages ? tmLanguages.languages : [];
+	
+	for each(tmLang in tmLanguages){
+		for each(dwLang in dwLanguages){
+			if(tmLang.code == dwLang.id){
+				languages.push(dwLang);
+			}
+		}
+	}
+	
+	languages.sort(function(a, b) {
+		return a.name < b.name ? -1 : 1;
+	});
+	
+	Transaction.begin();
+	session.custom['TMTranslationLanguages'] = languages;
+	Transaction.commit();
+	
+	return languages;
+}
+
+/*
+*	Get 'language from' list
+*/
+Utils.getLanguageFromList = function(){
+	if(session.custom['TMLanguageFromList'] && session.custom['TMLanguageFromList'].length > 0){
+		return session.custom['TMLanguageFromList'];
+	}
+	
+	var result = [],
+		language, languageToList,
+		languages = Utils.getTranslationLanguages();
+	
+	for each(language in languages){
+		languageToList = Utils.getLanguageTo(language.id);
+		if(languageToList.length > 0){
+			result.push(language);
+		}
+	}
+	
+	Transaction.begin();
+	session.custom['TMLanguageFromList'] = result;
+	Transaction.commit();
+	
+	return result;
+}
+
+/*
+*	Check whether language is in Demandware and TextMaster
+*/
+Utils.isTranslationLanguage = function(languageCheck){
+	var languages = Utils.getTranslationLanguages(),
+		language;
+	
+	for each(language in languages){
+		if(language.id == languageCheck){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Get all language ability list
+*/
+Utils.getLanguageAbilityList = function(){
+	if(session.custom['TMAbilityList'] && session.custom['TMAbilityList'].length > 0){
+		return session.custom['TMAbilityList'];
+	}
+	
+	var abilityEndPoint = Resource.msg('api.get.abilities','textmaster',null),
+		abilities = Utils.TextMasterClient("GET",abilityEndPoint,null),
+		result = [], ability;
+	
+	if(abilities){
+		abilities = abilities.data;
+	}
+	
+	for each(ability in abilities){
+		if(Utils.isTranslationLanguage(ability.language_to)){
+			result.push({
+				from: ability.language_from,
+				to: ability.language_to
+			});
+		}
+	}
+	
+	Transaction.begin();
+	session.custom['TMAbilityList'] = result;
+	Transaction.commit();
+	
+	return result;
+}
+
+/*
+*	Get 'language to' list with dropped 'language from'
+*/
+Utils.getLanguageTo = function(languageFrom){
+	var languageTo = [],
+		abilityList = Utils.getLanguageAbilityList(),
+		language;
+		
+	for each(language in abilityList){
+		if(language.from == languageFrom && language.to != languageFrom){
+			languageTo.push({
+				id: language.to,
+				name: Utils.getLocaleName(language.to)
+			});
+		}
+	}
+	
+	languageTo.sort(function(a,b){
+		return a.name < b.name ? -1 : 1;
+	});
+	
+	languageTo = Utils.makeArrayUnique(languageTo, "id");
+	
+	return languageTo;
+}
+
+/*
+*	Remove duplicate values from array
+*/
+Utils.makeArrayUnique = function(arr, key){
+	var result = [],
+		el, count = 0, i, found;
+	
+	for each(el in arr){
+		found = false;
+		
+		for(i = 0; i < count; i++){
+			if(arr[i][key] == el[key]){
+				found = true;
+				break;
+			}
+		}
+		
+		if(!found){
+			result.push(el);
+		}
+		
+		count++;
+	}
+	
+	return result;
 }
 
 /*
