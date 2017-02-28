@@ -28,11 +28,12 @@
         <start-node name="New" secure="false"/>
         <node-display x="1" y="1"/>
       </node>
-      <simple-transition>
-        <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
-        </transition-display>
-      </simple-transition>
+      <simple-transition/>
+      <node>
+        <call-node start-name-ref="Translation-LoginCheck"/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/filtertranslationitems"/>
@@ -47,11 +48,12 @@
         <start-node name="FollowUp" secure="false"/>
         <node-display x="3" y="1"/>
       </node>
-      <simple-transition>
-        <transition-display>
-          <bend-point relative-to="source" x="0" y="1"/>
-        </transition-display>
-      </simple-transition>
+      <simple-transition/>
+      <node>
+        <call-node start-name-ref="Translation-LoginCheck"/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
       <node>
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
@@ -148,7 +150,7 @@
         <text-node>
           <description>Subpipeline 'New' posts data to this subpipeline</description>
         </text-node>
-        <node-display x="1" y="5"/>
+        <node-display x="1" y="7"/>
       </node>
     </segment>
   </branch>
@@ -158,7 +160,17 @@
         <text-node>
           <description>Notification page on project creation</description>
         </text-node>
-        <node-display x="3" y="5"/>
+        <node-display x="3" y="7"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_9">
+    <segment>
+      <node>
+        <text-node>
+          <description>Default attributes settings</description>
+        </text-node>
+        <node-display x="5" y="7"/>
       </node>
     </segment>
   </branch>
@@ -166,7 +178,7 @@
     <segment>
       <node>
         <start-node name="PlaceOrder" secure="false"/>
-        <node-display x="1" y="6"/>
+        <node-display x="1" y="8"/>
       </node>
       <simple-transition/>
       <node>
@@ -211,7 +223,7 @@
     <segment>
       <node>
         <start-node name="Notification" secure="false"/>
-        <node-display x="3" y="6"/>
+        <node-display x="3" y="8"/>
       </node>
       <simple-transition/>
       <node>
@@ -249,21 +261,11 @@
       </node>
     </segment>
   </branch>
-  <branch basename="_ANONYMOUS_BRANCH_11">
-    <segment>
-      <node>
-        <text-node>
-          <description>Default attributes settings</description>
-        </text-node>
-        <node-display x="5" y="5"/>
-      </node>
-    </segment>
-  </branch>
   <branch basename="DefaultAttributes">
     <segment>
       <node>
         <start-node name="DefaultAttributes" secure="false"/>
-        <node-display x="5" y="6"/>
+        <node-display x="5" y="8"/>
       </node>
       <simple-transition>
         <transition-display>
@@ -275,6 +277,86 @@
           <template buffered="true" dynamic="false" name="translation/defaultattributessettings"/>
         </interaction-node>
         <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_13">
+    <segment>
+      <node>
+        <text-node>
+          <description>Check API key and API secret entered in Site Preference</description>
+        </text-node>
+        <node-display x="1" y="12"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="LoginCheck">
+    <segment>
+      <node>
+        <start-node call-mode="public" name="LoginCheck" secure="false"/>
+        <node-display x="1" y="13"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <key-binding alias="dw.system.Site.current.getCustomPreferenceValue(&quot;TMApiKey&quot;) || &quot;&quot;" key="From_0"/>
+          <key-binding alias="APIKey" key="To_0"/>
+          <key-binding alias="dw.system.Site.current.getCustomPreferenceValue(&quot;TMApiSecret&quot;) || &quot;&quot;" key="From_1"/>
+          <key-binding alias="APISecret" key="To_1"/>
+          <key-binding alias="null" key="From_2"/>
+          <key-binding alias="null" key="To_2"/>
+          <key-binding alias="null" key="From_3"/>
+          <key-binding alias="null" key="To_3"/>
+          <key-binding alias="null" key="From_4"/>
+          <key-binding alias="null" key="To_4"/>
+          <key-binding alias="null" key="From_5"/>
+          <key-binding alias="null" key="To_5"/>
+          <key-binding alias="null" key="From_6"/>
+          <key-binding alias="null" key="To_6"/>
+          <key-binding alias="null" key="From_7"/>
+          <key-binding alias="null" key="To_7"/>
+          <key-binding alias="null" key="From_8"/>
+          <key-binding alias="null" key="To_8"/>
+          <key-binding alias="null" key="From_9"/>
+          <key-binding alias="null" key="To_9"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <decision-node condition-key="APIKey != &quot;&quot; &amp;&amp; APISecret != &quot;&quot;" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="0" y="1"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display x="0" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="1" y="0"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <jump-node start-name-ref="Translation-Register"/>
+        <node-display orientation="horizontal" x="1" y="0"/>
       </node>
     </segment>
   </branch>
