@@ -107,7 +107,10 @@ function execute( pdict : PipelineDictionary ) : Number
 				document.title = itemType +"-"+ i;
 				document.original_content = JSON.stringify(itemData);
 				document.word_count = Utils.getWordCount(document.original_content);
-				document.custom_data = {id: item.ID};
+				document.custom_data = {
+					id: item.ID,
+					name: (itemType == "category" ? item.displayName : item.name)
+				};
 				
 				documents.push(document);
 			}

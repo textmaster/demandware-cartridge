@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
-    <custom-type type-id="ImportDataHolder">
-        <display-name xml:lang="x-default">ImportDataHolder</display-name>
+    <custom-type type-id="TMImportDataHolder">
+        <display-name xml:lang="x-default">TMImportDataHolder</display-name>
         <staging-mode>no-staging</staging-mode>
         <storage-scope>site</storage-scope>
         <key-definition attribute-id="ID">
@@ -48,7 +48,6 @@
             <attribute-group group-id="Textmaster">
                 <display-name xml:lang="x-default">Text Master</display-name>
                 <attribute attribute-id="projectid"/>
-                <attribute attribute-id="status"/>
             </attribute-group>
         </group-definitions>
     </custom-type>
