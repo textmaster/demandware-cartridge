@@ -32,7 +32,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		items = JSON.parse(JSON.parse(pdict.Items)),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "", documents, document, documentPostData,
-		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData;
+		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData, projectIDs = [];
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
@@ -47,7 +47,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		project.category = categoryCode;
 		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
 		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
-		project.api_template_id = langTo.templates[0];
+		project.api_template_id = langTo.template;
 		project.custom_data = {
 			itemType: itemType,
 			catalogID: catalogID
@@ -60,6 +60,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		
 		if(projectResult && projectResult.id != undefined){
 			projectID = projectResult.id;
+			projectIDs.push(projectID);
 			
 			documentPostData = {};
 			documents = [];
@@ -117,7 +118,8 @@ function execute( pdict : PipelineDictionary ) : Number
 		}
 	}
 	
-	response.getWriter().println("success");
+	// Returns project ID if only one project is created. On result page template this project ID is used to go to TextMaster specific project page. Else to go to project list page. 
+	response.getWriter().println(projectIDs.length == 1 ? projectIDs[0] : "");
 	
    	return PIPELET_NEXT;
 }

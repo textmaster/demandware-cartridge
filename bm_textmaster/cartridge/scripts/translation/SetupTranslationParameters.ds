@@ -39,7 +39,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 		localeTo[count] = {
 			id: Utils.toTextMasterLocaleID(locale),
 			name: localeName,
-			templates: []
+			template: ""
 		};
 		count++;
 	}
