@@ -16,6 +16,10 @@
 				if($('.registration').length){
 					this.registration();
 				}
+				
+				if($('.followup').length){
+					this.followup();
+				}
 			},
 			urls:{
 				getLanguageToList: "Components-GetLanguageToList",
@@ -373,6 +377,10 @@
 						}, 3000);
 					});
 				});
+			},
+			followup: function(){
+				$('.completed-items').insertAfter('.followup h1');
+				//$('.completed-items')
 			},
 			utils: {
 				firstLetterCapital: function(str){

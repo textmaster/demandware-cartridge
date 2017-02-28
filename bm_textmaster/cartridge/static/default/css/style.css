@@ -227,6 +227,9 @@
     color: #00629B;
     margin: 0;
 }
+.followup .completed-items{
+	text-align:center;
+}
 
 /* Place order page */
 .place-order .attribute-list {
