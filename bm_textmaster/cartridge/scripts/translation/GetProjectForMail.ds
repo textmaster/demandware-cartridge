@@ -38,7 +38,7 @@ function execute( pdict : PipelineDictionary ) : Number
   	  mail.subject = "TextMaster: Quotation for " + projectResult.name; 
   	  mail.text = "Project " + projectResult.name + " (" + projectResult.id + ") will cost you " 
   	      + costs.toFixed(2) + currency
-  	      + ". Please go to link " + Resource.msg("link.edit.project","textmaster",null) + "/"
+  	      + ". Please go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
   	      + projectResult.id + "/edit to check your project and launch it."; 
     }      	  
   	

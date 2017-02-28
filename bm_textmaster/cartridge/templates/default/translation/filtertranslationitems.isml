@@ -5,7 +5,7 @@
 	<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
 	<isscript>
 		var Utils = require('~/cartridge/scripts/utils/Utils'),
-			languages = Utils.getDWLanguages(),
+			languages = Utils.getLanguageFromList(),
 			catalog = dw.catalog.CatalogMgr.getSiteCatalog();
 	</isscript>
 	<div class="new-translation">
@@ -48,14 +48,8 @@
 			</div>
 			<div class="field-holder">
 				<div class="label-holder">${Resource.msg('translation.to','textmaster',null)}: </div>
-				<div class="input-holder">
-					<ul class="multi-select select-locale-to">
-						<isloop items="${languages}" var="lang" status="loopstate">
-							<li>
-								<input type="checkbox" name="locale-to[]" id="locale-to-${lang.id}" value="${lang.id}"><label class="checkbox-label" for="locale-to-${lang.id}">${lang.name}</label>
-							</li>
-						</isloop>
-					</ul>
+				<div class="input-holder locale-to">
+					<ul class="multi-select select-locale-to"></ul>
 				</div>
 			</div>
 		</div>
@@ -122,13 +116,8 @@
 			</div>
 		</div>
 		<div class="submit-error"></div>
-		<div class="form-holder">
-			<div class="field-holder title-holder no-fields">
-				<h2>${Resource.msg('general.order','textmaster',null)}</h2>
-			</div>
-			<div class="field-holder button-holder">
-				<input type="submit" class="button" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">
-			</div>
+		<div class="right">
+			<input type="submit" class="button main-action" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">
 		</div>
 		</form>
 	</div>

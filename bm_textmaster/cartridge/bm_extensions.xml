@@ -12,7 +12,7 @@
 	</menuitem>
 
 	<menuaction id="textmastermenumenuaction1" menupath="textmastermenuitem1" position="999" site="true">
-		<name xml:lang="x-default">New Translation</name>
+		<name xml:lang="x-default">New Translation Project</name>
 		<short_description xml:lang="x-default">
 			New translation project
 		</short_description>
@@ -29,12 +29,13 @@
 			<pipeline name="Components-AttributeList" />
 			<pipeline name="Components-GetTemplatesResponse" />
 			<pipeline name="Components-CreateTranslation" />
+			<pipeline name="Components-GetLanguageToList" />
 		</sub-pipelines>
-		<icon>icons/star_yellow_add.gif</icon>
+		<icon>icons/tm_new_project.gif</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction2" menupath="textmastermenuitem1" position="1000" site="true">
-		<name xml:lang="x-default">Follow Up</name>
+		<name xml:lang="x-default">Translation Dashboard</name>
 		<short_description xml:lang="x-default">
 			Follow up on translations
 		</short_description>
@@ -45,11 +46,11 @@
 		<sub-pipelines>
 			<pipeline name="Translation-FollowUp" />
 		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
+		<icon>icons/tm_dashboard.gif</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
-		<name xml:lang="x-default">Default Attributes</name>
+		<name xml:lang="x-default">Attribute Setup</name>
 		<short_description xml:lang="x-default">
 			Default attributes settings
 		</short_description>
@@ -62,11 +63,11 @@
 			<pipeline name="Components-AttributeList" />
 			<pipeline name="Components-SaveDefaultAttributes" />
 		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
+		<icon>icons/tm_attribute_setup.gif</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
-		<name xml:lang="x-default">Register</name>
+		<name xml:lang="x-default">API Setup</name>
 		<short_description xml:lang="x-default">
 			Register new account in TextMaster
 		</short_description>
@@ -78,6 +79,6 @@
 			<pipeline name="Translation-Register" />
 			<pipeline name="Components-SaveAPIConfigurations" />
 		</sub-pipelines>
-		<icon>icons/star_yellow_new.gif</icon>
+		<icon>icons/tm_api_setup.gif</icon>
 	</menuaction>
 </extensions>

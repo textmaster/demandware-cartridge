@@ -127,6 +127,17 @@
 	min-width:300px;
 	padding-left: 10px;
 }
+.translation-module .right {
+	align:right;
+}
+.translation-module .capitalize {
+	text-transform: capitalize;
+}
+.translation-module .button.main-action,
+.translation-module input[type=button].main-action {
+	font-size: 18px;
+    padding: 5px 25px;
+}
 #bm_header_row .sod_select:after {
 	bottom: 0;
 }
@@ -230,6 +241,9 @@
     color: #00629B;
     margin: 0;
 }
+.followup .completed-items{
+	text-align:center;
+}
 
 /* Place order page */
 .place-order .attribute-list {
@@ -239,12 +253,21 @@
 .place-order .submit-error {
 	text-align:right;
 }
+.place-order #reload-templates {
+	margin-bottom:5px;
+}
+.translation-module .place-order select {
+	min-width:150px;
+} 
 
 /*Notification*/
 .notification .form-holder {
 	border: 1px solid #DADADA;
 	margin-top: 10px;
 	padding: 10px;
+}
+.notification .button-holder {
+	margin-top:20px;
 }
 
 /* Default attributes settings */

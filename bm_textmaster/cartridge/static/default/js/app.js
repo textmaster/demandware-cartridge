@@ -16,8 +16,13 @@
 				if($('.registration').length){
 					this.registration();
 				}
+				
+				if($('.followup').length){
+					this.followup();
+				}
 			},
 			urls:{
+				getLanguageToList: "Components-GetLanguageToList",
 				categoryDropdown: "Components-CategoryDropdown",
 				translationItemList: "Components-ItemList",
 				attributeList: "Components-AttributeList",
@@ -31,9 +36,11 @@
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
-					$('input[name="locale-to[]"]').prop("disabled",false);
-					$('#locale-to-' + localeFrom).prop("checked",false);
-					$('#locale-to-' + localeFrom).prop("disabled",true);
+					$('ul.select-locale-to').html('');
+					
+					$.post(app.urls.getLanguageToList, {languageFrom:localeFrom}, function(data){
+						$('.input-holder.locale-to').html(data);
+					});
 				});
 				
 				$('select[name=item-type]').on('change',function(){
@@ -148,13 +155,13 @@
 				$('#filter-item-form').on('submit',function(){
 					var errors = ["Fix following errors"], message = "", ul = $('<ul>'), itemType;
 					
-					if($('select[name=locale-from]').val() == ""){
-						errors.push("- Select source language");
-					}
-					
 					itemType = $('select[name=item-type]').val();
 					if(itemType == ""){
 						errors.push("- Select item type");
+					}
+					
+					if($('select[name=locale-from]').val() == ""){
+						errors.push("- Select source language");
 					}
 					
 					if($('input[name="locale-to[]"]:checked').length == 0){
@@ -183,7 +190,7 @@
 				});
 			},
 			placeOrder: function(){
-				var result, transParams, localeFrom, localeTo, templates, listHolder, postData, select, count, autoLaunchCount, noAutoLaunchCount;
+				var result, transParams, localeFrom, localeTo, templateSelect, templates, listHolder, postData, select, count, autoLaunchCount, noAutoLaunchCount;
 				
 				transParams = JSON.parse($('#hidden-values').text());
 				
@@ -209,7 +216,8 @@
 							}
 							
 							if(templates.length > 0){
-								select = $('<select multiple></select>');
+								select = $('<select></select>');
+								select.append($('<option value="" data-auto-launch=""></option>'));
 								
 								templates.forEach(function(temp) {
 									select.append($('<option value="'+ temp.id +'" data-auto-launch="'+ temp.autoLaunch +'">'+ temp.name +'</option>'));
@@ -229,7 +237,7 @@
 					}
 					else{
 						$('.template-list-holder select').each(function(){
-							if($(this).find('option:selected').length == 0){
+							if($(this).val() == ""){
 								error = "Select template";
 							}
 						});
@@ -248,19 +256,15 @@
 						
 						for(count = 0;count < transParams.localeTo.length; count++){
 							localeTo = transParams.localeTo[count];
-							templates = [];
+							templateSelect = $('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find("select");
+							transParams.localeTo[count].template = templateSelect.val();
 							
-							$('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find('select option:selected').each(function(){
-								templates.push($(this).val());
-								if($(this).attr('data-auto-launch') == "true"){
-									autoLaunchCount++;
-								}
-								else{
-									noAutoLaunchCount++;
-								}
-							});
-							
-							transParams.localeTo[count].templates = templates;
+							if(templateSelect.find("option:selected").attr('data-auto-launch') == "true"){
+								autoLaunchCount++;
+							}
+							else{
+								noAutoLaunchCount++;
+							}
 						}
 						
 						postData = {
@@ -275,6 +279,7 @@
 						$.post(app.urls.createTranslation, postData, function(data){
 							$('input[name=autoLaunchCount]').val(autoLaunchCount);
 							$('input[name=noAutoLaunchCount]').val(noAutoLaunchCount);
+							$('input[name=projectID]').val(data);
 							$('#notification-form').submit();
 						});
 					}
@@ -372,6 +377,10 @@
 						}, 3000);
 					});
 				});
+			},
+			followup: function(){
+				$('.completed-items').insertAfter('.followup h1');
+				//$('.completed-items')
 			},
 			utils: {
 				firstLetterCapital: function(str){

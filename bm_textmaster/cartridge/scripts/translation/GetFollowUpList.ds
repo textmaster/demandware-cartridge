@@ -34,16 +34,36 @@ function execute( pdict : PipelineDictionary ) : Number
    		if(documentResult && documentResult.documents){
    			for each(document in documentResult.documents){
    				doc = document;
-   				actions = [Resource.msg("follow.action.view","textmaster",null)];
+   				doc.project_name = project.name;
+   				doc.project_launch_date = project.launched_at ? (project.launched_at.year || "") +"-"+ (project.launched_at.month || "") +"-"+ (project.launched_at.day || "") : "";
+   				doc.item_type = project.custom_data.itemType;
+   				doc.locale = Utils.getLocaleName(project.language_to_code);
+   				actions = [];
+   				doc.completed = false;
    				
    				switch(doc.status.toLowerCase()){
+   					case "in_creation":
+   						actions.push({
+   							text: Resource.msg("follow.action.view.project","textmaster",null),
+   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   						});
+   						break;
    					case "in_progress":
-   						actions.push(Resource.msg("follow.action.communicate","textmaster",null));
+   						actions.push({
+   							text: Resource.msg("follow.action.view.document","textmaster",null),
+   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   						});
    						break;
    					case "in_review":
-   						actions.push(Resource.msg("follow.action.validate","textmaster",null));
-   						actions.push(Resource.msg("follow.action.revision","textmaster",null));
+   						actions.push({
+   							text: Resource.msg("follow.action.revision","textmaster",null),
+   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   						});
    						break;
+   				}
+   				
+   				if(doc.status.toLowerCase() == "completed"){
+   					doc.completed = true;
    				}
    				
    				doc.actions = actions;
