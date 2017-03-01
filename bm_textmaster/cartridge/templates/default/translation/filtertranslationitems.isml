@@ -59,56 +59,11 @@
 			</div>
 			<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
 		</div>
-		<div class="form-holder filter-items">
-			<div class="field-holder title-holder">
-				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
-			</div>
-			<!-- <div class="field-holder">
-				<div class="label-holder">${Resource.msg('translation.online.flag','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-online-flag">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder search-status">
-				<div class="label-holder">${Resource.msg('translation.search.status','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-search-status">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder category">
-				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-category">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">${Resource.msg('translation.translated.flag','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-translated">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
-				</div>
-			</div> -->
-			<div class="field-holder button-holder left">
-				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
-			</div>
-		</div>
 		<div class="form-holder">
 			<div class="field-holder title-holder">
 				<h2>${Resource.msg('translation.select.items','textmaster',null)}</h2>
 			</div>
+			<div id="filter-holder"></div>
 			<div id="items-holder"></div>
 			<div class="field-holder button-holder">
 				<input type="button" id="button-select-all" value="${Resource.msg('general.select.all','textmaster',null)}">

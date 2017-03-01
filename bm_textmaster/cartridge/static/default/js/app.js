@@ -29,10 +29,36 @@
 				getTemplatesResponse: "Components-GetTemplatesResponse",
 				createTranslation: "Components-CreateTranslation",
 				saveDefaultAttributes: "Components-SaveDefaultAttributes",
+				filterInputs: "Components-FilterInputs",
 				saveAPIConfigurations: "Components-SaveAPIConfigurations"
 			},
 			newTranslation: function(){
-				var localeFrom, itemType, catalog, url, postData;
+				var localeFrom, itemType, catalog, url, postData, checkedCount, checkedLabel, thisEl;
+				
+				$('.new-translation').on('click','.multi-select-holder',function(e) {
+				    e.stopPropagation();
+				    
+				    thisEl = $(this);
+				    $('.multi-select-holder').each(function(){
+				    	if($(this)[0] != thisEl[0]){
+				    		$(this).removeClass('expand');
+				    	}
+				    });
+				});
+				
+				$(document).on('click', function (e) {
+					$('.multi-select-holder').removeClass('expand');
+				});
+				
+				$('.new-translation').on('click','.multi-select-holder .button', function(){
+					$(this).closest('.multi-select-holder').toggleClass('expand');
+				});
+				
+				$('.new-translation').on('click','input[type=checkbox]', function(){
+					checkedCount = $(this).closest('.multi-select').find('input[type=checkbox]:checked').length;
+					checkedLabel = checkedCount > 0 ? checkedCount + " Selected" : "";
+					$(this).closest('.multi-select-holder').find('.button').val(checkedLabel);
+				});
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
@@ -55,13 +81,6 @@
 						$('.filter-items .category').addClass('hide');
 					}
 					
-					if($(this).val() == "category"){
-						$('.filter-items .search-status').addClass('hide');
-					}
-					else{
-						$('.filter-items .search-status').removeClass('hide');
-					}
-					
 					postData = {itemType: app.utils.firstLetterCapital(itemType)};
 					$('.attributes-main').html("");
 					$.post(app.urls.attributeList, postData, function(data){
@@ -73,6 +92,10 @@
 						else{
 							$('.attributes-holder').removeClass("show-all");
 						}
+					});
+					
+					$.post(app.urls.filterInputs, postData, function(data){
+						$('#filter-holder').html(data);
 					});
 					
 					$(this).removeClass('error-field');

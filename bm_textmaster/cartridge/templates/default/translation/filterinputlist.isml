@@ -1,0 +1,65 @@
+<!--- TEMPLATENAME: filterinputlist.isml --->
+<isscript>
+	var Utils = require('~/cartridge/scripts/utils/Utils'),
+	    languages = Utils.getLanguageFromList();
+</isscript>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	    <td>&nbsp;</td>
+	    <td><input type="text"/></td>
+	    <td><input type="text"/></td>
+	    <td>
+	        <select> 
+	            <option value=""></option>
+	            <option value="Yes">Yes</option> 
+	            <option value="No">No</option> 
+	        </select>
+	    </td>
+	    <td>
+	        <select> 
+	            <option value=""></option>
+	            <option value="Yes">Yes</option> 
+	            <option value="No">No</option> 
+	        </select>
+	    </td>
+	    <td>
+			<div class="multi-select-holder">
+				<input type="button" class="button">
+		        <ul class="multi-select">
+					<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
+						<li>
+							<input type="checkbox" name="filter-category[]" id="filter-category-${category.ID}" value="${category.ID}"><label class="checkbox-label" for="filter-category-${category.ID}">${category.displayName}</label>
+						</li>
+					</isloop>
+				</ul>
+			</div>
+	    </td>
+	    <td>
+	    	<div class="multi-select-holder">
+				<input type="button" class="button">
+				<ul class="multi-select">
+					<isloop items="${languages}" var="lang" status="loopstate">
+						<li>
+							<input type="checkbox" name="filter-language[]" id="filter-language-${lang.id}" value="${lang.id}"><label class="checkbox-label" for="filter-language-${lang.id}">${Utils.getLocaleName(lang.id)}</label>
+						</li>
+					</isloop>
+				</ul>
+			</div>
+		</td>
+		<td><input type="text" id="datefield" name="datefield" /></td>
+		<td><input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span></td>
+	</tr>
+</table>
+<script>
+(function($){
+	$(document).ready(function(){
+		Calendar.setup(
+		    {
+		      inputField  : "datefield",         // ID of the input field
+		      ifFormat    : "%Y-%m-%d",          // the date format
+		      button      : "trigger"       // ID of the button
+		    }
+	    );
+	})
+})(jQuery);
+

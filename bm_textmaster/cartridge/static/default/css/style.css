@@ -72,6 +72,44 @@
 .translation-module select.error-field {
 	border-color: #f00;
 }
+.translation-module #filter-holder input[type=text],
+.translation-module #filter-holder select {
+	min-width:initial;
+}
+.translation-module .multi-select-holder {
+	display: inline-block;
+	position: relative;
+}
+.translation-module .multi-select-holder .multi-select {
+	display: none;
+	border-top: medium none;
+    position: absolute;
+}
+.translation-module .multi-select-holder.expand .multi-select {
+	display: block;
+}
+.translation-module .multi-select-holder .multi-select,
+.translation-module .multi-select-holder .button {
+	min-width: initial;
+    width: 215px;
+}
+.translation-module .multi-select-holder .multi-select .checkbox-label {
+	max-width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.translation-module .multi-select-holder .button {
+	color: inherit;
+	padding: 3.5px;
+    border: 1px solid #A5AEB5;
+    background-color:#ffffff;
+    border-radius: 0;
+}
+.translation-module .multi-select-holder .button:hover {
+	background-color:#ffffff;
+	border-color:#A5AEB5;
+}
 .translation-module .checkbox-label {
 	position: relative;
     top: -2px;

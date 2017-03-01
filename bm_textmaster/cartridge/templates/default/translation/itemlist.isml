@@ -2,11 +2,6 @@
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.multiselect.css')}" />
 
-<isscript>
-	var Utils = require('~/cartridge/scripts/utils/Utils'),
-	    languages = Utils.getDWLanguages();
-</isscript>
-
 <style>
 	tfoot {
 	display: table-header-group;}
@@ -25,48 +20,6 @@
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">Language</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">Date</th>
     </thead>
-    <tfoot>
-            <tr>
-                <th style="border-bottom: 1px solid #DADADA"> </th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search ID" id="inputfield" /></th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search Name" id="inputfield" /></th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select> 
-                        <option value=""></option>
-                        <option value="Yes">Yes</option> 
-                        <option value="No">No</option> 
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select> 
-                        <option value=""></option>
-                        <option value="Yes">Yes</option> 
-                        <option value="No">No</option> 
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select multiple="multiple" id="categoryfield"> 
-                        <isloop items="${pdict.CategoryList}" var="category" status="loopstate">
-	                        <option value="${category.ID}">${category.ID}</option>
-                        </isloop>
-                        <!-- <option value="Womens">Womens</option> 
-                        <option value="Elek">Elek</option> 
-                        <option value="Test">Test</option> --> 
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select multiple="multiple" id="languagefield">
-                        <isloop items="${languages}" var="lang" status="loopstate">
-							<option value="${lang.id}">${lang.id}</option>
-						</isloop>
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
-               
-                <!--  <th style="border-bottom: 1px solid #DADADA"><input id="categoryList" type="text" placeholder="Category" /></th>
-            -->
-            </tr>
-        </tfoot>
     <tbody>
     	<isloop items="${pdict.ItemList}" var="item" status="loopstate">
 	    	<tr>
@@ -87,7 +40,6 @@
 
 <script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
 <script>
-//var itemList =  "${pdict.ItemList}";
 (function($){
 	$(document).ready(function(){		
 		$('select[multiple]').multiselect();		

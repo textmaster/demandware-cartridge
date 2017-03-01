@@ -30,6 +30,7 @@
 			<pipeline name="Components-GetTemplatesResponse" />
 			<pipeline name="Components-CreateTranslation" />
 			<pipeline name="Components-GetLanguageToList" />
+			<pipeline name="Components-FilterInputs" />
 		</sub-pipelines>
 		<icon>icons/tm_new_project.gif</icon>
 	</menuaction>
