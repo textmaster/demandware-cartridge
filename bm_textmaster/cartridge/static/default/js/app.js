@@ -52,14 +52,8 @@
 					else{
 						$('.field-holder.catalog-list').removeClass("show");
 						$("select[name=catalog] option[value='']").prop("selected",true);
+						$("select[name=filter-category] option[value!='']").remove();
 						$('.filter-items .category').addClass('hide');
-					}
-					
-					if($(this).val() == "category"){
-						$('.filter-items .search-status').addClass('hide');
-					}
-					else{
-						$('.filter-items .search-status').removeClass('hide');
 					}
 					
 					postData = {itemType: app.utils.firstLetterCapital(itemType)};
@@ -107,28 +101,27 @@
 					var searchText = $(this).val(),
 						itemType = $('select[name=item-type]').val(),
 						catalog = $('select[name=catalog]').val(),
-						onlineFlag = $('select[name=filter-online-flag]').val(),
-						searchStatus = $('select[name=filter-search-status]').val(),
 						category = $('select[name=filter-category]').val(),
-						translatedFlag = $('select[name=filter-translated]').val(),
 						error = false,
 						postData = {
 							itemType: itemType,
 							catalog: catalog,
-							onlineFlag: onlineFlag,
-							searchStatus: searchStatus,
-							category: category,
-							translatedFlag: translatedFlag
+							category: category
 						};
 					
 					if(itemType == ""){
 						$('select[name=item-type]').addClass('error-field');
 						error = true;
 					}
-					else if(itemType != "content" && catalog == ""){
-						$('select[name=catalog]').addClass('error-field');
-						$('select[name=filter-category]').addClass('error-field');
-						error = true;
+					else if(itemType != "content"){
+						if(catalog == ""){
+							$('select[name=catalog]').addClass('error-field');
+							error = true;
+						}
+						if(category == ""){
+							$('select[name=filter-category]').addClass('error-field');
+							error = true;
+						}
 					}
 					
 					if(error){

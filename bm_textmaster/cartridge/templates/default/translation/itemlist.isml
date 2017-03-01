@@ -4,67 +4,62 @@
 
 <isscript>
 	var Utils = require('~/cartridge/scripts/utils/Utils'),
-	    languages = Utils.getDWLanguages();
+	    languages = Utils.getLanguageFromList();
 </isscript>
-
-<style>
-	tfoot {
-	display: table-header-group;}
-	tboody{
-	border-top-color: #000000;}
-</style>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
     <thead>
     	<th class="table_header center n e s w" width="8%"></th>
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.id','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.name','textmaster',null)}</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">Online Flag</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">Searchable Flag</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="20%">Category</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">Language</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">Date</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.online.flag','textmaster',null)}</th>
+    	<isif condition="${pdict.ItemType != 'category'}">
+    		<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.search.status','textmaster',null)}</th>
+    	</isif>
+    	<isif condition="${pdict.ItemType != 'content'}">
+    		<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.category','textmaster',null)}</th>
+    	</isif>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.language','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.date','textmaster',null)}</th>
     </thead>
     <tfoot>
             <tr>
-                <th style="border-bottom: 1px solid #DADADA"> </th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search ID" id="inputfield" /></th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search Name" id="inputfield" /></th>
-                <th style="border-bottom: 1px solid #DADADA">
+                <th>&nbsp;</th>
+                <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" id="inputfield" /></th>
+                <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" id="inputfield" /></th>
+                <th>
                     <select> 
                         <option value=""></option>
-                        <option value="Yes">Yes</option> 
-                        <option value="No">No</option> 
+                        <option value="${Resource.msg('general.yes','textmaster',null)}">${Resource.msg('general.yes','textmaster',null)}</option>
+                        <option value="${Resource.msg('general.no','textmaster',null)}">${Resource.msg('general.no','textmaster',null)}</option>
                     </select>
                 </th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select> 
-                        <option value=""></option>
-                        <option value="Yes">Yes</option> 
-                        <option value="No">No</option> 
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA">
-                    <select multiple="multiple" id="categoryfield"> 
-                        <isloop items="${pdict.CategoryList}" var="category" status="loopstate">
-	                        <option value="${category.ID}">${category.ID}</option>
-                        </isloop>
-                        <!-- <option value="Womens">Womens</option> 
-                        <option value="Elek">Elek</option> 
-                        <option value="Test">Test</option> --> 
-                    </select>
-                </th>
-                <th style="border-bottom: 1px solid #DADADA">
+                <isif condition="${pdict.ItemType != 'category'}">
+	                <th>
+	                    <select> 
+	                        <option value=""></option>
+	                        <option value="${Resource.msg('general.yes','textmaster',null)}">${Resource.msg('general.yes','textmaster',null)}</option>
+	                        <option value="${Resource.msg('general.no','textmaster',null)}">${Resource.msg('general.no','textmaster',null)}</option>
+	                    </select>
+	                </th>
+	            </isif>
+	            <isif condition="${pdict.ItemType != 'content'}">
+	                <th>
+	                    <select multiple="multiple" id="categoryfield"> 
+	                        <isloop items="${pdict.CategoryList}" var="category" status="loopstate">
+		                        <option value="${category.displayName}">${category.displayName}</option>
+	                        </isloop> 
+	                    </select>
+	                </th>
+	            </isif>
+                <th>
                     <select multiple="multiple" id="languagefield">
                         <isloop items="${languages}" var="lang" status="loopstate">
-							<option value="${lang.id}">${lang.id}</option>
+							<option value="${lang.id}">${Utils.getLocaleName(lang.id)}</option>
 						</isloop>
                     </select>
                 </th>
-                <th style="border-bottom: 1px solid #DADADA"><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
-               
-                <!--  <th style="border-bottom: 1px solid #DADADA"><input id="categoryList" type="text" placeholder="Category" /></th>
-            -->
+                <th><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
             </tr>
         </tfoot>
     <tbody>
@@ -73,12 +68,16 @@
 	        	<td class="table_detail center e s w" nowrap="nowrap"><input type="checkbox" name="item[]" id="${pdict.ItemType+'-'+item.ID}" value="${item.ID}"></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.ID}</label></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}</label></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.online ? "Yes" : "No"}</label></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.searchable ? "Yes" : "No"}</label></td>
-	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.primaryCategory ? item.primaryCategory.ID : ""}</label></td>
+	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
+	        	<isif condition="${pdict.ItemType != 'category'}">
+	        		<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
+	        	</isif>
+	            <isif condition="${pdict.ItemType != 'content'}">
+	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${pdict.ItemType == 'category' ? item.parent.displayName :(item.primaryCategory ? item.primaryCategory.ID : "")}</label></td>
+	            </isif>
 	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ""}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
-	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>          
+	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
 	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${lastModifiedDate}</label></td>
 	        </tr>
 	    </isloop>
@@ -87,7 +86,6 @@
 
 <script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
 <script>
-//var itemList =  "${pdict.ItemList}";
 (function($){
 	$(document).ready(function(){		
 		$('select[multiple]').multiselect();		

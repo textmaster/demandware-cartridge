@@ -221,11 +221,18 @@
 .new-translation .show-default-attributes.show {
 	display: block;
 }
-#filtertableProjects tfoot tr th select {
-	min-width:100px;
+.translation-module .new-translation #items-holder input[type=text],
+.translation-module .new-translation #items-holder select {
+	min-width:initial;
 }
 .translation-module input[type=text]#datefield {
 	min-width:70px;
+}
+#filtertableProjects tfoot {
+	display: table-header-group;
+}
+#filtertableProjects tfoot tr th {
+	border-bottom: 1px solid #dadada;
 }
 #filtertableProjects tfoot tr th div button{
 	min-width:150px;

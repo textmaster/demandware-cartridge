@@ -3,6 +3,7 @@
 *
 *	@input ItemType: String
 *	@input Catalog: String
+*	@input Category: String
 *
 *	@output ItemList: Array
 *	@output Type: String
@@ -24,6 +25,7 @@ var log;
 function execute( pdict : PipelineDictionary ) : Number {
 	var itemType = pdict.ItemType,
 		catalog = pdict.Catalog ? CatalogMgr.getCatalog(pdict.Catalog) : null,
+		categoryID = pdict.Category ? pdict.Category : (catalog ? catalog.getRoot().ID : null),
 		products, product, items = [], rootCategory, subCategories, library, rootContentFolder, subContentFolders = [], subContentFolder, contents, output = [];
 	
 	log = LogUtils.getLogger("GetItemList");
@@ -48,7 +50,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 			}
 			break;
 		case "category":
-			rootCategory = catalog.getRoot();			
+			rootCategory = CatalogMgr.getCategory(categoryID);
 			items = Utils.getAllSubCategories(rootCategory);
 			break;
 		case "content":
