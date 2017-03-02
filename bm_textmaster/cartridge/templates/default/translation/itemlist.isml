@@ -67,13 +67,14 @@
 	    	<tr>
 	        	<td class="table_detail center e s w" nowrap="nowrap"><input type="checkbox" name="item[]" id="${pdict.ItemType+'-'+item.ID}" value="${item.ID}"></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.ID}</label></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}</label></td>
+	        	<isset name="itemName" value="${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}" scope="page"/>
+	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}" title="${itemName}">${itemName}</label></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	<isif condition="${pdict.ItemType != 'category'}">
 	        		<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	</isif>
 	            <isif condition="${pdict.ItemType != 'content'}">
-	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${pdict.ItemType == 'category' ? item.parent.displayName :(item.primaryCategory ? item.primaryCategory.ID : "")}</label></td>
+	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${pdict.ItemType == 'category' ? item.parent.displayName :(item.primaryCategory ? item.primaryCategory.displayName : "")}</label></td>
 	            </isif>
 	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ""}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
@@ -87,21 +88,21 @@
 <script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
 <script>
 (function($){
-	$(document).ready(function(){		
+	$(document).ready(function(){
+		var itemType = $('select[name=item-type]').val();
 		$('select[multiple]').multiselect();		
 		Calendar.setup(
 		    {
 		      inputField  : "datefield",         // ID of the input field
 		      ifFormat    : "%Y-%m-%d",          // the date format
 		      button      : "trigger",       // ID of the button
-		      onUpdate     : function() { $( 'input#datefield', $('tfoot th').get(7)).trigger('myevent'); }
+		      onUpdate     : function() { $( 'input#datefield', $('tfoot th').get(7)).trigger('dateupdate'); }
 		    }
 	    );
 		
 		var table = $("#filtertableProjects").DataTable({
 			  "dom": 'lrtip'
 		});
-		//$('tfoot th').get(i)
 		
 		table.columns().every( function () {
 		    var column = this;
@@ -111,25 +112,20 @@
 		            .search( this.value )
 		            .draw();
 		    } );
-		    $( 'input#datefield', this.footer()).on( 'keyup change', function () {
-		        column
-		            .search( this.value )
-		            .draw();
-		    } );		 
-		    $( 'input#datefield', this.footer()).on( 'myevent', function () {
+		    $( 'input#datefield', this.footer()).on( 'keyup change dateupdate', function () {
 		    	$.fn.dataTable.ext.search.push(
 	    			function( settings, data, dataIndex ) {
 	    				var stringDate = $('input#datefield').val();
-	    				var date = (stringDate != "") ? new Date(stringDate) : new Date('1200-01-01');
-	    			    var dateData = new Date (data[7]);
+	    				var date = (stringDate != "") ? new Date(stringDate).getTime() : new Date('1200-01-01').getTime();
+	    			    var dateData = new Date ((itemType == 'category' || itemType == 'content') ? data[6] : data[7]).getTime();
 	    			    var showData = false;
 	    			    if (dateData >= date) {
 	    			    	showData = true;
 	    			    }
 	    			    return showData;
-	    			});
+	    		});
 		        column.draw();
-		    } );		   
+		    });
 		    $( 'select', this.footer() ).not('[multiple]').on( 'change', function () {
 		        column
 		            .search( this.value )
@@ -139,7 +135,7 @@
 		    	$.fn.dataTable.ext.search.push(
 	    			function( settings, data, dataIndex ) {
 	    			    var categoryArray = $('select[multiple]#categoryfield').val();
-	    			    var categoryData = data[5] || 0;
+	    			    var categoryData = itemType == 'category' ? data[4] : (data[5] || 0);
 	    			    var showData = false;
 	    			    if (!categoryArray) {
 	    			        showData = true;
@@ -161,8 +157,8 @@
 		    	$.fn.dataTable.ext.search.push(
 	    			function( settings, data, dataIndex ) {
 	    			    var languageArray = $('select[multiple]#languagefield').val();
-	    			    var languageData = data[6] || [];
-	    			    var showData = false; //console.log('A');
+	    			    var languageData = (itemType == 'category' || itemType == 'content') ? data[5] : (data[6] || []);
+	    			    var showData = false;
 	    			    if (!languageArray) {
 	    			        showData = true;
 	    			    } else if (languageData.length == 0) {

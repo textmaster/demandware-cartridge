@@ -129,11 +129,13 @@
 						return false;
 					}
 					
+					$('.items .ajax-loader').addClass('show');
 					$('.common-error.search').removeClass('show');
 					$(this).prop("disabled",true).val("Please wait...");
 					$.post(app.urls.translationItemList, postData, function(data){
 						$('#items-holder').html(data);
 						$('#filter-search').prop("disabled",false).val(searchText);
+						$('.items .ajax-loader').removeClass('show');
 					});
 				});
 				

@@ -133,6 +133,25 @@
 .translation-module .capitalize {
 	text-transform: capitalize;
 }
+.translation-module .relative {
+	position: relative;
+}
+.translation-module .relative .ajax-loader {
+    display:none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.8);
+}
+.translation-module .relative .ajax-loader.show {
+	display:block;
+}
+.translation-module .relative .ajax-loader img {
+	margin:100px auto;
+	display:block;
+}
 .translation-module .button.main-action,
 .translation-module input[type=button].main-action {
 	font-size: 18px;
@@ -225,6 +244,9 @@
 .translation-module .new-translation #items-holder select {
 	min-width:initial;
 }
+.translation-module .new-translation #items-holder input[type=text] {
+	padding:4px 2px;
+}
 .translation-module input[type=text]#datefield {
 	min-width:70px;
 }
@@ -299,4 +321,14 @@
 .registration .success-message.show,
 .default-attributes .success-message.show {
 	display:block;
+}
+
+/* Responsive */
+@media screen and (max-width:1400px){
+	.new-translation #items-holder .item-label {
+		white-space: nowrap;
+	    text-overflow: ellipsis;
+	    max-width: 235px;
+	    overflow: hidden;
+	}
 }

@@ -20,7 +20,6 @@ function execute( pdict : PipelineDictionary ) : Number
 	var site = Site.current;
 		
 	log = LogUtils.getLogger("SetAPIConfiguration");
-	log.error("pdict.APIKey: "+ pdict.APIKey);
 
 	Transaction.begin();
 	site.setCustomPreferenceValue("TMApiKey",pdict.APIKey);

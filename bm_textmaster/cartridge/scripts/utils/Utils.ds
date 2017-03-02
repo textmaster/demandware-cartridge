@@ -287,6 +287,28 @@ Utils.getAllSubCategories = function(root){
 }
 
 /*
+*	Gets underlying subcategories having atleast one subcategory, in a single array
+*/
+Utils.getFilterSubCategories = function(root){
+	var subCategories, category, nextLevelCategories,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		if(category.subCategories.length > 0){
+			output.push(category);
+		}
+	}
+	
+	for each(category in subCategories){
+		nextLevelCategories = Utils.getFilterSubCategories(category);
+		output.push.apply(output, nextLevelCategories);
+	}
+	
+	return output;
+}
+
+/*
 *	Gets name of the locale if locale ID is passed
 */
 Utils.getLocaleName = function(localeID){

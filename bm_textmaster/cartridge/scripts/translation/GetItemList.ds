@@ -26,7 +26,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 	var itemType = pdict.ItemType,
 		catalog = pdict.Catalog ? CatalogMgr.getCatalog(pdict.Catalog) : null,
 		categoryID = pdict.Category ? pdict.Category : (catalog ? catalog.getRoot().ID : null),
-		products, product, items = [], rootCategory, subCategories, library, rootContentFolder, subContentFolders = [], subContentFolder, contents, output = [];
+		products, category, product, items = [], rootCategory, subCategories, library, rootContentFolder, subContentFolders = [], subContentFolder, contents, output = [];
 	
 	log = LogUtils.getLogger("GetItemList");
 	pdict.Type = pdict.ItemType;
@@ -40,14 +40,9 @@ function execute( pdict : PipelineDictionary ) : Number {
 	/* Populate item list according to the itemType selected */
 	switch(itemType){
 		case "product":
-			products = ProductMgr.queryProductsInCatalog(catalog);
-			while(products.hasNext()){
-				product = products.next();
-				items.push(product);
-			}
-			if(products){
-				products.close();
-			}
+			category = CatalogMgr.getCategory(categoryID);
+			products = category.getProducts();
+			items = products.toArray();
 			break;
 		case "category":
 			rootCategory = CatalogMgr.getCategory(categoryID);

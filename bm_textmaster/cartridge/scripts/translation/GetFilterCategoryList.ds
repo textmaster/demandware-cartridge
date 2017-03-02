@@ -1,0 +1,68 @@
+/**
+*	Gets category checkbox list for item filter 
+*
+*	@input CatalogID: String
+*	@input CategoryID: String
+*	@input ItemType: String
+*	@input ItemList: Array
+*
+*	@output CategoryList: Array
+*
+*/
+
+// API Includes
+var CatalogMgr 		= require('dw/catalog/CatalogMgr');
+	
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+// Global variables
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number {
+	var catalog, rootCategory, item,
+		items = pdict.ItemList,
+		subCategories = [];
+	
+	log = LogUtils.getLogger("GetCategoryList");
+	pdict.CategoryList = [];
+	
+	if(pdict.ItemType == "content" || (!pdict.CatalogID && !pdict.CategoryID)){
+		return PIPELET_NEXT;
+	}
+	
+	switch(pdict.ItemType){
+		case "product":
+			for each(item in items){
+				if(!(isCategoryExist(subCategories, item.primaryCategory))){
+					subCategories.push(item.primaryCategory);
+				}
+			}
+			break;
+		case "category":
+			rootCategory = CatalogMgr.getCategory(pdict.CategoryID);
+			subCategories.push(rootCategory);
+			subCategories.push.apply(subCategories, Utils.getFilterSubCategories(rootCategory));
+			break;
+	}
+	
+	pdict.CategoryList = subCategories;
+	
+	return PIPELET_NEXT;
+}
+
+/*
+*	Check category already exists in category list
+*/
+function isCategoryExist(categoryList, category){
+	var cat;
+	
+	for each(cat in categoryList){
+		if(cat.ID == category.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}

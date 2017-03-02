@@ -2,7 +2,6 @@
 *	Gets category dropdown list of a catalog
 *
 *	@input CatalogID: String
-*	@input CategoryID: String
 *
 *	@output CategoryList: Array
 *
@@ -26,7 +25,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 	
 	if(pdict.CatalogID){
 		catalog = CatalogMgr.getCatalog(pdict.CatalogID);
-		rootCategory = pdict.CategoryID ? CatalogMgr.getCategory(pdict.CategoryID) : catalog.getRoot();
+		rootCategory = catalog.getRoot();
 		subCategories = Utils.getAllSubCategories(rootCategory);
 		pdict.CategoryList = subCategories;
 	}
