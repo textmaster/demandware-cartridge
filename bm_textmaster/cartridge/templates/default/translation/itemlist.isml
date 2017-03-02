@@ -74,9 +74,9 @@
 	        		<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	</isif>
 	            <isif condition="${pdict.ItemType != 'content'}">
-	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${pdict.ItemType == 'category' ? item.parent.displayName :(item.primaryCategory ? item.primaryCategory.displayName : "")}</label></td>
+	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${pdict.ItemType == 'category' ? item.parent.displayName :(item.primaryCategory ? item.primaryCategory.displayName : '')}</label></td>
 	            </isif>
-	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ""}</label></td>
+	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
 	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
 	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${pdict.ItemType+'-'+item.ID}">${lastModifiedDate}</label></td>

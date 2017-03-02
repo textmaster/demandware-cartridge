@@ -11,7 +11,7 @@
 */
 
 // API Includes
-var CatalogMgr 		= require('dw/catalog/CatalogMgr');
+var CatalogMgr = require('dw/catalog/CatalogMgr');
 	
 // Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
