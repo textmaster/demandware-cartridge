@@ -197,7 +197,6 @@
 	overflow-x: hidden;
     overflow-y: auto;
     min-height: 400px;
-    max-height: 800px;
 }
 .new-translation #items-holder .item-label {
 	display:block;
@@ -324,11 +323,17 @@
 }
 
 /* Responsive */
+@media screen and (max-width:2732px){
+	.new-translation #items-holder .item-label {
+	    white-space: nowrap;
+	    text-overflow: ellipsis;
+	    max-width: 450px;
+	    overflow: hidden;
+	}
+}
+
 @media screen and (max-width:1400px){
 	.new-translation #items-holder .item-label {
-		white-space: nowrap;
-	    text-overflow: ellipsis;
 	    max-width: 235px;
-	    overflow: hidden;
 	}
 }
