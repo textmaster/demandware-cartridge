@@ -39,6 +39,7 @@
     background: white;
     z-index: 2000;
     border: 1px solid #aaa;
+    max-height: 200px !important;
 }
 
 .ms-options-wrap > .ms-options > .ms-search input {

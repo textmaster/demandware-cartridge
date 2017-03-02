@@ -65,14 +65,12 @@
 			</div>
 			<div class="field-holder category">
 				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-category">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-					</select>
+				<div class="input-holder category">
+					<ul class="multi-select select-category"></ul>
 				</div>
 			</div>
 			<div class="field-holder button-holder left">
-				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.category','textmaster',null)}</span>
 			</div>
 		</div>
 		<div class="form-holder relative items">

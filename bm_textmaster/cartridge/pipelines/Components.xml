@@ -69,9 +69,9 @@
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="CatalogID"/>
           <key-binding alias="CategoryList" key="CategoryList"/>
-          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="CategoryID"/>
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
           <key-binding alias="ItemList" key="ItemList"/>
+          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="CategoryIDs"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b3" source-connector="error">

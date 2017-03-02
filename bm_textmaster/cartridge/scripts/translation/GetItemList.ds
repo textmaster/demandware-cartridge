@@ -25,8 +25,9 @@ var log;
 function execute( pdict : PipelineDictionary ) : Number {
 	var itemType = pdict.ItemType,
 		catalog = pdict.Catalog ? CatalogMgr.getCatalog(pdict.Catalog) : null,
-		categoryID = pdict.Category ? pdict.Category : (catalog ? catalog.getRoot().ID : null),
-		products, category, product, items = [], rootCategory, subCategories, library, rootContentFolder, subContentFolders = [], subContentFolder, contents, output = [];
+		categoryIDs = pdict.Category ? pdict.Category.split(",") : (catalog ? [catalog.getRoot().ID] : []),
+		products, category, product, items = [], rootCategory, subCategories = [], library, rootContentFolder, subContentFolders = [],
+		subContentFolder, contents, output = [], allCategories = [], categoryID;
 	
 	log = LogUtils.getLogger("GetItemList");
 	pdict.Type = pdict.ItemType;
@@ -40,13 +41,28 @@ function execute( pdict : PipelineDictionary ) : Number {
 	/* Populate item list according to the itemType selected */
 	switch(itemType){
 		case "product":
-			category = CatalogMgr.getCategory(categoryID);
-			products = category.getProducts();
-			items = products.toArray();
+			for each(categoryID in categoryIDs){
+				category = CatalogMgr.getCategory(categoryID);
+				allCategories.push(category);
+				allCategories.push.apply(allCategories, Utils.getAllSubCategories(category));
+			}
+			
+			for each(category in allCategories){
+				products = category.getProducts();
+				items.push.apply(items, products.toArray());
+			}
 			break;
 		case "category":
-			rootCategory = CatalogMgr.getCategory(categoryID);
-			items = Utils.getAllSubCategories(rootCategory);
+			for each(categoryID in categoryIDs){
+				rootCategory = CatalogMgr.getCategory(categoryID);
+				subCategories = Utils.getAllSubCategories(rootCategory);
+				
+				for each(category in subCategories){
+					if(!(Utils.isCategoryExistInList(items, category))){
+						items.push(category);
+					}
+				}
+			}
 			break;
 		case "content":
 			library = ContentMgr.siteLibrary;

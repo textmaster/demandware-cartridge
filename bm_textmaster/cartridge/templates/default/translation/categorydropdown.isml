@@ -1,8 +1,10 @@
 <!--- TEMPLATENAME: categorylist.isml --->
 <!--- For ajax call on getting category list of a catalog --->
 
-<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-
-<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
-	<option value="${category.ID}">${category.displayName}</option>
-</isloop>
+<ul class="multi-select select-category">
+	<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
+		<li>
+			<input type="checkbox" name="category[]" id="category-${category.ID}" value="${category.ID}"><label class="checkbox-label" for="category-${category.ID}">${category.displayName}</label>
+		</li>
+	</isloop>
+</ul>

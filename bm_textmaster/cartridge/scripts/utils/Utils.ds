@@ -308,6 +308,26 @@ Utils.getFilterSubCategories = function(root){
 	return output;
 }
 
+
+/*
+*	Check category already exists in category list
+*/
+Utils.isCategoryExistInList = function(categoryList, category){
+	var cat;
+	
+	if(category == null){
+		return true;
+	}
+	
+	for each(cat in categoryList){
+		if(cat.ID == category.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 /*
 *	Gets name of the locale if locale ID is passed
 */

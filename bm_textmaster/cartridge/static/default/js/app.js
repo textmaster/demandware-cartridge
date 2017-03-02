@@ -73,11 +73,12 @@
 					$('#items-holder').html('');
 				});
 				
-				$('select[name=catalog]').on('change',function(){
+				$('select[name="catalog"]').on('change',function(){
 					catalog = $(this).val();
+					$('ul.select-category').html('');
 					url = app.urls.categoryDropdown + "?catalog=" + catalog;
 					$.get(url, function(data){
-						$('select[name=filter-category]').html(data);
+						$('.input-holder.category').html(data);
 					});
 					$(this).removeClass('error-field');
 				});
@@ -101,13 +102,19 @@
 					var searchText = $(this).val(),
 						itemType = $('select[name=item-type]').val(),
 						catalog = $('select[name=catalog]').val(),
-						category = $('select[name=filter-category]').val(),
+						category = [],
 						error = false,
-						postData = {
-							itemType: itemType,
-							catalog: catalog,
-							category: category
-						};
+						postData;
+					
+					$('input[type="checkbox"][name="category[]"]:checked').each(function(){
+						category.push($(this).val());
+					});
+					
+					postData = {
+						itemType: itemType,
+						catalog: catalog,
+						category: category.join(",")
+					};
 					
 					if(itemType == ""){
 						$('select[name=item-type]').addClass('error-field');
@@ -118,8 +125,7 @@
 							$('select[name=catalog]').addClass('error-field');
 							error = true;
 						}
-						if(category == ""){
-							$('select[name=filter-category]').addClass('error-field');
+						if(category.length == 0){
 							error = true;
 						}
 					}
