@@ -10,8 +10,8 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
     <thead>
     	<th class="table_header center n e s w" width="8%"></th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.id','textmaster',null)}</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.name','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.id','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.name','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.online.flag','textmaster',null)}</th>
     	<isif condition="${pdict.ItemType != 'category'}">
     		<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.search.status','textmaster',null)}</th>
@@ -19,8 +19,8 @@
     	<isif condition="${pdict.ItemType != 'content'}">
     		<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.category','textmaster',null)}</th>
     	</isif>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.language','textmaster',null)}</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.date','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.languages','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.date','textmaster',null)}</th>
     </thead>
     <tfoot>
             <tr>
