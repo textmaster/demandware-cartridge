@@ -61,51 +61,19 @@
 		</div>
 		<div class="form-holder filter-items">
 			<div class="field-holder title-holder">
-				<h2>${Resource.msg('translation.filter.items','textmaster',null)}</h2>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">${Resource.msg('translation.online.flag','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-online-flag">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder search-status">
-				<div class="label-holder">${Resource.msg('translation.search.status','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-search-status">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
-				</div>
+				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder category">
 				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-category">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-					</select>
-				</div>
-			</div>
-			<div class="field-holder">
-				<div class="label-holder">${Resource.msg('translation.translated.flag','textmaster',null)}: </div>
-				<div class="input-holder">
-					<select name="filter-translated">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
-						<option value="yes">${Resource.msg('general.yes','textmaster',null)}</option>
-						<option value="no">${Resource.msg('general.no','textmaster',null)}</option>
-					</select>
+				<div class="input-holder category">
+					<ul class="multi-select select-category"></ul>
 				</div>
 			</div>
 			<div class="field-holder button-holder left">
-				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.mandatory.missing','textmaster',null)}</span>
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.category','textmaster',null)}</span>
 			</div>
 		</div>
-		<div class="form-holder">
+		<div class="form-holder relative items">
 			<div class="field-holder title-holder">
 				<h2>${Resource.msg('translation.select.items','textmaster',null)}</h2>
 			</div>
@@ -114,6 +82,7 @@
 				<input type="button" id="button-select-all" value="${Resource.msg('general.select.all','textmaster',null)}">
 				<input type="button" id="button-deselect-all" value="${Resource.msg('general.deselect.all','textmaster',null)}">
 			</div>
+			<div class="ajax-loader"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}"></div>
 		</div>
 		<div class="submit-error"></div>
 		<div class="right">

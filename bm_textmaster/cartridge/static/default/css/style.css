@@ -133,6 +133,25 @@
 .translation-module .capitalize {
 	text-transform: capitalize;
 }
+.translation-module .relative {
+	position: relative;
+}
+.translation-module .relative .ajax-loader {
+    display:none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.8);
+}
+.translation-module .relative .ajax-loader.show {
+	display:block;
+}
+.translation-module .relative .ajax-loader img {
+	margin:100px auto;
+	display:block;
+}
 .translation-module .button.main-action,
 .translation-module input[type=button].main-action {
 	font-size: 18px;
@@ -177,7 +196,7 @@
 	padding: 0 5px 5px;
 	overflow-x: hidden;
     overflow-y: auto;
-    max-height: 260px;
+    min-height: 400px;
 }
 .new-translation #items-holder .item-label {
 	display:block;
@@ -201,6 +220,10 @@
 .new-translation .filter-items .field-holder.hide {
 	display: none;
 }
+.ms-options-wrap > .ms-options > ul label {
+	text-align: left;
+	padding-left:10px;
+}
 .new-translation .submit-error {
     overflow: hidden;
 }
@@ -215,6 +238,25 @@
 }
 .new-translation .show-default-attributes.show {
 	display: block;
+}
+.translation-module .new-translation #items-holder input[type=text],
+.translation-module .new-translation #items-holder select {
+	min-width:initial;
+}
+.translation-module .new-translation #items-holder input[type=text] {
+	padding:4px 2px;
+}
+.translation-module input[type=text]#datefield {
+	min-width:70px;
+}
+#filtertableProjects tfoot {
+	display: table-header-group;
+}
+#filtertableProjects tfoot tr th {
+	border-bottom: 1px solid #dadada;
+}
+#filtertableProjects tfoot tr th div button{
+	min-width:150px;
 }
 
 /* Follow up page */
@@ -278,4 +320,20 @@
 .registration .success-message.show,
 .default-attributes .success-message.show {
 	display:block;
+}
+
+/* Responsive */
+@media screen and (max-width:2732px){
+	.new-translation #items-holder .item-label {
+	    white-space: nowrap;
+	    text-overflow: ellipsis;
+	    max-width: 450px;
+	    overflow: hidden;
+	}
+}
+
+@media screen and (max-width:1400px){
+	.new-translation #items-holder .item-label {
+	    max-width: 235px;
+	}
 }
