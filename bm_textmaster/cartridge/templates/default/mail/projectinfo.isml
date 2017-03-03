@@ -5,6 +5,28 @@
 <head>
 </head>
 <body>
-    ${pdict.MailInfos.text}
+	<table cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td>
+				<table cellpadding="10" cellspacing="0" width="500px" align="center" style="border:4px solid #C74228;">
+					<tr>
+						<td>
+							${pdict.MailInfos.content.text}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							${Resource.msg("mail.wordcount","textmaster",null)}: ${pdict.MailInfos.content.wordCount}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							${Resource.msg("mail.weightedwordcount","textmaster",null)}: ${pdict.MailInfos.content.weightedWordCount}
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
 </body>
 </html>

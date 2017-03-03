@@ -39,7 +39,6 @@ function execute( pdict : PipelineDictionary ) : Number
    				doc.item_type = project.custom_data.itemType;
    				doc.locale = Utils.getLocaleName(project.language_to_code);
    				actions = [];
-   				doc.completed = false;
    				
    				switch(doc.status.toLowerCase()){
    					case "in_creation":
@@ -60,10 +59,6 @@ function execute( pdict : PipelineDictionary ) : Number
    							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
    						});
    						break;
-   				}
-   				
-   				if(doc.status.toLowerCase() == "completed"){
-   					doc.completed = true;
    				}
    				
    				doc.actions = actions;

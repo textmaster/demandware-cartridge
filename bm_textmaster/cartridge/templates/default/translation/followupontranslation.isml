@@ -5,7 +5,8 @@
 <script src="${URLUtils.staticURL('/js/jquery.dataTables.js')}"></script>
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
 <isscript>
-	var completed = 0;
+	var creation = 0, progress = 0, review = 0, completed = 0,
+		total = pdict.Documents.length;
 </isscript>
 <isbreadcrumbs bcurl1="${URLUtils.url('Translation-FollowUp')}" bctext1="Follow Up" />
 <div class="followup">
@@ -39,13 +40,43 @@
 				</td>
 			</tr>
 			<isscript>
-				if(document.completed){
-					completed++;
+				switch(document.status.toLowerCase()){
+					case "in_creation":
+						creation++;
+						break;
+					case "in_progress":
+						progress++;
+						break;
+					case "in_review":
+						review++;
+						break;
+					case "completed":
+						completed++;
+						break;
 				}
 			</isscript>
 		</isloop>
 	</table>
-	<div class="completed-items">Number of items completed: ${Number(completed).toFixed()}</div>
+	<div class="status-diagram">
+		<table cellpadding="0" cellspacing="1" width="100%" align="center">
+			<thead>
+				<tr>
+					<th>${Resource.msg("follow.status.in_creation","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_progress","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_review","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.completed","textmaster",null)}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${Number((creation/total)*100).toFixed()}%</td>
+					<td>${Number((progress/total)*100).toFixed()}%</td>
+					<td>${Number((review/total)*100).toFixed()}%</td>
+					<td>${Number((completed/total)*100).toFixed()}%</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <script>
