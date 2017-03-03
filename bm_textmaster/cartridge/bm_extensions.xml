@@ -31,7 +31,7 @@
 			<pipeline name="Components-CreateTranslation" />
 			<pipeline name="Components-GetLanguageToList" />
 		</sub-pipelines>
-		<icon>icons/tm_new_project.gif</icon>
+		<icon>icons/tm_new_project.png</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction2" menupath="textmastermenuitem1" position="1000" site="true">
@@ -46,7 +46,7 @@
 		<sub-pipelines>
 			<pipeline name="Translation-FollowUp" />
 		</sub-pipelines>
-		<icon>icons/tm_dashboard.gif</icon>
+		<icon>icons/tm_dashboard.png</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
@@ -63,7 +63,7 @@
 			<pipeline name="Components-AttributeList" />
 			<pipeline name="Components-SaveDefaultAttributes" />
 		</sub-pipelines>
-		<icon>icons/tm_attribute_setup.gif</icon>
+		<icon>icons/tm_attribute_setup.png</icon>
 	</menuaction>
 	
 	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
@@ -79,6 +79,6 @@
 			<pipeline name="Translation-Register" />
 			<pipeline name="Components-SaveAPIConfigurations" />
 		</sub-pipelines>
-		<icon>icons/tm_api_setup.gif</icon>
+		<icon>icons/tm_api_setup.png</icon>
 	</menuaction>
 </extensions>
