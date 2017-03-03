@@ -246,8 +246,27 @@
 .translation-module .new-translation #items-holder input[type=text] {
 	padding:4px 2px;
 }
-.translation-module input[type=text]#datefield {
+.translation-module .new-translation input[type=text]#datefield {
 	min-width:70px;
+}
+.translation-module .new-translation ul.multi-select.select-category li:last-of-type {
+	border-top: 1px solid #efefef;
+    padding-top: 5px;
+}
+.translation-module .new-translation ul.multi-select.select-category li:last-of-type label:after {
+	content: '\00a1';
+	color:#ffffff;
+    display: inline-block;
+    margin-left: 3px;
+    width: 10px;
+    height: 10px;
+    background-color: #cccccc;
+    border-radius: 50%;
+    font-size: 9px;
+    text-align: center;
+    padding: 1px 1px 2px 2px;
+    position: relative;
+    top: -2px;
 }
 #filtertableProjects tfoot {
 	display: table-header-group;
@@ -269,8 +288,26 @@
     color: #00629B;
     margin: 0;
 }
-.followup .completed-items{
-	text-align:center;
+.followup .status-diagram {
+	padding-bottom:10px;
+	margin-bottom:10px;
+	border-bottom:1px solid #DADADA;
+}
+.followup .status-diagram table {
+	background-color: #dedede;
+	max-width: 50%;
+}
+.followup .status-diagram table th {
+	background-color: #efefef;
+	padding:5px;
+	font-weight: normal;
+}
+.followup .status-diagram table td {
+    text-align: center;
+    padding: 4px;
+    background-color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 /* Place order page */

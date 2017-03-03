@@ -19,9 +19,10 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 
 function execute( pdict : PipelineDictionary ) : Number
 {  
-    var projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + pdict.TMProject.custom.projectid;
+    var projectID = pdict.TMProject.custom.projectid;
+    var projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
     var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
-    var mail = null, costs = 0, currency="";
+    var mail = null, mContent = {}, projectOptions = {}, updateRequest, costs = 0, currency = "", wordCount = 0;
   
     if (projectResult != null) {
   	  var userEndPoint = Resource.msg("api.get.user","textmaster",null);
@@ -31,16 +32,32 @@ function execute( pdict : PipelineDictionary ) : Number
   	    costs = projectResult.total_costs[0].amount;
   	    currency = projectResult.total_costs[0].currency;
   	  }
+  	  
+  	  wordCount = projectResult.total_word_count;
+  	  projectOptions = projectResult.options;
+  	  projectOptions.translation_memory = true;
+  	  
+  	  updateRequest = {
+			"project": {
+				"options": projectOptions
+			}
+	  }
+	  
+	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
  
-      mail = {};
+	  mail = {};
   	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
   	  mail.to = userResult.email;
-  	  mail.subject = "TextMaster: Quotation for " + projectResult.name; 
-  	  mail.text = "Project " + projectResult.name + " (" + projectResult.id + ") will cost you " 
+  	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
+  	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
   	      + costs.toFixed(2) + currency
-  	      + ". Please go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
-  	      + projectResult.id + "/edit to check your project and launch it."; 
-    }      	  
+  	      + ".\n\nPlease go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
+  	      + projectResult.id + "/edit to check your project and launch it.";
+  	  mContent.wordCount = wordCount; /* total_word_count before updating the project */
+  	  mContent.weightedWordCount = projectResult.total_word_count;
+  	  
+  	  mail.content = mContent;
+    }
   	
     pdict.MailInfos = mail;
 

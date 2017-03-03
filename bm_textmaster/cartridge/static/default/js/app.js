@@ -52,7 +52,7 @@
 					else{
 						$('.field-holder.catalog-list').removeClass("show");
 						$("select[name=catalog] option[value='']").prop("selected",true);
-						$("select[name=filter-category] option[value!='']").remove();
+						$('ul.select-category').html('');
 						$('.filter-items .category').addClass('hide');
 					}
 					
@@ -70,12 +70,14 @@
 					});
 					
 					$(this).removeClass('error-field');
+					$('.common-error.search').removeClass('show');
 					$('#items-holder').html('');
 				});
 				
 				$('select[name="catalog"]').on('change',function(){
 					catalog = $(this).val();
 					$('ul.select-category').html('');
+					$('.common-error.search').removeClass('show');
 					url = app.urls.categoryDropdown + "?catalog=" + catalog;
 					$.get(url, function(data){
 						$('.input-holder.category').html(data);
@@ -83,8 +85,13 @@
 					$(this).removeClass('error-field');
 				});
 				
-				$('select[name=filter-category]').on('change',function(){
-					$(this).removeClass('error-field');
+				$('.input-holder.category').on('click', '#category-select-all', function(){
+					if($(this).is(':checked')){
+						$('input[name="category[]"]').prop("checked",true);
+					}
+					else{
+						$('input[name="category[]"]').prop("checked",false);
+					}
 				});
 				
 				$('.new-translation').on('click', '.show-all-attributes input[type=button]', function(){
@@ -380,8 +387,7 @@
 				});
 			},
 			followup: function(){
-				$('.completed-items').insertAfter('.followup h1');
-				//$('.completed-items')
+				$('.status-diagram').insertAfter('.followup h1');
 			},
 			utils: {
 				firstLetterCapital: function(str){
