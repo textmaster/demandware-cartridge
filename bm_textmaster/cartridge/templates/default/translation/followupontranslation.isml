@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
 <isscript>
 	var creation = 0, progress = 0, review = 0, completed = 0,
-		total = pdict.Documents.length;
+		total = pdict.Documents.length || 1;
 </isscript>
 <isbreadcrumbs bcurl1="${URLUtils.url('Translation-FollowUp')}" bctext1="Follow Up" />
 <div class="followup">
