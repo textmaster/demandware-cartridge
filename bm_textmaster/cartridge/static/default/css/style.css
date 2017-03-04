@@ -306,8 +306,18 @@
     text-align: center;
     padding: 4px;
     background-color: #ffffff;
-    font-size: 18px;
+}
+.followup .status-diagram table td span {
+	display: block;
+}
+.followup .status-diagram table td span.percent {
+	font-size: 18px;
     font-weight: bold;
+}
+.followup .status-diagram table td span.count {
+	background-color: #dedede;
+    color: #ffffff;
+    padding: 1px 0 0px;
 }
 
 /* Place order page */

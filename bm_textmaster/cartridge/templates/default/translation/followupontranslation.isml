@@ -69,10 +69,22 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td>${Number((creation/total)*100).toFixed()}%</td>
-					<td>${Number((progress/total)*100).toFixed()}%</td>
-					<td>${Number((review/total)*100).toFixed()}%</td>
-					<td>${Number((completed/total)*100).toFixed()}%</td>
+					<td>
+						<span class="percent">${Number((creation/total)*100).toFixed()}%</span>
+						<span class="count">${Number(creation).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((progress/total)*100).toFixed()}%</span>
+						<span class="count">${Number(progress).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((review/total)*100).toFixed()}%</span>
+						<span class="count">${Number(review).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((completed/total)*100).toFixed()}%</span>
+						<span class="count">${Number(completed).toFixed()}</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
