@@ -94,7 +94,7 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
-				<default-value>[{"id":"zh","name":"Chinese"},{"id":"zh-cn","name":"Chinese (China)"},{"id":"nl","name":"Dutch"},{"id":"en","name":"English"},{"id":"en-ca","name":"English (Canada)"},{"id":"en-gb","name":"English (United Kingdom)"},{"id":"en-us","name":"English (United States)"},{"id":"fr","name":"French"},{"id":"fr-ca","name":"French (Canada)"},{"id":"fr-fr","name":"French (France)"},{"id":"de","name":"German"},{"id":"de-de","name":"German (Germany)"},{"id":"it","name":"Italian"},{"id":"it-it","name":"Italian (Italy)"},{"id":"ja","name":"Japanese"},{"id":"ja-jp","name":"Japanese (Japan)"},{"id":"es","name":"Spanish"}]</default-value>
+                <default-value>[{"id":"zh","name":"Chinese"},{"id":"zh-cn","name":"Chinese (China)"},{"id":"nl","name":"Dutch"},{"id":"en","name":"English"},{"id":"en-ca","name":"English (Canada)"},{"id":"en-gb","name":"English (United Kingdom)"},{"id":"en-us","name":"English (United States)"},{"id":"fr","name":"French"},{"id":"fr-ca","name":"French (Canada)"},{"id":"fr-fr","name":"French (France)"},{"id":"de","name":"German"},{"id":"de-de","name":"German (Germany)"},{"id":"it","name":"Italian"},{"id":"it-it","name":"Italian (Italy)"},{"id":"ja","name":"Japanese"},{"id":"ja-jp","name":"Japanese (Japan)"},{"id":"es","name":"Spanish"}]</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMProductAttributes">
                 <display-name xml:lang="x-default">TextMaster Product Attributes</display-name>
