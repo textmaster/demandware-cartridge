@@ -84,25 +84,9 @@ Utils.getFileNameExtension = function(fileName : String){
 *	Gets Demandware languages in JSON
 */
 Utils.getDWLanguages = function(){
-	return [
-		{id:"zh",name:"Chinese"},
-		{id:"zh-cn",name:"Chinese (China)"},
-		{id:"nl",name:"Dutch"},
-		{id:"en",name:"English"},
-		{id:"en-ca",name:"English (Canada)"},
-		{id:"en-gb",name:"English (United Kingdom)"},
-		{id:"en-us",name:"English (United States)"},
-		{id:"fr",name:"French"},
-		{id:"fr-ca",name:"French (Canada)"},
-		{id:"fr-fr",name:"French (France)"},
-		{id:"de",name:"German"},
-		{id:"de-de",name:"German (Germany)"},
-		{id:"it",name:"Italian"},
-		{id:"it-it",name:"Italian (Italy)"},
-		{id:"ja",name:"Japanese"},
-		{id:"ja-jp",name:"Japanese (Japan)"},
-		{id:"es",name:"Spanish"}
-	];
+	var languages = Site.getCurrent().getCustomPreferenceValue('TMDemandwareLanguages').toString() || "[]";
+	languages = JSON.parse(languages);
+	return languages;
 }
 
 /*

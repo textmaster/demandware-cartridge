@@ -217,9 +217,6 @@
 .new-translation .common-error.show {
 	display: inline;
 }
-.new-translation .filter-items .field-holder.hide {
-	display: none;
-}
 .ms-options-wrap > .ms-options > ul label {
 	text-align: left;
 	padding-left:10px;
@@ -238,6 +235,12 @@
 }
 .new-translation .show-default-attributes.show {
 	display: block;
+}
+.new-translation .field-holder.category {
+	display:none;
+}
+.new-translation .field-holder.category.show {
+	display:block;
 }
 .translation-module .new-translation #items-holder input[type=text],
 .translation-module .new-translation #items-holder select {

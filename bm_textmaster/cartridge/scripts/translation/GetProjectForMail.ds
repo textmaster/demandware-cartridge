@@ -37,6 +37,7 @@ function execute( pdict : PipelineDictionary ) : Number
   	  projectOptions = projectResult.options;
   	  projectOptions.translation_memory = true;
   	  
+  	  // update project to add translation_memory: true
   	  updateRequest = {
 			"project": {
 				"options": projectOptions
