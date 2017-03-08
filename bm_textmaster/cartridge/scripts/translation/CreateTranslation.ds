@@ -120,21 +120,11 @@ function execute( pdict : PipelineDictionary ) : Number
 			documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
 		}
 		
-		/*
-		// update project to add translation_memory: true
 		if(langTo.autoLaunch){
-			updateRequest = {
-				"project": {
-					"options": {
-						language_level: Resource.msg("constant.enterprise","textmaster",null),
-						translation_memory: true
-					}
-				}
-			}
-			
-			projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
-			projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
-		}*/
+			// finalize project
+			projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+			projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+		}
 	}
 	
 	// Returns project ID if only one project is created. On result page template this project ID is used to go to TextMaster specific project page. Else to go to project list page. 
