@@ -35,6 +35,12 @@
 					</select>
 				</div>
 			</div>
+			<div class="field-holder category">
+				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
+				<div class="input-holder category">
+					<ul class="multi-select select-category"></ul>
+				</div>
+			</div>
 			<div class="field-holder">
 				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
 				<div class="input-holder">
@@ -62,12 +68,6 @@
 		<div class="form-holder filter-items">
 			<div class="field-holder title-holder">
 				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
-			</div>
-			<div class="field-holder category">
-				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
-				<div class="input-holder category">
-					<ul class="multi-select select-category"></ul>
-				</div>
 			</div>
 			<div class="field-holder button-holder left">
 				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.category','textmaster',null)}</span>

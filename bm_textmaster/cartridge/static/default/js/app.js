@@ -47,13 +47,13 @@
 					itemType = this.value;
 					if($(this).val() == "product" || $(this).val() == "category"){
 						$('.field-holder.catalog-list').addClass("show");
-						$('.filter-items .category').removeClass('hide');
+						$('.category').addClass('show');
 					}
 					else{
 						$('.field-holder.catalog-list').removeClass("show");
 						$("select[name=catalog] option[value='']").prop("selected",true);
 						$('ul.select-category').html('');
-						$('.filter-items .category').addClass('hide');
+						$('.category').removeClass('show');
 					}
 					
 					postData = {itemType: app.utils.firstLetterCapital(itemType)};
@@ -266,9 +266,11 @@
 							localeTo = transParams.localeTo[count];
 							templateSelect = $('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find("select");
 							transParams.localeTo[count].template = templateSelect.val();
+							transParams.localeTo[count].autoLaunch = false;
 							
 							if(templateSelect.find("option:selected").attr('data-auto-launch') == "true"){
 								autoLaunchCount++;
+								transParams.localeTo[count].autoLaunch = true;
 							}
 							else{
 								noAutoLaunchCount++;

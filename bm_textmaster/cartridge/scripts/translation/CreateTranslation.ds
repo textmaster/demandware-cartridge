@@ -32,7 +32,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		items = JSON.parse(JSON.parse(pdict.Items)),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "", documents, document, documentPostData,
-		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData, projectIDs = [];
+		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
@@ -118,6 +118,12 @@ function execute( pdict : PipelineDictionary ) : Number
 			documentPostData.documents = documents;
 			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
 			documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
+		}
+		
+		if(langTo.autoLaunch){
+			// finalize project
+			projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+			projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
 		}
 	}
 	
