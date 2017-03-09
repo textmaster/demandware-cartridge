@@ -17,13 +17,18 @@ importClass( dw.web.Resource );
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 	Utils = require('~/cartridge/scripts/utils/Utils');
 
+/* Global variable */
+var log;
+
 function execute( pdict : PipelineDictionary ) : Number
 {  
     var projectID = pdict.TMProject.custom.projectid;
     var projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
     var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
     var mail = null, mContent = {}, projectOptions = {}, updateRequest, costs = 0, currency = "", wordCount = 0;
-  
+    
+    log = LogUtils.getLogger("AskForQuote");
+    
     if (projectResult != null) {
   	  var userEndPoint = Resource.msg("api.get.user","textmaster",null);
   	  var userResult = Utils.TextMasterClient("GET", userEndPoint);
@@ -37,6 +42,10 @@ function execute( pdict : PipelineDictionary ) : Number
   	  projectOptions = projectResult.options;
   	  projectOptions.translation_memory = true;
   	  
+  	  // finalize project
+  	  projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+  	  
   	  // update project to add translation_memory: true
   	  updateRequest = {
 			"project": {
@@ -44,16 +53,18 @@ function execute( pdict : PipelineDictionary ) : Number
 			}
 	  }
 	  
+	  projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
 	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
- 
+
 	  mail = {};
   	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
   	  mail.to = userResult.email;
   	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
   	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
   	      + costs.toFixed(2) + currency
-  	      + ".\n\nPlease go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
+  	      + ". Please go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
   	      + projectResult.id + "/edit to check your project and launch it.";
+  	  mContent.firstName = userResult.contact_information.first_name;
   	  mContent.wordCount = wordCount; /* total_word_count before updating the project */
   	  mContent.weightedWordCount = projectResult.total_word_count;
   	  
