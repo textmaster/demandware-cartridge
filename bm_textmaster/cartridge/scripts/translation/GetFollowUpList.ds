@@ -44,19 +44,19 @@ function execute( pdict : PipelineDictionary ) : Number
    					case "in_creation":
    						actions.push({
    							text: Resource.msg("follow.action.view.project","textmaster",null),
-   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
    						});
    						break;
    					case "in_progress":
    						actions.push({
    							text: Resource.msg("follow.action.view.document","textmaster",null),
-   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
    						});
    						break;
    					case "in_review":
    						actions.push({
    							text: Resource.msg("follow.action.revision","textmaster",null),
-   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
    						});
    						break;
    					case "incomplete":
