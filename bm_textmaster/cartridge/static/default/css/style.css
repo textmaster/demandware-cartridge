@@ -372,6 +372,15 @@
 	display:block;
 }
 
+/* Quote */
+.quote .notification {
+	text-align:center;
+}
+.quote .notification .form-holder {
+	display: inline-block;
+	margin:10px auto;
+	padding:10px 50px;
+}
 /* Responsive */
 @media screen and (max-width:2732px){
 	.new-translation #items-holder .item-label {
