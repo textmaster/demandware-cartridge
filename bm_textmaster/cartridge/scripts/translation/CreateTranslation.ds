@@ -106,7 +106,7 @@ function execute( pdict : PipelineDictionary ) : Number
 				
 				document.title = itemType +"-"+ i;
 				document.original_content = JSON.stringify(itemData);
-				document.word_count = Utils.getWordCount(document.original_content);
+				document.perform_word_count = true;
 				document.custom_data = {
 					id: item.ID,
 					name: (itemType == "category" ? item.displayName : item.name)
