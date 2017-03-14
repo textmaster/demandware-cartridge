@@ -4,7 +4,7 @@
 
 <isscript>
 	var Utils = require('~/cartridge/scripts/utils/Utils'),
-	    languages = Utils.getLanguageFromList();
+	    languages = Utils.getTranslationLanguages();
 </isscript>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
@@ -55,7 +55,7 @@
                 <th>
                     <select multiple="multiple" id="languagefield">
                         <isloop items="${languages}" var="lang" status="loopstate">
-							<option value="${lang.id}">${Utils.getLocaleName(lang.id)}</option>
+							<option value="${Utils.toDemandwareLocaleID(lang.id)}">${Utils.getLocaleName(lang.id)}</option>
 						</isloop>
                     </select>
                 </th>

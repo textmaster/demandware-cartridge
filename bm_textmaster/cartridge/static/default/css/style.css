@@ -322,7 +322,18 @@
     color: #ffffff;
     padding: 1px 0 0px;
 }
-
+.followup table td.action {
+	position:relative;
+}
+.followup span.tooltip {
+	position: absolute;
+    right: 0;
+    top: -20px;
+    white-space: nowrap;
+    padding: 5px 10px;
+    color: #ffffff;
+    background-color: #666666;
+}
 /* Place order page */
 .place-order .attribute-list {
 	display: inline-block;

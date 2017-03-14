@@ -31,10 +31,10 @@
 				<td class="table_detail e s capitalize">${document.item_type}</td>
 				<td class="table_detail e s left">${document.locale}</td>
 				<td class="table_detail e s">${document.status}</td>
-				<td class="table_detail e s left">
+				<td class="table_detail e s left action">
 					<ul>
 						<isloop items="${document.actions}" var="action" status="loopstate">
-							<li><a href="${action.link}" target="_blank">${action.text}</a></li>
+							<li><a ${action.link ? 'href="'+ action.link +'" target="_blank"' : 'class=review-link'} title="${action.title ? action.title : ''}">${action.text}</a></li>
 						</isloop>
 					</ul>
 				</td>

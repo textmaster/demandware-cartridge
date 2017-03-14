@@ -392,7 +392,17 @@
 				});
 			},
 			followup: function(){
+				var tooltip;
+				
 				$('.status-diagram').insertAfter('.followup h1');
+				
+				$('.followup').on("mousedown","a.review-link", function(){
+					tooltip = $(this).attr("title");
+					$(this).closest('li').append('<span class="tooltip">'+ tooltip +'</span>');
+				})
+				.on("mouseup","a.review-link", function(){
+					$('span.tooltip').remove();
+				});
 			},
 			utils: {
 				firstLetterCapital: function(str){

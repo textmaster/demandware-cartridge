@@ -48,6 +48,7 @@
                 <type>email</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
+                <default-value>noreply@textmaster.com</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMApiKey">
                 <display-name xml:lang="x-default">TextMaster API Key</display-name>

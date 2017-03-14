@@ -58,7 +58,8 @@ function execute( pdict : PipelineDictionary ) : Number
    					case "in_review":
    						actions.push({
    							text: Resource.msg("follow.action.revision","textmaster",null),
-   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+   							link: "",
+   							title: Resource.msg("review.tooltip." + doc.item_type,"textmaster",null)
    						});
    						break;
    					case "incomplete":
