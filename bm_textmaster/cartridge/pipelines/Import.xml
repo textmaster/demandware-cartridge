@@ -52,7 +52,7 @@
       </node>
       <simple-transition/>
       <node>
-        <decision-node condition-key="ProjectID != &quot;&quot;" condition-operator="expr"/>
+        <decision-node condition-key="ProjectID != &quot;&quot; &amp;&amp; DocumentID != &quot;&quot;" condition-operator="expr"/>
         <node-display x="0" y="1"/>
         <branch basename="b3" source-connector="yes">
           <transition target-connector="in"/>

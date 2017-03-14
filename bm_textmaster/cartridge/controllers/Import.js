@@ -23,24 +23,25 @@ var log;
 * Calls start method
 */
 function data(){
-	var RunJobNow, projectid, documentid, result = false, jobRunning;
+	var RunJobNow, jobName, projectid, documentid, result = false, jobRunning;
 	
 	log = logUtils.getLogger("ImportController");
 	projectid = request.httpParameterMap.get("projectid").value;
 	documentid = request.httpParameterMap.get("documentid").value;
+	jobName = Resource.msg("import.job.name","textmaster",null) + dw.system.Site.current.ID
 	
 	if(projectid && documentid){
 		jobRunning = setQuery(projectid, documentid);
 		
 		if(jobRunning == false){
 			RunJobNow = new Pipelet('RunJobNow').execute({
-				JobName: Resource.msg("import.job.name","textmaster",null)
+				JobName: jobName
 			});
 			
 			result = RunJobNow.result == 1;
 			
 			if(RunJobNow.result == 2){
-				log.error("Job '"+ Resource.msg("import.job.name","textmaster",null) +"' is not found or not enabled");
+				log.error("Job '"+ jobName +"' is not found or not enabled");
 			}
 		}
 		else{

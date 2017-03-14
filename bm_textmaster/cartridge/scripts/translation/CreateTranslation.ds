@@ -11,6 +11,7 @@
 */
 importPackage( dw.system );
 importPackage( dw.catalog );
+importPackage( dw.util );
 
 importClass( dw.web.Resource );
 importClass( dw.content.ContentMgr );
@@ -31,8 +32,10 @@ function execute( pdict : PipelineDictionary ) : Number
 		attributes = JSON.parse(JSON.parse(pdict.Attributes)),
 		items = JSON.parse(JSON.parse(pdict.Items)),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
-		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "", documents, document, documentPostData,
-		documentResult, documentEndPoint, item, itemData, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
+		calendarDate = Calendar(),
+		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "",
+		documentID = "", documents, document, documentPostData, documentResult, documentEndPoint, wordCount,
+		item, customData, itemData, contentValue, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
@@ -40,14 +43,14 @@ function execute( pdict : PipelineDictionary ) : Number
 		projectPostData = {};
 		project = {};
 		
-		project.name = itemType +"-from-"+ localeFrom.id +"-to-"+ langTo.id;
+		project.name = Utils.firstLetterCapital(itemType) +" - "+ langTo.template.name + " - " + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd') ;
 		project.ctype = Resource.msg("constant.translation","textmaster",null);
 		project.language_from = localeFrom.id;
 		project.language_to = langTo.id;
 		project.category = categoryCode;
 		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
 		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
-		project.api_template_id = langTo.template;
+		project.api_template_id = langTo.template.id;
 		project.custom_data = {
 			itemType: itemType,
 			catalogID: catalogID
@@ -66,7 +69,8 @@ function execute( pdict : PipelineDictionary ) : Number
 			documents = [];
 			
 			for each(i in items){
-				itemData = [];
+				customData = [];
+				itemData = {};
 				document = {};
 				
 				switch(itemType){
@@ -84,32 +88,47 @@ function execute( pdict : PipelineDictionary ) : Number
 				
 				for each(attr in attributes){
 					attrData = {};
+					contentValue = "";
 					
 					switch(itemType){
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									attrData.value = item.attributeModel.getValue(itemAttr);
+									contentValue = item.attributeModel.getValue(itemAttr);
+									
+									if(contentValue){
+										itemData[attr.id] = contentValue;
+									}
 								}
 							}
 							break;
 						case "content":
 						case "category":
-							attrData.value = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
+							contentValue = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
+							
+							if(contentValue){
+								itemData[attr.id] = contentValue;
+							}
 							break;
 					}
 					
-					attrData.id = attr.id;
-					attrData.type = attr.type;
-					itemData.push(attrData);
+					if(contentValue){
+						attrData.id = attr.id;
+						attrData.type = attr.type;
+						customData.push(attrData);
+					}
 				}
 				
 				document.title = itemType +"-"+ i;
-				document.original_content = JSON.stringify(itemData);
+				document.original_content = itemData;
+				document.type = Resource.msg("constant.key.value","textmaster",null);
 				document.perform_word_count = true;
 				document.custom_data = {
-					id: item.ID,
-					name: (itemType == "category" ? item.displayName : item.name)
+					item:{
+						id: item.ID,
+						name: (itemType == "category" ? item.displayName : item.name)
+					},
+					attribute:customData
 				};
 				
 				documents.push(document);
@@ -118,12 +137,37 @@ function execute( pdict : PipelineDictionary ) : Number
 			documentPostData.documents = documents;
 			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
 			documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
-		}
-		
-		if(langTo.autoLaunch){
-			// finalize project
-			projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
-			projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+			
+			if(documentResult){
+				for each(document in documentResult){
+					documentID = document.id;
+					// document edit
+					documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.get.documents","textmaster",null) + "/" + documentID;
+					
+					wordCount = 0;
+					for(var key in document.original_content){
+						wordCount += Utils.getWordCount(document.original_content[key].original_phrase)
+					}
+					
+					documentPostData = {
+						document: {
+							callback: {
+								in_review: {
+									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Import-Data?projectid="+ projectID +"&documentid="+ documentID
+								}
+							},
+							word_count: wordCount
+						}
+					};
+					documentResult = Utils.TextMasterClient("PUT",documentEndPoint, JSON.stringify(documentPostData));
+				}
+			}
+			
+			if(langTo.autoLaunch){
+				// finalize project
+				projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+				projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+			}
 		}
 	}
 	

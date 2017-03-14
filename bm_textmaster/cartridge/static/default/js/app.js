@@ -265,7 +265,10 @@
 						for(count = 0;count < transParams.localeTo.length; count++){
 							localeTo = transParams.localeTo[count];
 							templateSelect = $('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find("select");
-							transParams.localeTo[count].template = templateSelect.val();
+							transParams.localeTo[count].template = {
+								id: templateSelect.val(),
+								name: templateSelect.find("option:selected").text()
+							};
 							transParams.localeTo[count].autoLaunch = false;
 							
 							if(templateSelect.find("option:selected").attr('data-auto-launch') == "true"){

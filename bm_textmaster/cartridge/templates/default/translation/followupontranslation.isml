@@ -26,8 +26,8 @@
 		<isloop items="${pdict.Documents}" var="document" status="innerloopstate">
 			<tr class="contentslistentry" align="center">
 				<td class="table_detail w e s left">${document.project_name + document.project_launch_date}</td>
-				<td class="table_detail e s left"><span class="spContentId">${document.custom_data.id}</span></td>
-				<td class="table_detail e s left"><span class="spContentName">${document.custom_data.name}</span></td>
+				<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item.id}</span></td>
+				<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item.name}</span></td>
 				<td class="table_detail e s capitalize">${document.item_type}</td>
 				<td class="table_detail e s left">${document.locale}</td>
 				<td class="table_detail e s">${document.status}</td>

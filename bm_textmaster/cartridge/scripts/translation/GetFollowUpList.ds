@@ -48,6 +48,8 @@ function execute( pdict : PipelineDictionary ) : Number
    						});
    						break;
    					case "in_progress":
+   					case "waiting_assignment":
+   					case "quality_control":
    						actions.push({
    							text: Resource.msg("follow.action.view.document","textmaster",null),
    							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
@@ -56,7 +58,7 @@ function execute( pdict : PipelineDictionary ) : Number
    					case "in_review":
    						actions.push({
    							text: Resource.msg("follow.action.revision","textmaster",null),
-   							link: Resource.msgf("link.edit.project","textmaster",null,project.id)
+   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
    						});
    						break;
    					case "incomplete":
