@@ -369,9 +369,10 @@
 					var apiKey = $('input[name=api-key]').val().trim(),
 						apiSecret = $('input[name=api-secret]').val().trim(),
 						apiCategory = $('select[name=api-category]').val(),
+						catalogID = $('input[name=api-catalog-id]').val().trim(),
 						postData;
 					
-					if(apiKey == "" || apiSecret == "" || apiCategory == ""){
+					if(apiKey == "" || apiSecret == "" || apiCategory == "" || catalogID == ""){
 						$('.error').text("All fields are required");
 						return false;
 					}
@@ -380,7 +381,8 @@
 					postData = {
 						apiKey: apiKey,
 						apiSecret: apiSecret,
-						apiCategory: apiCategory
+						apiCategory: apiCategory,
+						catalogID: catalogID
 					};
 					$.post(app.urls.saveAPIConfigurations, postData, function(data){
 						$('.success-message').addClass('show');

@@ -66,6 +66,14 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.catalog.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="text" name="api-catalog-id" value="${pdict.APICatalogID}"/>
+				</td>
+			</tr>
+			<tr>
 				<td colspan="2" class="table_detail e s w right input-holder">
 					<span class="error"></span>
 					<input id="api-config-save" type="button" value="${Resource.msg('general.save', 'textmaster',null)}"/>

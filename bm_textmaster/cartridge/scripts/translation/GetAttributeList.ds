@@ -34,7 +34,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		attrDefinitions = dw.object.SystemObjectMgr.describe(pdict.ItemType).getAttributeDefinitions().toArray();
 		
 		for each(attrDef in attrDefinitions){
-			if(pdict.ItemType.toLowerCase() != "product" && attrDef.system && !Utils.isAttributeAccessible(pdict.ItemType.toLowerCase(), attrDef.ID)){
+			if((pdict.ItemType.toLowerCase() != "product" && attrDef.system && !Utils.isAttributeAccessible(pdict.ItemType.toLowerCase(), attrDef.ID)) || attrDef.ID == "ID" || attrDef.ID == "TranslatedLanguages" || attrDef.ID == "UUID" || attrDef.ID == "taxClassID"){
 				continue;
 			}
 			

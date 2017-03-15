@@ -4,6 +4,7 @@
 *	@input APIKey: String
 *	@input APISecret: String
 *	@input APICategory: String
+*	@input APICatalogID: String
 *
 */
 importPackage( dw.system );
@@ -25,6 +26,7 @@ function execute( pdict : PipelineDictionary ) : Number
 	site.setCustomPreferenceValue("TMApiKey",pdict.APIKey);
 	site.setCustomPreferenceValue("TMApiSecret",pdict.APISecret);
 	site.setCustomPreferenceValue("TMCategoryCode",pdict.APICategory);
+	site.setCustomPreferenceValue("TMMasterCatalogID",pdict.APICatalogID);
 	Transaction.commit();
 	
 	return PIPELET_NEXT;

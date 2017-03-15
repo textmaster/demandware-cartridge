@@ -166,7 +166,6 @@
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
           <key-binding alias="Attributes" key="Attributes"/>
-          <key-binding alias="Item" key="Item"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
@@ -408,6 +407,7 @@
           <key-binding alias="CurrentHttpParameterMap.get('apiCategory').stringValue" key="APICategory"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiKey').stringValue" key="APIKey"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiSecret').stringValue" key="APISecret"/>
+          <key-binding alias="CurrentHttpParameterMap.get('catalogID').stringValue" key="APICatalogID"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

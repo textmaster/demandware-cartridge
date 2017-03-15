@@ -106,6 +106,13 @@
                 <min-length>0</min-length>
                 <default-value>[]</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="TMMasterCatalogID">
+                <display-name xml:lang="x-default">Master Catalog ID</display-name>
+                <type>string</type>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="TextMaster">
@@ -118,6 +125,7 @@
                 <attribute attribute-id="TMDemandwareLanguages"/>
                 <attribute attribute-id="TMCategoryCode"/>
                 <attribute attribute-id="TMEmail"/>
+                <attribute attribute-id="TMMasterCatalogID"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

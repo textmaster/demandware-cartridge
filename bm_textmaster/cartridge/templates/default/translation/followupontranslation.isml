@@ -34,7 +34,7 @@
 				<td class="table_detail e s left action">
 					<ul>
 						<isloop items="${document.actions}" var="action" status="loopstate">
-							<li><a ${action.link ? 'href="'+ action.link +'" target="_blank"' : 'class=review-link'} title="${action.title ? action.title : ''}">${action.text}</a></li>
+							<li><a ${action.link ? 'href='+ action.link +' target=_blank' : 'class=review-link'} title="${action.title ? action.title : ''}">${action.text}</a></li>
 						</isloop>
 					</ul>
 				</td>

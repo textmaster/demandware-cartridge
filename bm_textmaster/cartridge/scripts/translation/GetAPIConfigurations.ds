@@ -5,6 +5,7 @@
 *	@output APISecret: String
 *	@output APICategory: String
 *	@output APICategories: Array
+*	@output APICatalogID: String
 *
 */
 importPackage( dw.system );
@@ -28,6 +29,7 @@ function execute( pdict : PipelineDictionary ) : Number
 	pdict.APIKey = site.getCustomPreferenceValue("TMApiKey") || "";
 	pdict.APISecret = site.getCustomPreferenceValue("TMApiSecret") || "";
 	pdict.APICategory = site.getCustomPreferenceValue("TMCategoryCode") || "";
+	pdict.APICatalogID = site.getCustomPreferenceValue("TMMasterCatalogID") || "";
 	
 	if(catResponse && catResponse.categories){
 		categories = catResponse.categories;
