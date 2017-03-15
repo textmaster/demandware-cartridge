@@ -2,6 +2,7 @@
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
     <job job-id="AskForQuote" priority="0">
         <description/>
+        <parameters/>
         <flow>
             <context site-id="SiteGenesis"/>
             <step step-id="Job-1" type="ExecutePipeline" enforce-restart="false">
@@ -19,7 +20,8 @@
             </run-once>
         </triggers>
     </job>
-    <job job-id="ImportDataFromTextMaster" priority="1">
+    
+    <job job-id="ImportDataFromTextMasterSiteGenesis" priority="1">
         <description/>
         <parameters/>
         <flow>
@@ -31,6 +33,18 @@
                 </parameters>
             </step>
         </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="ImportDataFromTextMasterSiteGenesisGlobal" priority="1">
+        <description/>
+        <parameters/>
         <flow>
             <context site-id="SiteGenesisGlobal"/>
             <step step-id="TMImportDataSiteGenesisGlobal" type="ExecutePipeline" enforce-restart="false">
@@ -42,9 +56,9 @@
         </flow>
         <rules/>
         <triggers>
-            <run-once enabled="true">
-                <date>2017-02-27Z</date>
-                <time>11:52:48.000Z</time>
+            <run-once enabled="false">
+                <date>2017-03-13Z</date>
+                <time>11:44:54.000Z</time>
             </run-once>
         </triggers>
     </job>
