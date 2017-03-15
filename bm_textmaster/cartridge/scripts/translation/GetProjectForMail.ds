@@ -42,10 +42,6 @@ function execute( pdict : PipelineDictionary ) : Number
   	  projectOptions = projectResult.options;
   	  projectOptions.translation_memory = true;
   	  
-  	  // finalize project
-  	  projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
-	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
-  	  
   	  // update project to add translation_memory: true
   	  updateRequest = {
 			"project": {

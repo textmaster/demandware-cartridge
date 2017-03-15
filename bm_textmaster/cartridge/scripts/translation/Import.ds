@@ -25,7 +25,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null) +"/"+ documentID,
 		canImport = false,
 		project, doc, content, baseFolder, relativeFolder, fileName,
-		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, itemID,
+		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID,
 		pageAttrs = {
 			pageTitle: {},
 			pageDescription: {},
@@ -81,26 +81,30 @@ function execute( pdict : PipelineDictionary ) : Number
 			doc = utils.TextMasterClient("GET", docEndPoint, "");
 			
 			if(doc && (doc.status.toLowerCase() == 'in_review' || doc.status.toLowerCase() == 'completed')){
-				itemID = doc.custom_data.id || "";
-				content = doc.original_content ? JSON.parse(doc.original_content) : [];
-		
+				itemID = doc.custom_data.item.id || "";
+				attrList = doc.custom_data.attribute || [];
+				content = doc.author_work ? doc.author_work : {};
+				
 				writer.writeStartElement(itemType);
 			    writer.writeAttribute(itemType+"-id", itemID);
 				
 				// each system attribute without page attributes
-				for each (attr in content){
-					if(attr.type == "system" && attr.id.indexOf("page") != 0 && attr.value){
-						writer.writeStartElement(utils.idToXMLTag(attr.id));
+				for each (attr in attrList){
+					if(attr.type == "system" && attr.id.indexOf("page") != 0 && content[attr.id]){
+						writer.writeStartElement(utils.idToXMLTag(attr.id == "name" ? "displayName" : attr.id));
 						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(attr.value);
+							writer.writeCharacters(content[attr.id]);
 						writer.writeEndElement();
 					}
 				}
 				
 				// keep each system page attribute ordered list
-				for each (attr in content){
-					if(attr.type == "system" && attr.id.indexOf("page") == 0 && attr.value){
-						pageAttrs[attr.id] = attr;
+				for each (attr in attrList){
+					if(attr.type == "system" && attr.id.indexOf("page") == 0 && content[attr.id]){
+						pageAttrs[attr.id] = {
+							id: attr.id,
+							value: content[attr.id]
+						};
 					}
 				}
 				
@@ -121,12 +125,12 @@ function execute( pdict : PipelineDictionary ) : Number
 				// each custom attribute
 				writer.writeStartElement("custom-attributes");
 				
-				for each (attr in content){
-					if(attr.type == "custom" && attr.value){
+				for each (attr in attrList){
+					if(attr.type == "custom" && content[attr.id]){
 						writer.writeStartElement("custom-attribute");
 						writer.writeAttribute("attribute-id",attr.id);
 						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(attr.value);
+							writer.writeCharacters(content[attr.id]);
 						writer.writeEndElement();
 					}
 				}

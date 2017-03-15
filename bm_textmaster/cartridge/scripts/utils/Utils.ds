@@ -393,6 +393,23 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 }
 
 /*
+*	Execute callback URL
+*/
+Utils.TriggerURL = function(method, endPoint){
+	var httpClient: HTTPClient = new HTTPClient();
+	
+	httpClient.setRequestHeader('Content-Type', 'application/json');
+	
+	httpClient.setTimeout(5000);
+	httpClient.open(method, endPoint);
+	httpClient.send();
+	
+	if (httpClient.statusCode != 200 && httpClient.statusCode != 201) {
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+	}
+}
+
+/*
 *	Converts Demandware locale ID format (eg:- en_US) to TextMaster locale ID format (eg:- en-us)
 */
 Utils.toTextMasterLocaleID = function(locale){

@@ -265,7 +265,10 @@
 						for(count = 0;count < transParams.localeTo.length; count++){
 							localeTo = transParams.localeTo[count];
 							templateSelect = $('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find("select");
-							transParams.localeTo[count].template = templateSelect.val();
+							transParams.localeTo[count].template = {
+								id: templateSelect.val(),
+								name: templateSelect.find("option:selected").text()
+							};
 							transParams.localeTo[count].autoLaunch = false;
 							
 							if(templateSelect.find("option:selected").attr('data-auto-launch') == "true"){
@@ -366,9 +369,10 @@
 					var apiKey = $('input[name=api-key]').val().trim(),
 						apiSecret = $('input[name=api-secret]').val().trim(),
 						apiCategory = $('select[name=api-category]').val(),
+						catalogID = $('input[name=api-catalog-id]').val().trim(),
 						postData;
 					
-					if(apiKey == "" || apiSecret == "" || apiCategory == ""){
+					if(apiKey == "" || apiSecret == "" || apiCategory == "" || catalogID == ""){
 						$('.error').text("All fields are required");
 						return false;
 					}
@@ -377,7 +381,8 @@
 					postData = {
 						apiKey: apiKey,
 						apiSecret: apiSecret,
-						apiCategory: apiCategory
+						apiCategory: apiCategory,
+						catalogID: catalogID
 					};
 					$.post(app.urls.saveAPIConfigurations, postData, function(data){
 						$('.success-message').addClass('show');
@@ -389,7 +394,17 @@
 				});
 			},
 			followup: function(){
+				var tooltip;
+				
 				$('.status-diagram').insertAfter('.followup h1');
+				
+				$('.followup').on("mousedown","a.review-link", function(){
+					tooltip = $(this).attr("title");
+					$(this).closest('li').append('<span class="tooltip">'+ tooltip +'</span>');
+				})
+				.on("mouseup","a.review-link", function(){
+					$('span.tooltip').remove();
+				});
 			},
 			utils: {
 				firstLetterCapital: function(str){

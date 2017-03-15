@@ -322,7 +322,18 @@
     color: #ffffff;
     padding: 1px 0 0px;
 }
-
+.followup table td.action {
+	position:relative;
+}
+.followup span.tooltip {
+	position: absolute;
+    right: 0;
+    top: -20px;
+    white-space: nowrap;
+    padding: 5px 10px;
+    color: #ffffff;
+    background-color: #666666;
+}
 /* Place order page */
 .place-order .attribute-list {
 	display: inline-block;
@@ -372,6 +383,15 @@
 	display:block;
 }
 
+/* Quote */
+.quote .notification {
+	text-align:center;
+}
+.quote .notification .form-holder {
+	display: inline-block;
+	margin:10px auto;
+	padding:10px 50px;
+}
 /* Responsive */
 @media screen and (max-width:2732px){
 	.new-translation #items-holder .item-label {

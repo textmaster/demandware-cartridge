@@ -11,6 +11,7 @@
 *	@output TransParams: String
 *
 */
+importPackage( dw.system );
 
 // API Includes
 var CatalogMgr = require('dw/catalog/CatalogMgr');
@@ -34,12 +35,20 @@ function execute( pdict : PipelineDictionary ) : Number {
 	log = LogUtils.getLogger("setupTranslationParameters");
 	localeFromName = Utils.getLocaleName(localeFrom);
 	
+	// Get Master Catalog ID from site preference
+	if(itemType == "product" && Site.current.getCustomPreferenceValue('TMMasterCatalogID')){
+		catalogID = Site.current.getCustomPreferenceValue('TMMasterCatalogID');
+	}
+	else{
+		log.error("Please set Master Catalog ID in Site Preference. Else Import feature may fail.");
+	}
+	
 	for each(locale in localeTo){
 		localeName = Utils.getLocaleName(locale);
 		localeTo[count] = {
 			id: Utils.toTextMasterLocaleID(locale),
 			name: localeName,
-			template: ""
+			template: {}
 		};
 		count++;
 	}
