@@ -61,6 +61,10 @@ function execute( pdict : PipelineDictionary ) : Number
    							link: "",
    							title: Resource.msg("review.tooltip." + doc.item_type,"textmaster",null)
    						});
+   						actions.push({
+   							text: Resource.msg("follow.action.view.document","textmaster",null),
+   							link: Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+   						});
    						break;
    					case "incomplete":
    						actions.push({
