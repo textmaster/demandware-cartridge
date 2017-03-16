@@ -31,6 +31,9 @@
     border: 1px solid #ccc;
     white-space: nowrap;
 }
+.translation-module a:active {
+	color: #3AB5CF;
+}
 .translation-module table {
 	margin-bottom:5px;
 }
@@ -333,6 +336,9 @@
     padding: 5px 10px;
     color: #ffffff;
     background-color: #666666;
+}
+.followup table td.action a.review-link {
+	cursor: default;
 }
 /* Place order page */
 .place-order .attribute-list {
