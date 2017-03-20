@@ -87,4 +87,4 @@ function setQuery(projectid, documentid){
 */
 /** Calls export functionalities
   @see {@link module:controllers/Import~Data} */
-exports.Data = guard.ensure(['get'], data);
+exports.Data = guard.ensure(['post'], data);

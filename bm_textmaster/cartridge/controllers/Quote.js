@@ -64,4 +64,4 @@ function sendResult(status){
 */
 /** Calls export functionalities
  * @see {@link module:controllers/Quote~Send} */
-exports.Send = guard.ensure(['get'], send);
+exports.Send = guard.ensure(['post'], send);
