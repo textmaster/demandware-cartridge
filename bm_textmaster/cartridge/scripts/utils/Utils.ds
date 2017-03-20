@@ -419,7 +419,7 @@ Utils.toTextMasterLocaleID = function(locale){
 }
 
 /*
-*	Converts TextMaster locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en_US)
+*	Converts TextMaster locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
 */
 Utils.toDemandwareLocaleID = function(locale){
 	var localePart = locale.split("-");

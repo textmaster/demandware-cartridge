@@ -6,8 +6,7 @@
 */
 
 importPackage(dw.system);
-
-importClass( dw.web.Resource );
+importPackage(dw.web);
 
 // Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
@@ -20,7 +19,7 @@ function execute( pdict : PipelineDictionary ) : Number
 {
    	var projects, project, projectResult, documentResult, documentEndPoint,
 		projectsEndPoint = Resource.msg("api.get.projects","textmaster",null),
-		documents = [], document, doc, actions;
+		documents = [], document, doc, actions, urlAction, urlparam, itemURL, itemPipeline, itemIDLabel, languageID;
 
    	log = LogUtils.getLogger("getFollowUpList");
    
@@ -56,10 +55,29 @@ function execute( pdict : PipelineDictionary ) : Number
    						});
    						break;
    					case "in_review":
+   						switch(doc.item_type.toLowerCase()){
+   							case "product":
+   								itemPipeline = "Product-Show";
+   								itemIDLabel = 'pid';
+   								break;
+   							case "category":
+   								itemPipeline = "Search-Show";
+   								itemIDLabel = 'cgid';
+   								break;
+   							case "content":
+   								itemPipeline = "Page-Show";
+   								itemIDLabel = 'cid';
+   								break;
+   						}
+   						languageID = Utils.toDemandwareLocaleID(project.language_to_code);
+   						languageID = languageID.replace("-", "_");
+   						urlAction = new URLAction(itemPipeline, Site.current.ID, languageID);
+   						urlparam = new URLParameter(itemIDLabel,doc.custom_data.item.id);
+						itemURL = dw.web.URLUtils.abs(urlAction,urlparam);
+						
    						actions.push({
    							text: Resource.msg("follow.action.revision","textmaster",null),
-   							link: "",
-   							title: Resource.msg("review.tooltip." + doc.item_type,"textmaster",null)
+   							link: itemURL
    						});
    						actions.push({
    							text: Resource.msg("follow.action.view.document","textmaster",null),
