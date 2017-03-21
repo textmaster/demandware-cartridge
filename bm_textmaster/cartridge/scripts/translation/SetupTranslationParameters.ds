@@ -36,11 +36,8 @@ function execute( pdict : PipelineDictionary ) : Number {
 	localeFromName = Utils.getLocaleName(localeFrom);
 	
 	// Get Master Catalog ID from site preference
-	if(itemType == "product" && Site.current.getCustomPreferenceValue('TMMasterCatalogID')){
-		catalogID = Site.current.getCustomPreferenceValue('TMMasterCatalogID');
-	}
-	else{
-		log.error("Please set Master Catalog ID in Site Preference. Else Import feature may fail.");
+	if(itemType == "product"){
+		catalogID = Site.current.getCustomPreferenceValue('TMMasterCatalogID') || "";
 	}
 	
 	for each(locale in localeTo){

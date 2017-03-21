@@ -43,6 +43,10 @@ function execute( pdict : PipelineDictionary ) : Number
 		catalogID = project.custom_data.catalogID;
 		language = utils.toDemandwareLocaleID(project.language_to_code);
 		
+		if(itemType == "product" && !catalogID){
+			return PIPELET_NEXT;
+		}
+		
 		try{
 			baseFolder = File.IMPEX + File.SEPARATOR + "src";
 			relativeFolder = "textmaster" + File.SEPARATOR + itemType;
@@ -155,46 +159,17 @@ function execute( pdict : PipelineDictionary ) : Number
 		}
 		
 		if(canImport){
-			importStartNode = itemType == "product" || itemType == "category" ? "Catalog" : "Content";
+			importStartNode = itemType == "content" ? "Content" : "Catalog";
 			
 			// Call Standard import pipeline
 			Pipeline.execute("Import-"+ importStartNode, {
-				ImportFile: relativeFolder + File.SEPARATOR + fileName
+				ImportFile: relativeFolder + File.SEPARATOR + fileName,
+				ItemType: itemType,
+				ItemID: itemID,
+				Language: language
 			});
-			
-			updateTranslatedLanguageList(itemType, itemID, language);
 		}
 	}
 	
 	return PIPELET_NEXT;
-}
-
-/* update the custom attribute of item to keep list of translated languages */
-function updateTranslatedLanguageList(itemType, itemID, language){
-	var item;
-	
-	switch(itemType){
-		case "product":
-			item = dw.catalog.ProductMgr.getProduct(itemID);
-			break;
-		case "category":
-			item = dw.catalog.CatalogMgr.getCategory(itemID);
-			break;
-		case "content":
-			item = dw.content.ContentMgr.getContent(itemID);
-			break;
-	}
-	
-	Transaction.begin();
-	
-	if(item.custom.TranslatedLanguages != "" && item.custom.TranslatedLanguages != null){
-		if(item.custom.TranslatedLanguages.indexOf(language) < 0){
-			item.custom.TranslatedLanguages += "," + language;
-		}
-	}
-	else{
-		item.custom.TranslatedLanguages = language;
-	}
-
-	Transaction.commit();
 }
