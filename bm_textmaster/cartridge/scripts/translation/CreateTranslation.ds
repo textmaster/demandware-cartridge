@@ -35,7 +35,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		calendarDate = Calendar(),
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "",
 		documentID = "", documents, document, documentPostData, documentResult, documentEndPoint, wordCount,
-		item, customData, itemData, contentValue, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
+		item, customData, itemData, markupFlag, contentValue, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
 	
 	log = LogUtils.getLogger("CreateTranslation");
 	
@@ -72,6 +72,7 @@ function execute( pdict : PipelineDictionary ) : Number
 				customData = [];
 				itemData = {};
 				document = {};
+				markupFlag = false;
 				
 				switch(itemType){
 					case "product":
@@ -94,7 +95,13 @@ function execute( pdict : PipelineDictionary ) : Number
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? item[attr.id].markup : item.attributeModel.getDisplayValue(itemAttr);
+									if(attr.id == "shortDescription" || attr.id == "longDescription"){
+										contentValue = item[attr.id].markup;
+										markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
+									}
+									else{
+										contentValue = item.attributeModel.getDisplayValue(itemAttr);
+									}
 									
 									if(contentValue){
 										itemData[attr.id] = contentValue;
@@ -123,6 +130,7 @@ function execute( pdict : PipelineDictionary ) : Number
 				document.original_content = itemData;
 				document.type = Resource.msg("constant.key.value","textmaster",null);
 				document.perform_word_count = true;
+				document.markup_in_content = markupFlag;
 				document.custom_data = {
 					item:{
 						id: item.ID,
