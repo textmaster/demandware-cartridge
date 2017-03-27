@@ -162,6 +162,9 @@ function execute( pdict : PipelineDictionary ) : Number
 							callback: {
 								in_review: {
 									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Import-Data?projectid="+ projectID +"&documentid="+ documentID
+								},
+								completed: {
+									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Import-Data?projectid="+ projectID +"&documentid="+ documentID
 								}
 							},
 							word_count: wordCount
