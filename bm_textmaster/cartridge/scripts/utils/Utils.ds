@@ -336,6 +336,7 @@ Utils.getLocaleName = function(localeID){
 Utils.TextMasterClient = function(method, endPoint, request){
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
 		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
+		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
 		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
 		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
@@ -350,7 +351,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	httpClient.setRequestHeader('Signature', signatureString);
 	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
-	httpClient.setTimeout(5000);
+	httpClient.setTimeout(timeout);
 	httpClient.open(method, endPointUrl);
 	httpClient.send(request);
 	
@@ -371,13 +372,14 @@ Utils.TextMasterClient = function(method, endPoint, request){
 */
 Utils.TextMasterPublic = function(method, endPoint, request){
 	var endPointUrl: String = Resource.msg("api.public.base","textmaster",null) + endPoint,
+		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		httpClient: HTTPClient = new HTTPClient(),
 		response: Object;
 	
 	request = request || "";
 	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
-	httpClient.setTimeout(5000);
+	httpClient.setTimeout(timeout);
 	httpClient.open(method, endPointUrl);
 	httpClient.send(request);
 	
@@ -396,11 +398,12 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 *	Execute callback URL
 */
 Utils.TriggerURL = function(method, endPoint){
-	var httpClient: HTTPClient = new HTTPClient();
+	var httpClient: HTTPClient = new HTTPClient(),
+		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000;
 	
 	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
-	httpClient.setTimeout(5000);
+	httpClient.setTimeout(timeout);
 	httpClient.open(method, endPoint);
 	httpClient.send();
 	
