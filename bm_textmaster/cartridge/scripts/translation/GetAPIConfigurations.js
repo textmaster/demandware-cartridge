@@ -1,3 +1,5 @@
+'use strict';
+
 /**
 * 	Get API configurations 
 *
@@ -8,7 +10,7 @@
 *	@output APICatalogID: String
 *
 */
-importPackage( dw.system );
+importPackage(dw.system);
 
 // Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
@@ -18,24 +20,39 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 var log;
 
 function execute( pdict : PipelineDictionary ) : Number
-{
+{	
+	var output = getOutput();
+	
+	pdict.APIKey = output.APIKey;
+	pdict.APISecret = output.APISecret;
+	pdict.APICategory = output.APICategory;
+	pdict.APICatalogID = output.APICatalogID;
+	pdict.APICategories = output.APICategories;
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(){
 	var site = Site.current,
 		categories = [],
 		catResponse;
 		
 	log = LogUtils.getLogger("GetAPIConfiguration");
 	catResponse = Utils.TextMasterPublic("GET",dw.web.Resource.msg("api.get.categories","textmaster",null));
-		
-	pdict.APIKey = site.getCustomPreferenceValue("TMApiKey") || "";
-	pdict.APISecret = site.getCustomPreferenceValue("TMApiSecret") || "";
-	pdict.APICategory = site.getCustomPreferenceValue("TMCategoryCode") || "";
-	pdict.APICatalogID = site.getCustomPreferenceValue("TMMasterCatalogID") || "";
 	
 	if(catResponse && catResponse.categories){
 		categories = catResponse.categories;
 	}
 	
-	pdict.APICategories = categories;
-	
-	return PIPELET_NEXT;
+	return {
+		APIKey: site.getCustomPreferenceValue("TMApiKey") || "",
+		APISecret: site.getCustomPreferenceValue("TMApiSecret") || "",
+		APICategory: site.getCustomPreferenceValue("TMCategoryCode") || "",
+		APICatalogID: site.getCustomPreferenceValue("TMMasterCatalogID") || "",
+		APICategories: categories
+	}
+}
+
+module.exports = {
+	output: getOutput()
 }
