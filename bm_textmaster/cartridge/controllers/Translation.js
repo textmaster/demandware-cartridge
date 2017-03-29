@@ -74,13 +74,33 @@ function placeOrder(){
 }
 
 /**
+* Notification page on project creation
+*/
+function notification(){
+	var input = {
+			autoLaunchCount: request.httpParameterMap.get("autoLaunchCount").intValue,
+			noAutoLaunchCount: request.httpParameterMap.get("noAutoLaunchCount").intValue,
+			projectID: request.httpParameterMap.get("projectID").stringValue
+		};
+	
+	app.getView(input).render('translation/notification');
+}
+
+/**
+* Default attributes settings
+*/
+function defaultAttributes(){
+	app.getView().render('translation/defaultattributessettings');
+}
+
+/**
 * Check API key and API secret entered in Site Preference
 */
 function loginCheck(){
-	var apiKey = Site.current.getCustomPreferenceValue("TMApiKey") || "",
-		apiSecret = Site.current.getCustomPreferenceValue("TMApiSecret") || "";
+	var APIKey = Site.current.getCustomPreferenceValue("TMApiKey") || "",
+		APISecret = Site.current.getCustomPreferenceValue("TMApiSecret") || "";
 	
-	if(apiKey == "" || apiSecret == ""){
+	if(APIKey == "" || APISecret == ""){
 		register();
 		
 		return false;
@@ -98,3 +118,5 @@ function loginCheck(){
 exports.New = guard.ensure(['get'], newTranslation);
 exports.FollowUp = guard.ensure(['get'], followUp);
 exports.PlaceOrder = guard.ensure(['post'], placeOrder);
+exports.Notification = guard.ensure(['post'], notification);
+exports.DefaultAttributes = guard.ensure(['get'], defaultAttributes);
