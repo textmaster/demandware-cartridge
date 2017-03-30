@@ -95,13 +95,7 @@ function execute( pdict : PipelineDictionary ) : Number
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									if(attr.id == "shortDescription" || attr.id == "longDescription"){
-										contentValue = item[attr.id].markup;
-										markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
-									}
-									else{
-										contentValue = item.attributeModel.getDisplayValue(itemAttr);
-									}
+									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? item[attr.id].markup : item.attributeModel.getDisplayValue(itemAttr);
 									
 									if(contentValue){
 										itemData[attr.id] = contentValue;
@@ -122,6 +116,7 @@ function execute( pdict : PipelineDictionary ) : Number
 					if(contentValue){
 						attrData.id = attr.id;
 						attrData.type = attr.type;
+						markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
 						customData.push(attrData);
 					}
 				}
