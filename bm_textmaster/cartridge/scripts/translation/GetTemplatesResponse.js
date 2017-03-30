@@ -15,11 +15,21 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
+	var output = getOutput();
+	response.getWriter().println(output);
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(){
 	var templatesEndPoint = Resource.msg("api.get.templates","textmaster",null),
 		result;
 	log = LogUtils.getLogger("GetTemplateList");
 	result = Utils.TextMasterClient("GET", templatesEndPoint);
-	response.getWriter().println(JSON.stringify(result));
 	
-   	return PIPELET_NEXT;
+	return JSON.stringify(result);
+}
+
+module.exports = {
+	output: getOutput()
 }

@@ -25,12 +25,29 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
-	var localeFrom = JSON.parse(JSON.parse(pdict.LocaleFrom)),
-		localeTo = JSON.parse(JSON.parse(pdict.LocaleTo)),
-		itemType = pdict.ItemType,
-		catalogID = pdict.CatalogID,
-		attributes = JSON.parse(JSON.parse(pdict.Attributes)),
-		items = JSON.parse(JSON.parse(pdict.Items)),
+	var input, output;
+	
+	input = {
+		LocaleFrom: pdict.LocaleFrom,
+		LocaleTo: pdict.LocaleTo,
+		ItemType: pdict.ItemType,
+		CatalogID: pdict.CatalogID,
+		Attributes: pdict.Attributes,
+		Items: pdict.Items
+	};
+	output = getOutput(input);
+	response.getWriter().println(output);
+	
+   	return PIPELET_NEXT;
+}
+
+function getOutput(input){
+	var localeFrom = JSON.parse(JSON.parse(input.LocaleFrom)),
+		localeTo = JSON.parse(JSON.parse(input.LocaleTo)),
+		itemType = input.ItemType,
+		catalogID = input.CatalogID,
+		attributes = JSON.parse(JSON.parse(input.Attributes)),
+		items = JSON.parse(JSON.parse(input.Items)),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		calendarDate = Calendar(),
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "",
@@ -181,7 +198,11 @@ function execute( pdict : PipelineDictionary ) : Number
 	}
 	
 	// Returns project ID if only one project is created. On result page template this project ID is used to go to TextMaster specific project page. Else to go to project list page. 
-	response.getWriter().println(projectIDs.length == 1 ? projectIDs[0] : "");
-	
-   	return PIPELET_NEXT;
+	return (projectIDs.length == 1 ? projectIDs[0] : "");
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }
