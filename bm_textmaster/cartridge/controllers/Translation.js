@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Controller that provides functions for importing translated data from TextMaster
+ * Controller that provides user interface for all pages
  * @module controllers/Translation
  */
 
@@ -113,7 +113,7 @@ function loginCheck(){
 * Web exposed methods
 */
 /**
-* Calls export functionalities
+* Calls translation pages
 */
 exports.New = guard.ensure(['get'], newTranslation);
 exports.FollowUp = guard.ensure(['get'], followUp);

@@ -112,7 +112,7 @@
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
           <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetCategoryList.ds"/>
+          <config-property key="ScriptFile" value="translation/GetCategoryList.js"/>
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="CatalogID"/>
           <key-binding alias="CategoryList" key="CategoryList"/>
@@ -162,7 +162,7 @@
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
           <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetAttributeList.ds"/>
+          <config-property key="ScriptFile" value="translation/GetAttributeList.js"/>
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
           <key-binding alias="Attributes" key="Attributes"/>
@@ -452,7 +452,7 @@
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
           <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/GetLanguageToList.ds"/>
+          <config-property key="ScriptFile" value="translation/GetLanguageToList.js"/>
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.get('languageFrom').stringValue" key="LanguageFrom"/>
           <key-binding alias="LanguageToList" key="LanguageToList"/>
