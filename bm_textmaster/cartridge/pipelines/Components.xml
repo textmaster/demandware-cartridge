@@ -334,7 +334,7 @@
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
           <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/SaveDefaultAttributes.ds"/>
+          <config-property key="ScriptFile" value="translation/SaveDefaultAttributes.js"/>
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.get('attributes[]').values" key="Attributes"/>
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
@@ -402,7 +402,7 @@
         <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
           <config-property key="Transactional" value="false"/>
           <config-property key="OnError" value="PIPELET_ERROR"/>
-          <config-property key="ScriptFile" value="translation/SetAPIConfigurations.ds"/>
+          <config-property key="ScriptFile" value="translation/SetAPIConfigurations.js"/>
           <key-binding alias="null" key="ScriptLog"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiCategory').stringValue" key="APICategory"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiKey').stringValue" key="APIKey"/>

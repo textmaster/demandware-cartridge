@@ -16,8 +16,22 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
-	var itemType = pdict.ItemType,
-		attributes = pdict.Attributes.toArray(),
+	var input, output;
+	
+	input = {
+		ItemType: pdict.ItemType,
+		Attributes: pdict.Attributes
+	};
+	output = getOutput(input);
+	
+	response.getWriter().println(output);
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(input){
+	var itemType = input.ItemType,
+		attributes = input.Attributes.toArray(),
 		attributeList = [],
 		attr, prefName, prefValue;
 	
@@ -34,7 +48,13 @@ function execute( pdict : PipelineDictionary ) : Number
 	Site.getCurrent().setCustomPreferenceValue(prefName, prefValue);
 	Transaction.commit();
 	
-	response.getWriter().println("success");
-	
-	return PIPELET_NEXT;
+	return {
+		output: "success"
+	};
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }

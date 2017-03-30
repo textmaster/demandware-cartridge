@@ -166,7 +166,7 @@ function getOutput(input){
 					
 					wordCount = 0;
 					for(var key in document.original_content){
-						wordCount += Utils.getWordCount(document.original_content[key].original_phrase)
+						wordCount += Utils.getWordCount(document.original_content[key].original_phrase);
 					}
 					
 					documentPostData = {

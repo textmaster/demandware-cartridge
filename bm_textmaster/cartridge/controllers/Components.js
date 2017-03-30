@@ -21,7 +21,9 @@ var app = require('~/cartridge/scripts/app'),
 	items = require('~/cartridge/scripts/translation/GetItemList'),
 	filterCategories = require('~/cartridge/scripts/translation/GetFilterCategoryList'),
 	templatesResponse = require('~/cartridge/scripts/translation/GetTemplatesResponse'),
-	translationCreation = require('~/cartridge/scripts/translation/CreateTranslation');
+	translationCreation = require('~/cartridge/scripts/translation/CreateTranslation'),
+	defaultAttributes = require('~/cartridge/scripts/translation/SaveDefaultAttributes'),
+	apiConfig = require('~/cartridge/scripts/translation/SetAPIConfigurations');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
@@ -122,6 +124,34 @@ function createTranslation(){
 	response.getWriter().println(output);
 }
 
+/**
+* Save default attribute settings
+*/
+function saveDefaultAttributes(){
+	var input, output;
+	
+	input = {
+		ItemType: request.httpParameterMap.get('itemType').stringValue,
+		Attributes: request.httpParameterMap.get('attributes[]').values
+	};
+	output = defaultAttributes.output(input);
+	
+	response.getWriter().println(output);
+}
+
+/**
+* 
+*/
+function saveAPIConfigurations(){
+	var input = {
+		APIKey: request.httpParameterMap.get('apiKey').stringValue,
+		APISecret: request.httpParameterMap.get('apiSecret').stringValue,
+		APICategory: request.httpParameterMap.get('apiCategory').stringValue,
+		APICatalogID: request.httpParameterMap.get('catalogID').stringValue
+	};
+	apiConfig.output(input);
+}
+
 /*
 * Web exposed methods
 */
@@ -134,3 +164,5 @@ exports.GetLanguageToList = guard.ensure(['post'], getLanguageToList);
 exports.ItemList = guard.ensure(['post'], itemList);
 exports.GetTemplatesResponse = guard.ensure(['get'], getTemplatesResponse);
 exports.CreateTranslation = guard.ensure(['post'], createTranslation);
+exports.SaveDefaultAttributes = guard.ensure(['post'], saveDefaultAttributes);
+exports.SaveAPIConfigurations = guard.ensure(['post'], saveAPIConfigurations);

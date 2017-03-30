@@ -117,6 +117,7 @@ function loginCheck(){
 */
 exports.New = guard.ensure(['get'], newTranslation);
 exports.FollowUp = guard.ensure(['get'], followUp);
+exports.Register = guard.ensure(['get'], register);
 exports.PlaceOrder = guard.ensure(['post'], placeOrder);
 exports.Notification = guard.ensure(['post'], notification);
 exports.DefaultAttributes = guard.ensure(['get'], defaultAttributes);
