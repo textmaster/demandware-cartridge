@@ -140,7 +140,7 @@ function saveDefaultAttributes(){
 }
 
 /**
-* 
+* Save API Configurations
 */
 function saveAPIConfigurations(){
 	var input = {

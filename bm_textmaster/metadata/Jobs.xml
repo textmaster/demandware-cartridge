@@ -29,7 +29,7 @@
             <step step-id="TMImportDataSiteGenesis" type="ExecutePipeline" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">ImportTranslation-Start</parameter>
+                    <parameter name="ExecutePipeline.Pipeline">Import-Start</parameter>
                 </parameters>
             </step>
         </flow>
@@ -50,7 +50,7 @@
             <step step-id="TMImportDataSiteGenesisGlobal" type="ExecutePipeline" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">ImportTranslation-Start</parameter>
+                    <parameter name="ExecutePipeline.Pipeline">Import-Start</parameter>
                 </parameters>
             </step>
         </flow>
