@@ -23,19 +23,37 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 var log;
 
 function execute( pdict : PipelineDictionary ) : Number {
-	var itemType = pdict.ItemType,
-		catalog = pdict.Catalog ? CatalogMgr.getCatalog(pdict.Catalog) : null,
-		categoryIDs = pdict.Category ? pdict.Category.split(",") : (catalog ? [catalog.getRoot().ID] : []),
+	var input, output;
+	
+	input = {
+		ItemType: pdict.ItemType,
+		Catalog: pdict.Catalog,
+		Category: pdict.Category
+	};
+	output = getOutput(input);
+	
+	pdict.Type = output.Type;
+	pdict.ItemList = output.ItemList;
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(input){
+	var itemType = input.ItemType,
+		catalog = input.Catalog ? CatalogMgr.getCatalog(input.Catalog) : null,
+		categoryIDs = input.Category ? input.Category.split(",") : (catalog ? [catalog.getRoot().ID] : []),
 		products, category, product, items = [], rootCategory, subCategories = [], library, rootContentFolder, subContentFolders = [],
 		subContentFolder, contents, output = [], allCategories = [], categoryID;
 	
 	log = LogUtils.getLogger("GetItemList");
-	pdict.Type = pdict.ItemType;
 	
 	if(!itemType || (itemType != "content" && !catalog)){
 		log.error("Mandatory values are missing for getting item list");
-		pdict.ItemList = output;
-		return PIPELET_NEXT;
+		
+		return {
+			Type: itemType,
+			ItemList: []
+		}
 	}
 	
 	/* Populate item list according to the itemType selected */
@@ -81,9 +99,10 @@ function execute( pdict : PipelineDictionary ) : Number {
 			break;
 	}
 	
-	pdict.ItemList = items;
-	
-	return PIPELET_NEXT;
+	return {
+		Type: itemType,
+		ItemList: items
+	}
 }
 
 /*
@@ -103,4 +122,10 @@ function getSubContentFolders(contentFolder){
 	}
 	
 	return output;
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }

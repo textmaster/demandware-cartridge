@@ -21,18 +21,34 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 	Utils = require('~/cartridge/scripts/utils/Utils');
 
 // Global variables
-var log;
+var log = LogUtils.getLogger("setupTranslationParameters");
 
 function execute( pdict : PipelineDictionary ) : Number {
-	var localeFrom = pdict.LocaleFrom,
-		itemType = pdict.ItemType,
-		catalogID = pdict.CatalogID,
-		localeTo = pdict.LocaleTo.toArray(),
-		attributes = pdict.Attributes.toArray(),
-		items = pdict.Items.toArray(),
+	var input = {
+			LocaleFrom: pdict.LocaleFrom,
+			ItemType: pdict.ItemType,
+			CatalogID: pdict.CatalogID,
+			LocaleTo: pdict.LocaleTo.toArray(),
+			Attributes: pdict.Attributes.toArray(),
+			Items: pdict.Items.toArray()
+		},
+		output;
+	
+	output = getOutput(input);
+	pdict.TransParams = output.TransParams;
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(input){
+	var localeFrom = input.LocaleFrom,
+		itemType = input.ItemType,
+		catalogID = input.CatalogID,
+		localeTo = input.LocaleTo,
+		attributes = input.Attributes,
+		items = input.Items,
 		localeFromName, localeTo, locale, localeName, attribute, attr, count = 0, output;
 	
-	log = LogUtils.getLogger("setupTranslationParameters");
 	localeFromName = Utils.getLocaleName(localeFrom);
 	
 	// Get Master Catalog ID from site preference
@@ -73,7 +89,13 @@ function execute( pdict : PipelineDictionary ) : Number {
 		items: items
 	};
 	
-	pdict.TransParams = JSON.stringify(output);
-	
-	return PIPELET_NEXT;
+	return {
+		TransParams: JSON.stringify(output)
+	};
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }

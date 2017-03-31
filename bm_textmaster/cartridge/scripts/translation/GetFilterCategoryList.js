@@ -21,20 +21,36 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 var log;
 
 function execute( pdict : PipelineDictionary ) : Number {
+	var input, output;
+	
+	input = {
+		CatalogID: pdict.CatalogID,
+		CategoryIDs: pdict.CategoryIDs,
+		ItemType: pdict.ItemType,
+		ItemList: pdict.ItemList
+	};
+	output = getOutput(input);
+	pdict.CategoryList = output.CategoryList;
+	
+	return PIPELET_NEXT;
+}
+
+function getOutput(input){
 	var catalog, rootCategory, item,
-		items = pdict.ItemList,
+		items = input.ItemList,
 		subCategories = [],
-		categoryIDs = pdict.CategoryIDs.split(","),
+		categoryIDs = input.CategoryIDs.split(","),
 		categoryID, categories, category;
 	
 	log = LogUtils.getLogger("GetCategoryList");
-	pdict.CategoryList = [];
 	
-	if(pdict.ItemType == "content" || (!pdict.CatalogID && !pdict.CategoryIDs)){
-		return PIPELET_NEXT;
+	if(input.ItemType == "content" || (!input.CatalogID && !input.CategoryIDs)){
+		return {
+			CategoryList: []
+		};
 	}
 	
-	switch(pdict.ItemType){
+	switch(input.ItemType){
 		case "product":
 			for each(item in items){
 				if(!(Utils.isCategoryExistInList(subCategories, item.primaryCategory))){
@@ -57,7 +73,13 @@ function execute( pdict : PipelineDictionary ) : Number {
 			break;
 	}
 	
-	pdict.CategoryList = subCategories;
-	
-	return PIPELET_NEXT;
+	return {
+		CategoryList: subCategories
+	}
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }

@@ -18,17 +18,35 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 var log;
 
 function execute( pdict : PipelineDictionary ) : Number {
-	var catalog, rootCategory, subCategories;
+	var input = {
+		CatalogID: pdict.CatalogID
+	},
+	output;
 	
-	log = LogUtils.getLogger("GetCategoryList");
-	pdict.CategoryList = [];
-	
-	if(pdict.CatalogID){
-		catalog = CatalogMgr.getCatalog(pdict.CatalogID);
-		rootCategory = catalog.getRoot();
-		subCategories = Utils.getAllSubCategories(rootCategory);
-		pdict.CategoryList = subCategories;
-	}
+	output = getOutput(input);
+	pdict.CategoryList = output.CategoryList;
 	
 	return PIPELET_NEXT;
+}
+
+function getOutput(input){
+	var catalog, rootCategory, subCategories = [];
+	
+	log = LogUtils.getLogger("GetCategoryList");
+	
+	if(input.CatalogID){
+		catalog = CatalogMgr.getCatalog(input.CatalogID);
+		rootCategory = catalog.getRoot();
+		subCategories = Utils.getAllSubCategories(rootCategory);
+	}
+	
+	return {
+		CategoryList: subCategories
+	};
+}
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
 }

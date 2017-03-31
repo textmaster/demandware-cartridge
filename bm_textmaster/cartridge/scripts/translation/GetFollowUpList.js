@@ -1,3 +1,4 @@
+'use strict';
 /**
 * 	Return Projects data to Follow up:    
 *   
@@ -13,15 +14,21 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 	Utils = require('~/cartridge/scripts/utils/Utils');
 
 // Global variables
-var log;
+var log = LogUtils.getLogger("getFollowUpList");
 
 function execute( pdict : PipelineDictionary ) : Number
 {
+	var output = getOutput();
+	
+	pdict.Documents = output.Documents;
+   	
+   	return PIPELET_NEXT;
+}
+
+function getOutput(){
    	var projects, project, projectResult, documentResult, documentEndPoint,
 		projectsEndPoint = Resource.msg("api.get.projects","textmaster",null),
 		documents = [], document, doc, actions, urlAction, urlparam, itemURL, itemPipeline, itemIDLabel, languageID;
-
-   	log = LogUtils.getLogger("getFollowUpList");
    
    	projectResult = Utils.TextMasterClient("GET", projectsEndPoint);
    	projects = (projectResult && projectResult.projects) ? projectResult.projects : [];
@@ -98,7 +105,11 @@ function execute( pdict : PipelineDictionary ) : Number
    		}
    	}
 	
-   	pdict.Documents = documents;
-   	
-   	return PIPELET_NEXT;
+   	return {
+   		Documents: documents
+   	};
+}
+
+module.exports = {
+	output: getOutput()
 }

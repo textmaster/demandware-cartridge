@@ -17,9 +17,21 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number
 {
+	var input = {
+			itemType: pdict.ItemType
+		},
+		output;
+	
+	output = getOutput(input);
+	pdict.Attributes = output.Attributes;
+	
+   	return PIPELET_NEXT;
+}
+
+function getOutput(input){
 	var attrDefinitions, attr, attrDef,
 		attributes = [],
-		defaultAttributes = dw.system.Site.getCurrent().getCustomPreferenceValue('TM'+ pdict.ItemType +'Attributes');
+		defaultAttributes = dw.system.Site.getCurrent().getCustomPreferenceValue('TM'+ input.itemType +'Attributes');
 		
 	log = LogUtils.getLogger("GetAttributeList");
 	
@@ -27,14 +39,14 @@ function execute( pdict : PipelineDictionary ) : Number
 		defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
 	}
 	catch(ex){
-		log.error("Exception on getting default attribute list for "+ pdict.ItemType +" from Site Preferences: " + ex.message);
+		log.error("Exception on getting default attribute list for "+ input.itemType +" from Site Preferences: " + ex.message);
 	}
 	
 	try{
-		attrDefinitions = dw.object.SystemObjectMgr.describe(pdict.ItemType).getAttributeDefinitions().toArray();
+		attrDefinitions = dw.object.SystemObjectMgr.describe(input.itemType).getAttributeDefinitions().toArray();
 		
 		for each(attrDef in attrDefinitions){
-			if((pdict.ItemType.toLowerCase() != "product" && attrDef.system && !Utils.isAttributeAccessible(pdict.ItemType.toLowerCase(), attrDef.ID)) || attrDef.ID == "ID" || attrDef.ID == "TranslatedLanguages" || attrDef.ID == "UUID" || attrDef.ID == "taxClassID"){
+			if((input.itemType.toLowerCase() != "product" && attrDef.system && !Utils.isAttributeAccessible(input.itemType.toLowerCase(), attrDef.ID)) || attrDef.ID == "ID" || attrDef.ID == "TranslatedLanguages" || attrDef.ID == "UUID" || attrDef.ID == "taxClassID"){
 				continue;
 			}
 			
@@ -50,12 +62,12 @@ function execute( pdict : PipelineDictionary ) : Number
 		}
 	}
 	catch(ex){
-		log.error("Exception on dealing with attributeDefinitions for "+ pdict.ItemType +": " + ex.message);
+		log.error("Exception on dealing with attributeDefinitions for "+ input.itemType +": " + ex.message);
 	}
 	
-	pdict.Attributes = attributes;
-	
-   	return PIPELET_NEXT;
+	return {
+		Attributes: attributes
+	};
 }
 
 /*
@@ -76,3 +88,9 @@ function getTMDefault(ID, name, defaultAttributes){
 	
 	return result;
 }
+
+module.exports = {
+	output: function(input){
+		return getOutput(input);
+	}
+};
