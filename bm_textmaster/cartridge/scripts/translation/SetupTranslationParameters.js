@@ -30,7 +30,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 			CatalogID: pdict.CatalogID,
 			LocaleTo: pdict.LocaleTo.toArray(),
 			Attributes: pdict.Attributes.toArray(),
-			Items: pdict.Items.toArray()
+			Items: pdict.Items.split(",")
 		},
 		output;
 	

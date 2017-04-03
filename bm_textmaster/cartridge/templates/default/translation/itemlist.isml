@@ -24,7 +24,7 @@
     </thead>
     <tfoot>
             <tr>
-                <th>&nbsp;</th>
+                <th>&nbsp;<input type="hidden" name="items" value=""></th>
                 <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" id="inputfield" /></th>
                 <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" id="inputfield" /></th>
                 <th>

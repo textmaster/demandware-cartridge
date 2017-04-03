@@ -199,7 +199,7 @@
           <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-from&quot;).stringValue" key="LocaleFrom"/>
           <key-binding alias="TransParams" key="TransParams"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;attribute[]&quot;).values.toArray()" key="Attributes"/>
-          <key-binding alias="CurrentHttpParameterMap.get(&quot;item[]&quot;).values.toArray()" key="Items"/>
+          <key-binding alias="CurrentHttpParameterMap.get(&quot;items&quot;).stringValue" key="Items"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;locale-to[]&quot;).values.toArray()" key="LocaleTo"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;item-type&quot;).stringValue" key="ItemType"/>
           <key-binding alias="CurrentHttpParameterMap.get(&quot;catalog&quot;).stringValue" key="CatalogID"/>

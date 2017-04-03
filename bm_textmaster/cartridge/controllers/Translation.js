@@ -65,7 +65,7 @@ function placeOrder(){
 			CatalogID: request.httpParameterMap.get("catalog").stringValue,
 			LocaleTo: request.httpParameterMap.get("locale-to[]").values.toArray(),
 			Attributes: request.httpParameterMap.get("attribute[]").values.toArray(),
-			Items: request.httpParameterMap.get("item[]").values.toArray()
+			Items: request.httpParameterMap.get("items").stringValue.split(",")
 		},
 		output;
 	

@@ -32,7 +32,7 @@
 				saveAPIConfigurations: "Components-SaveAPIConfigurations"
 			},
 			newTranslation: function(){
-				var localeFrom, itemType, catalog, url, postData;
+				var localeFrom, itemType, catalog, url, postData, items = [], itemID;
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
@@ -152,12 +152,45 @@
 					});
 				});
 				
+				$('#items-holder').on('click','input[type="checkbox"][name="item[]"]',function(){
+					itemID = $(this).val();
+					
+					if($(this).prop("checked")){
+						addItem(itemID);
+					}
+					else{
+						removeItem(itemID);
+					}
+				});
+				
+				var addItem = function(itemID){
+					items.push(itemID);
+				};
+				
+				var removeItem = function(itemID){
+					var index = items.indexOf(itemID);
+					
+					if(index > -1){
+						items.splice(index, 1);
+					}
+				};
+				
 				$('#button-select-all').on('click',function(){
 					$('input[type="checkbox"][name="item[]"]').prop("checked",true);
+					
+					$('input[type="checkbox"][name="item[]"]').each(function(){
+						itemID = $(this).val();
+						addItem(itemID);
+					});
 				});
 				
 				$('#button-deselect-all').on('click',function(){
 					$('input[type="checkbox"][name="item[]"]').prop("checked",false);
+					
+					$('input[type="checkbox"][name="item[]"]').each(function(){
+						itemID = $(this).val();
+						removeItem(itemID);
+					});
 				});
 				
 				$('#filter-item-form').on('submit',function(){
@@ -180,7 +213,7 @@
 						errors.push("- Select attribute(s)");
 					}
 					
-					if($('input[type="checkbox"][name="item[]"]:checked').length == 0){
+					if(items.length == 0){
 						errors.push("- Select item(s)");
 					}
 					
@@ -193,6 +226,7 @@
 						return false;
 					}
 					
+					$('input[name=items]').val(items.join(","));
 					$('.submit-error').html("");
 					$('#filter-item-submit').prop("disabled",true).val("Please wait...");
 				});

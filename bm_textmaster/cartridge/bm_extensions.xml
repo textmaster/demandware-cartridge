@@ -3,10 +3,10 @@
 	<menuitem id="textmastermenuitem1" position="99999" site="true">
 		<name xml:lang="x-default">TextMaster</name>
 		<short_description xml:lang="x-default">
-			TextMaster Translation
+			Cloud-based professional translation solution for eCommerce
 		</short_description>
 		<description xml:lang="x-default">
-			TextMaster Translation tools
+			Cloud-based professional translation solution for eCommerce
 		</description>
 		<icon>icons/textmaster-small.png</icon>
 	</menuitem>
@@ -14,10 +14,10 @@
 	<menuaction id="textmastermenumenuaction1" menupath="textmastermenuitem1" position="999" site="true">
 		<name xml:lang="x-default">New Translation Project</name>
 		<short_description xml:lang="x-default">
-			New translation project
+			Send content to TextMaster to translate
 		</short_description>
 		<description xml:lang="x-default">
-			Start a new translation project
+			Send content to TextMaster to translate
 		</description>
 		<exec pipeline="Translation" node="New"/>
 		<sub-pipelines>
@@ -37,10 +37,10 @@
 	<menuaction id="textmastermenumenuaction2" menupath="textmastermenuitem1" position="1000" site="true">
 		<name xml:lang="x-default">Translation Dashboard</name>
 		<short_description xml:lang="x-default">
-			Follow up on translations
+			Real time follow-up and monitoring of TextMaster translation projects
 		</short_description>
 		<description xml:lang="x-default">
-			Follow up on translations
+			Real time follow-up and monitoring of TextMaster translation projects
 		</description>
 		<exec pipeline="Translation" node="FollowUp"/>
 		<sub-pipelines>
@@ -52,10 +52,10 @@
 	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
 		<name xml:lang="x-default">Attribute Setup</name>
 		<short_description xml:lang="x-default">
-			Default attributes settings
+			Set default item attributes to translate
 		</short_description>
 		<description xml:lang="x-default">
-			Set attributes those are need to be translated frequently
+			Set default item attributes to translate
 		</description>
 		<exec pipeline="Translation" node="DefaultAttributes"/>
 		<sub-pipelines>
@@ -69,10 +69,10 @@
 	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
 		<name xml:lang="x-default">API Setup</name>
 		<short_description xml:lang="x-default">
-			Register new account in TextMaster
+			Set up API connection with TextMaster
 		</short_description>
 		<description xml:lang="x-default">
-			Go to TextMaster and create new account to use the translation feature
+			Set up API connection with TextMaster
 		</description>
 		<exec pipeline="Translation" node="Register"/>
 		<sub-pipelines>
