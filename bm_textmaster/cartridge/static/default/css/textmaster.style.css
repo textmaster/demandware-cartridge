@@ -255,11 +255,11 @@
 .translation-module .new-translation input[type=text]#datefield {
 	min-width:70px;
 }
-.translation-module .new-translation ul.multi-select.select-category li:last-of-type {
-	border-top: 1px solid #efefef;
-    padding-top: 5px;
+.translation-module .new-translation ul.multi-select.select-category li:first-of-type {
+	border-bottom: 1px solid #efefef;
+    margin-bottom: 5px;
 }
-.translation-module .new-translation ul.multi-select.select-category li:last-of-type label:after {
+.translation-module .new-translation ul.multi-select.select-category li:first-of-type label:after {
 	content: '\00a1';
 	color:#ffffff;
     display: inline-block;
@@ -349,11 +349,11 @@
 	text-align:right;
 }
 .place-order #reload-templates {
-	margin-bottom:5px;
+	margin:0 0 5px 10px;
 }
 .translation-module .place-order select {
 	min-width:150px;
-} 
+}
 
 /*Notification*/
 .notification .form-holder {
