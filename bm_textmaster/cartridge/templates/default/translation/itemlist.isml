@@ -101,7 +101,8 @@
 	    );
 		
 		var table = $("#filtertableProjects").DataTable({
-			  "dom": 'lrtip'
+			  "dom": 'lrtip',
+			  "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]]
 		});
 		
 		table.columns().every( function () {
