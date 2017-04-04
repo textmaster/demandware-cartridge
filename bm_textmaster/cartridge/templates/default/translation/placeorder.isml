@@ -9,8 +9,8 @@
 <div class="place-order">
 	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
 	<div class="right">
-		<a href="${Resource.msg('link.list.templates','textmaster',null)}" target="_blank">${Resource.msg('order.edit.templates','textmaster',null)}</a>
-		<input type="button" id="reload-templates" value="${Resource.msg('order.reload.templates','textmaster',null)}">
+		<a href="${Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
+		<input type="button" id="reload-templates" value="${Resource.msg('order.reload.templates','textmaster',null)}" class="button">
 	</div>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
