@@ -2,7 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
-<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 <isscript>
 	var transParams = JSON.parse(pdict.TransParams);
 </isscript>
@@ -10,7 +10,7 @@
 	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
 	<div class="right">
 		<a href="${Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
-		<input type="button" id="reload-templates" value="${Resource.msg('order.reload.templates','textmaster',null)}" class="button">
+		<a id="reload-templates" class="button">${Resource.msg('order.reload.templates','textmaster',null)}</a>
 	</div>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>

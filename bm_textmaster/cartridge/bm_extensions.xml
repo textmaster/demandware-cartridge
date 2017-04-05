@@ -12,12 +12,12 @@
 	</menuitem>
 
 	<menuaction id="textmastermenumenuaction1" menupath="textmastermenuitem1" position="999" site="true">
-		<name xml:lang="x-default">New Translation Project</name>
+		<name xml:lang="x-default">Send content for translation to TextMaster</name>
 		<short_description xml:lang="x-default">
-			Send content to TextMaster to translate
+			Send content for translation to TextMaster
 		</short_description>
 		<description xml:lang="x-default">
-			Send content to TextMaster to translate
+			Send content for translation to TextMaster
 		</description>
 		<exec pipeline="Translation" node="New"/>
 		<sub-pipelines>
