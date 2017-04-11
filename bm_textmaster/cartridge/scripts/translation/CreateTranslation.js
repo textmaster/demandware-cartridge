@@ -112,7 +112,7 @@ function getOutput(input){
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? item[attr.id].markup : item.attributeModel.getDisplayValue(itemAttr);
+									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? (item[attr.id] ? item[attr.id].markup : "") : item.attributeModel.getDisplayValue(itemAttr);
 									
 									if(contentValue){
 										itemData[attr.id] = contentValue;

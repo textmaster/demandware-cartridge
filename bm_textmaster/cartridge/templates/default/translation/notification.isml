@@ -4,7 +4,7 @@
 	var projectLink = pdict.projectID ? Resource.msgf("link.edit.project", "textmaster", null, pdict.projectID) : Resource.msg("link.list.projects", "textmaster",null) ;
 </isscript>
 <isdecorate template="application/MenuFrame">
-    <isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="New Translation" />
+    <isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
     <h1>${Resource.msg("order.success", "textmaster",null)}</h1>
     <div class="notification">
     	<isif condition="${pdict.autoLaunchCount > 0}">
