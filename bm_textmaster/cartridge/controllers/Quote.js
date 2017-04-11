@@ -33,7 +33,7 @@ function send()
 	    	}
 	    	
 	    	RunJobNow = new Pipelet('RunJobNow').execute({
-	            JobName: Resource.msg("quote.jobname", "textmaster",null)
+	            JobName: Resource.msg("quote.jobname", "textmaster",null) + dw.system.Site.current.ID
 	        });
 	    	
 	    	status = RunJobNow.result == 1 ? 201 : 404;	
