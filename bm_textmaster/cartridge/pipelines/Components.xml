@@ -39,7 +39,7 @@
           <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="Category"/>
           <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
           <key-binding alias="ItemList" key="ItemList"/>
-          <key-binding alias="ItemType" key="Type"/>
+          <key-binding alias="Type" key="Type"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
