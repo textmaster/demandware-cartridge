@@ -6,7 +6,7 @@
 	var Utils = require('~/cartridge/scripts/utils/Utils'),
 	    languages = Utils.getTranslationLanguages();
 </isscript>
-<span>${pdict.Type}</span>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
     <thead>
     	<th class="table_header center n e s w" width="8%"></th>
@@ -118,7 +118,7 @@
 	    			function( settings, data, dataIndex ) {
 	    				var stringDate = $('input#datefield').val();
 	    				var date = (stringDate != "") ? new Date(stringDate).getTime() : new Date('1200-01-01').getTime();
-	    				var dateData = new Date ((itemType == 'category' || itemType == 'content') ? data[6] : data[7]).getTime();
+						var dateData = new Date ((itemType == 'category' || itemType == 'content') ? data[6] : data[7]).getTime();
 	    			    var showData = false;
 	    			    if (dateData >= date) {
 	    			    	showData = true;
