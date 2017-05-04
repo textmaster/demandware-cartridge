@@ -14,10 +14,7 @@ var Pipelet  = require('dw/system/Pipelet'),
 var app = require('~/cartridge/scripts/app'),
 	guard = require('~/cartridge/scripts/guard'),
 	logUtils = require('~/cartridge/scripts/utils/LogUtils'),
-	utils = require('~/cartridge/scripts/utils/Utils'),
-	apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations'),
-	transParams = require('~/cartridge/scripts/translation/SetupTranslationParameters'),
-	followUpList = require('~/cartridge/scripts/translation/GetFollowUpList');
+	utils = require('~/cartridge/scripts/utils/Utils');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
@@ -38,9 +35,10 @@ function newTranslation(){
 */
 function followUp(){
 	var registered = loginCheck(),
-		output;
+		output, followUpList;
 	
 	if(registered){
+		followUpList = require('~/cartridge/scripts/translation/GetFollowUpList')
 		output = followUpList.output;
 		app.getView(output).render('translation/followupontranslation');
 	}
@@ -50,7 +48,8 @@ function followUp(){
 * Regitration link to TextMaster
 */
 function register(){
-	var config = apiConfig.output;
+	var apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations'),
+		config = apiConfig.output;
 	
 	app.getView(config).render('translation/entertextmaster');
 }
@@ -67,6 +66,7 @@ function placeOrder(){
 			Attributes: request.httpParameterMap.get("attribute[]").values.toArray(),
 			Items: request.httpParameterMap.get("items").stringValue.split(",")
 		},
+		transParams = require('~/cartridge/scripts/translation/SetupTranslationParameters'),
 		output;
 	
 	output = transParams.output(input);

@@ -14,16 +14,7 @@ var Pipelet  = require('dw/system/Pipelet'),
 var app = require('~/cartridge/scripts/app'),
 	guard = require('~/cartridge/scripts/guard'),
 	logUtils = require('~/cartridge/scripts/utils/LogUtils'),
-	utils = require('~/cartridge/scripts/utils/Utils'),
-	attributes = require('~/cartridge/scripts/translation/GetAttributeList'),
-	categories = require('~/cartridge/scripts/translation/GetCategoryList'),
-	toLanguages = require('~/cartridge/scripts/translation/GetLanguageToList'),
-	items = require('~/cartridge/scripts/translation/GetItemList'),
-	filterCategories = require('~/cartridge/scripts/translation/GetFilterCategoryList'),
-	templatesResponse = require('~/cartridge/scripts/translation/GetTemplatesResponse'),
-	translationCreation = require('~/cartridge/scripts/translation/CreateTranslation'),
-	defaultAttributes = require('~/cartridge/scripts/translation/SaveDefaultAttributes'),
-	apiConfig = require('~/cartridge/scripts/translation/SetAPIConfigurations');
+	utils = require('~/cartridge/scripts/utils/Utils');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
@@ -35,6 +26,7 @@ function attributeList(){
 	var input = {
 			itemType: request.httpParameterMap.get("itemType").stringValue
 		},
+		attributes = require('~/cartridge/scripts/translation/GetAttributeList'),
 		output;
 	
 	output = attributes.output(input);
@@ -49,6 +41,7 @@ function categoryDropdown(){
 	var input = {
 			CatalogID: request.httpParameterMap.get("catalog").stringValue
 		},
+		categories = require('~/cartridge/scripts/translation/GetCategoryList'),
 		output;
 	
 	output = categories.output(input);
@@ -63,6 +56,7 @@ function getLanguageToList(){
 	var input = {
 			LanguageFrom: request.httpParameterMap.get("languageFrom").stringValue
 		},
+		toLanguages = require('~/cartridge/scripts/translation/GetLanguageToList'),
 		output;
 	
 	output = toLanguages.output(input);
@@ -74,7 +68,9 @@ function getLanguageToList(){
 * Gets item list in ajax call
 */
 function itemList(){
-	var input1, input2, output, output1, output2;
+	var items = require('~/cartridge/scripts/translation/GetItemList'),
+		filterCategories = require('~/cartridge/scripts/translation/GetFilterCategoryList'),
+		input1, input2, output, output1, output2;
 	
 	input1 = {
 		Catalog: request.httpParameterMap.get("catalog").stringValue,
@@ -100,7 +96,8 @@ function itemList(){
 * Gets template response from TextMaster
 */
 function getTemplatesResponse(){
-	var output = templatesResponse.output;
+	var templatesResponse = require('~/cartridge/scripts/translation/GetTemplatesResponse'),
+		output = templatesResponse.output;
 	
 	response.getWriter().println(output);
 }
@@ -109,7 +106,8 @@ function getTemplatesResponse(){
 * Create translation document in TextMaster
 */
 function createTranslation(){
-	var input, output;
+	var translationCreation = require('~/cartridge/scripts/translation/CreateTranslation'),
+		input, output;
 	
 	input = {
 		LocaleFrom: request.httpParameterMap.get("localeFrom").stringValue,
@@ -128,7 +126,8 @@ function createTranslation(){
 * Save default attribute settings
 */
 function saveDefaultAttributes(){
-	var input, output;
+	var defaultAttributes = require('~/cartridge/scripts/translation/SaveDefaultAttributes'),
+		input, output;
 	
 	input = {
 		ItemType: request.httpParameterMap.get('itemType').stringValue,
@@ -143,12 +142,13 @@ function saveDefaultAttributes(){
 * Save API Configurations
 */
 function saveAPIConfigurations(){
-	var input = {
-		APIKey: request.httpParameterMap.get('apiKey').stringValue,
-		APISecret: request.httpParameterMap.get('apiSecret').stringValue,
-		APICategory: request.httpParameterMap.get('apiCategory').stringValue,
-		APICatalogID: request.httpParameterMap.get('catalogID').stringValue
-	};
+	var apiConfig = require('~/cartridge/scripts/translation/SetAPIConfigurations'),
+		input = {
+			APIKey: request.httpParameterMap.get('apiKey').stringValue,
+			APISecret: request.httpParameterMap.get('apiSecret').stringValue,
+			APICategory: request.httpParameterMap.get('apiCategory').stringValue,
+			APICatalogID: request.httpParameterMap.get('catalogID').stringValue
+		};
 	apiConfig.output(input);
 }
 
