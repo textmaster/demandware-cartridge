@@ -13,8 +13,9 @@ var Pipelet	 = require('dw/system/Pipelet'),
 	CustomObjMgr = require('dw/object/CustomObjectMgr');
 
 /* Script Modules */
-var app = require('~/cartridge/scripts/app');
-var guard = require('~/cartridge/scripts/guard');
+var app = require('~/cartridge/scripts/app'),
+	guard = require('~/cartridge/scripts/guard'),
+	utils = require('~/cartridge/scripts/utils/Utils');
 
 /**
 * Calls appropriate jobs 
@@ -22,7 +23,8 @@ var guard = require('~/cartridge/scripts/guard');
 function send()
 {		
     try {
-    	var projectid = dw.util.StringUtils.trim(request.httpParameterMap.projectid.toString());
+    	var projectid = dw.util.StringUtils.trim(request.httpParameterMap.projectid.toString()),
+    		jobName, jobResponse, ocapiJobUrl;
     	
     	if(projectid){
 	    	var co = CustomObjMgr.getCustomObject('TextMasterProject', projectid);
@@ -32,11 +34,11 @@ function send()
 	    		Transaction.commit();
 	    	}
 	    	
-	    	RunJobNow = new Pipelet('RunJobNow').execute({
-	            JobName: Resource.msg("quote.jobname", "textmaster",null) + dw.system.Site.current.ID
-	        });
+	    	jobName = Resource.msg("quote.jobname", "textmaster",null) + dw.system.Site.current.ID;
+	    	ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
+	    	jobResponse = utils.OCAPIClient("post", ocapiJobUrl,null);
 	    	
-	    	status = RunJobNow.result == 1 ? 201 : 404;	
+	    	status = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending") ? 201 : 404;
 	    	sendResult(status);
     	}
     	else{

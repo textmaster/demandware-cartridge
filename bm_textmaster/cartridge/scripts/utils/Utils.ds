@@ -93,8 +93,10 @@ Utils.getDWLanguages = function(){
 *	Gets Translation Languages - common languages in Demandware and TextMaster
 */
 Utils.getTranslationLanguages = function(){
-	if(session.custom['TMTranslationLanguages'] && session.custom['TMTranslationLanguages'].length > 0){
-		return session.custom['TMTranslationLanguages'];
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMTranslationLanguages){
+		return JSON.parse(dataHolder.custom.TMTranslationLanguages);
 	}
 	
 	var dwLanguages = Utils.getDWLanguages(),
@@ -116,9 +118,11 @@ Utils.getTranslationLanguages = function(){
 		return a.name < b.name ? -1 : 1;
 	});
 	
-	Transaction.begin();
-	session.custom['TMTranslationLanguages'] = languages;
-	Transaction.commit();
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMTranslationLanguages = JSON.stringify(languages);
+		Transaction.commit();
+	}
 	
 	return languages;
 }
@@ -127,8 +131,12 @@ Utils.getTranslationLanguages = function(){
 *	Get 'language from' list
 */
 Utils.getLanguageFromList = function(){
-	if(session.custom['TMLanguageFromList'] && session.custom['TMLanguageFromList'].length > 0){
-		return session.custom['TMLanguageFromList'];
+	Utils.resetLanguageSession();
+	
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMLanguageFromList){
+		return JSON.parse(dataHolder.custom.TMLanguageFromList);
 	}
 	
 	var result = [],
@@ -142,11 +150,28 @@ Utils.getLanguageFromList = function(){
 		}
 	}
 	
-	Transaction.begin();
-	session.custom['TMLanguageFromList'] = result;
-	Transaction.commit();
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMLanguageFromList = JSON.stringify(result);
+		Transaction.commit();
+	}
 	
 	return result;
+}
+
+/*
+*	Reset session values
+*/
+Utils.resetLanguageSession = function(){
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMLanguageFromList = "";
+		dataHolder.custom.TMTranslationLanguages = "";
+		dataHolder.custom.TMAbilityList = "";
+		Transaction.commit();
+	}
 }
 
 /*
@@ -169,8 +194,10 @@ Utils.isTranslationLanguage = function(languageCheck){
 *	Get all language ability list
 */
 Utils.getLanguageAbilityList = function(){
-	if(session.custom['TMAbilityList'] && session.custom['TMAbilityList'].length > 0){
-		return session.custom['TMAbilityList'];
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMAbilityList){
+		return JSON.parse(dataHolder.custom.TMAbilityList);
 	}
 	
 	var abilityEndPoint = Resource.msg('api.get.abilities','textmaster',null),
@@ -190,9 +217,11 @@ Utils.getLanguageAbilityList = function(){
 		}
 	}
 	
-	Transaction.begin();
-	session.custom['TMAbilityList'] = result;
-	Transaction.commit();
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMAbilityList = JSON.stringify(result);
+		Transaction.commit();
+	}
 	
 	return result;
 }
@@ -413,6 +442,69 @@ Utils.TriggerURL = function(method, endPoint){
 }
 
 /*
+*	Communicates with OCAPI
+*/
+Utils.OCAPIClient = function(method, endPoint, request){
+	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
+		endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
+		httpClient: HTTPClient = new HTTPClient(),
+		response: Object, token;
+	
+	token = Utils.getOCAPIToken();
+	request = request || "";
+	httpClient.setRequestHeader('Authorization', "Bearer " + token);
+	httpClient.setRequestHeader('Content-Type', 'application/json');
+	
+	httpClient.setTimeout(timeout);
+	httpClient.open(method, endPointUrl);
+	httpClient.send(request);
+	
+	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		response = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		response = null;
+	}
+	
+	return response;
+}
+
+/*
+*	Gets OCAPI authorization token
+*/
+Utils.getOCAPIToken = function(){
+	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
+		ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
+		ocapiPassword: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIpassword') || Resource.msg("ocapi.demo.password","textmaster",null),
+		endPointUrl: String = Resource.msg("ocapi.token.post","textmaster",null),
+		httpClient: HTTPClient = new HTTPClient(),
+		token = "",
+		auth = "Basic " + StringUtils.encodeBase64(ocapiID + ":" + ocapiPassword),
+		response: Object;
+	
+	httpClient.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	httpClient.setRequestHeader('Authorization', auth);
+	
+	httpClient.setTimeout(timeout);
+	httpClient.open("post", endPointUrl);
+	httpClient.send();
+	
+	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		response = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		response = null;
+	}
+	
+	if(response){
+		token = response.access_token;
+	}
+	
+	return token;
+}
+/*
 *	Converts Demandware locale ID format (eg:- en_US) to TextMaster locale ID format (eg:- en-us)
 */
 Utils.toTextMasterLocaleID = function(locale){
@@ -456,6 +548,27 @@ Utils.getWordCount = function(str){
  Utils.getJobDataHolder = function(){
 	var customObjectName = Resource.msg("import.customobject.name","textmaster",null),
 		customObjectInstanceID = Resource.msg("import.customobject.instanceid","textmaster",null);
+	try{
+		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+		if(dataHolder == null){
+			Transaction.begin();
+			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+			Transaction.commit();
+		}
+		return dataHolder;
+	}
+	catch(ex){
+		Utils.log.error(ex.message + " - No custom object found.");
+		return null;
+	}
+}
+
+/**
+* Get custom object to keep Language list
+*/
+ Utils.getLanguageDataHolder = function(){
+	var customObjectName = Resource.msg("language.customobject.name","textmaster",null),
+		customObjectInstanceID = Resource.msg("language.customobject.instanceid","textmaster",null);
 	try{
 		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
 		if(dataHolder == null){

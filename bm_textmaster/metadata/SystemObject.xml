@@ -112,6 +112,20 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="TMOCAPIid">
+                <display-name xml:lang="x-default">OCAPI Client ID</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMOCAPIpassword">
+                <display-name xml:lang="x-default">OCAPI Client Password</display-name>
+                <type>password</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
             <attribute-definition attribute-id="TMProductAttributes">
                 <display-name xml:lang="x-default">TextMaster Product Attributes</display-name>
                 <description xml:lang="x-default">TextMaster default product attributes for translation</description>
@@ -135,6 +149,8 @@
                 <attribute attribute-id="TMEmail"/>
                 <attribute attribute-id="TMMasterCatalogID"/>
                 <attribute attribute-id="TMAPITimeout"/>
+                <attribute attribute-id="TMOCAPIid"/>
+                <attribute attribute-id="TMOCAPIpassword"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

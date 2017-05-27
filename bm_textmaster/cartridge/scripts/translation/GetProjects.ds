@@ -18,6 +18,7 @@ var guard = require('~/cartridge/scripts/guard');
 function execute( pdict : PipelineDictionary ) : Number
 {  
   var objectMgr : CustomObjectMgr = dw.object.CustomObjectMgr;
+  
   try{
 	  var projects : SeekableIterator = objectMgr.getAllCustomObjects('TextMasterProject');
 	  pdict.TMProjects = projects.asList();
