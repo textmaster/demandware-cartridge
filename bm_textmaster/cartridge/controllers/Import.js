@@ -23,24 +23,23 @@ var log;
 * Calls start method
 */
 function data(){
-	var RunJobNow, jobName, projectid, documentid, result = false, jobRunning;
+	var jobName, jobResponse, ocapiJobUrl, projectid, documentid, result = false, jobRunning;
 	
 	log = logUtils.getLogger("ImportController");
 	projectid = request.httpParameterMap.get("projectid").value;
 	documentid = request.httpParameterMap.get("documentid").value;
-	jobName = Resource.msg("import.job.name","textmaster",null) + dw.system.Site.current.ID
 	
 	if(projectid && documentid){
 		jobRunning = setQuery(projectid, documentid);
 		
 		if(jobRunning == false){
-			RunJobNow = new Pipelet('RunJobNow').execute({
-				JobName: jobName
-			});
+			jobName = Resource.msg("import.job.name","textmaster",null) + dw.system.Site.current.ID;
+			ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
+			jobResponse = utils.OCAPIClient("post", ocapiJobUrl,null);
 			
-			result = RunJobNow.result == 1;
+			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending");
 			
-			if(RunJobNow.result == 2){
+			if(!result){
 				log.error("Job '"+ jobName +"' is not found or not enabled");
 			}
 		}

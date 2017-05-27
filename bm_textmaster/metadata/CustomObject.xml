@@ -36,6 +36,38 @@
             </attribute-group>
         </group-definitions>
     </custom-type>
+    <custom-type type-id="TMLanguageDataHolder">
+        <display-name xml:lang="x-default">TMLanguageDataHolder</display-name>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="ID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="TMLanguageFromList">
+                <display-name xml:lang="x-default">TMLanguageFromList</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMTranslationLanguages">
+                <display-name xml:lang="x-default">TMTranslationLanguages</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="TMAbilityList">
+                <display-name xml:lang="x-default">TMAbilityList</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+    </custom-type>
     <custom-type type-id="TextMasterProject">
         <display-name xml:lang="x-default">TextMaster Project</display-name>
         <staging-mode>no-staging</staging-mode>
