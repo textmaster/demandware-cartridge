@@ -392,19 +392,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	        
 	        return args.request;
 	    },
-	    parseResponse: function(service : HTTPService, httpClient : HTTPClient) {
-			var resp;
-			
-		    if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
-				resp = JSON.parse(httpClient.getText());
-			}
-			else{
-				Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-				resp = null;
-			}
-			
-			return resp;
-		}
+	    Utils.serviceParseResponse
 	});
 	
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
