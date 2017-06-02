@@ -5,6 +5,7 @@ importPackage( dw.system );
 importPackage( dw.catalog );
 importPackage( dw.io );
 importPackage( dw.net );
+importPackage( dw.svc );
 importPackage( dw.util );
 importPackage( dw.crypto );
 
@@ -360,9 +361,40 @@ Utils.getLocaleName = function(localeID){
 }
 
 /*
+*	HTTPService configuration parseResponse
+*/
+Utils.serviceParseResponse = function(service : HTTPService, httpClient : HTTPClient) {
+	var resp;
+	
+    if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		resp = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		resp = null;
+	}
+	
+	return resp;
+}
+
+/*
 *	Communicates with TextMaster clients APIs
 */
 Utils.TextMasterClient = function(method, endPoint, request){
+	ServiceRegistry.configure("textmaster.http", {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        service.addHeader('Apikey', args.apiKey);
+	        service.addHeader('Date', args.date);
+	        service.addHeader('Signature', args.signatureString);
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	});
+	
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
 		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
 		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
@@ -371,27 +403,22 @@ Utils.TextMasterClient = function(method, endPoint, request){
 		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
 		signatureString: String = signature.toString(),
 		endPointUrl: String = Resource.msg("api.base","textmaster",null) + endPoint,
-		httpClient: HTTPClient = new HTTPClient(),
-		response: Object;
+		response: Object, serviceArgs, service, result;
 	
 	request = request || "";
-	httpClient.setRequestHeader('Apikey', apiKey);
-	httpClient.setRequestHeader('Date', date);
-	httpClient.setRequestHeader('Signature', signatureString);
-	httpClient.setRequestHeader('Content-Type', 'application/json');
+	serviceArgs = {
+		apiKey: apiKey,
+		date: date,
+		signatureString: signatureString,
+		method: method,
+		endPointUrl: endPointUrl,
+		request: request
+	};
 	
-	httpClient.setTimeout(timeout);
-	httpClient.open(method, endPointUrl);
-	httpClient.send(request);
-	
-	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
-		response = JSON.parse(httpClient.getText());
-		//Utils.log.error(httpClient.getText());
-	}
-	else{
-		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-		response = null;
-	}
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
 	
 	return response;
 }
@@ -400,25 +427,33 @@ Utils.TextMasterClient = function(method, endPoint, request){
 *	Communicates with TextMaster public APIs
 */
 Utils.TextMasterPublic = function(method, endPoint, request){
+	ServiceRegistry.configure("textmaster.http", {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	});
+	
 	var endPointUrl: String = Resource.msg("api.public.base","textmaster",null) + endPoint,
 		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
-		httpClient: HTTPClient = new HTTPClient(),
-		response: Object;
+		response, serviceArgs, service, result;
 	
 	request = request || "";
-	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
-	httpClient.setTimeout(timeout);
-	httpClient.open(method, endPointUrl);
-	httpClient.send(request);
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl,
+		request: request
+	};
 	
-	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
-		response = JSON.parse(httpClient.getText());
-	}
-	else{
-		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-		response = null;
-	}
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
 	
 	return response;
 }
@@ -427,45 +462,67 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 *	Execute callback URL
 */
 Utils.TriggerURL = function(method, endPoint){
-	var httpClient: HTTPClient = new HTTPClient(),
-		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000;
+	ServiceRegistry.configure("textmaster.http", {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        
+	        return service;
+	    },
+	    parseResponse: function(service : HTTPService, httpClient : HTTPClient) {
+		    if (httpClient.statusCode != 200 && httpClient.statusCode != 201) {
+				Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+			}
+		}
+	});
 	
-	httpClient.setRequestHeader('Content-Type', 'application/json');
+	var endPointUrl = endPoint,
+		serviceArgs, service, result;
 	
-	httpClient.setTimeout(timeout);
-	httpClient.open(method, endPoint);
-	httpClient.send();
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl
+	};
 	
-	if (httpClient.statusCode != 200 && httpClient.statusCode != 201) {
-		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-	}
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
 }
 
 /*
 *	Communicates with OCAPI
 */
 Utils.OCAPIClient = function(method, endPoint, request){
-	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
-		endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
-		httpClient: HTTPClient = new HTTPClient(),
-		response: Object, token;
+	var endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
+		token, response, serviceArgs, service, result;
 	
 	token = Utils.getOCAPIToken();
+	
+	ServiceRegistry.configure("textmaster.http", {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        service.addHeader('Authorization', "Bearer " + args.token);
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	});
+	
 	request = request || "";
-	httpClient.setRequestHeader('Authorization', "Bearer " + token);
-	httpClient.setRequestHeader('Content-Type', 'application/json');
 	
-	httpClient.setTimeout(timeout);
-	httpClient.open(method, endPointUrl);
-	httpClient.send(request);
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl,
+		request: request,
+		token: token
+	};
 	
-	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
-		response = JSON.parse(httpClient.getText());
-	}
-	else{
-		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-		response = null;
-	}
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
 	
 	return response;
 }
@@ -474,36 +531,73 @@ Utils.OCAPIClient = function(method, endPoint, request){
 *	Gets OCAPI authorization token
 */
 Utils.getOCAPIToken = function(){
+	ServiceRegistry.configure("textmaster.http", {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+	        service.addHeader('Authorization', args.auth);
+	        
+	        return "";
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	});
+	
 	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
 		ocapiPassword: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIpassword') || Resource.msg("ocapi.demo.password","textmaster",null),
 		endPointUrl: String = Resource.msg("ocapi.token.post","textmaster",null),
-		httpClient: HTTPClient = new HTTPClient(),
 		token = "",
 		auth = "Basic " + StringUtils.encodeBase64(ocapiID + ":" + ocapiPassword),
-		response: Object;
+		response, serviceArgs, service, result;
 	
-	httpClient.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	httpClient.setRequestHeader('Authorization', auth);
+	token = Utils.getSessionToken(auth);
 	
-	httpClient.setTimeout(timeout);
-	httpClient.open("post", endPointUrl);
-	httpClient.send();
-	
-	if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
-		response = JSON.parse(httpClient.getText());
+	if(token){
+		return token;
 	}
-	else{
-		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
-		response = null;
-	}
+	
+	serviceArgs = {
+		method: "post",
+		endPointUrl: endPointUrl,
+		auth: auth
+	};
+	
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
 	
 	if(response){
 		token = response.access_token;
 	}
 	
+	Transaction.begin();
+	session.custom.textmasterTokenAuth = auth;
+	session.custom.textmasterTokenTime = new Date();
+	session.custom.textmasterToken = token;
+	Transaction.commit();
+	
 	return token;
 }
+
+/*
+*	get token from Session if found
+*/
+Utils.getSessionToken = function(auth){
+	if(session.custom.textmasterTokenAuth && session.custom.textmasterTokenAuth == auth){
+		var sessionTime = new Date(session.custom.textmasterTokenTime),
+			currentTime = new Date(),
+			tokenExpire = 300000; /* 5 minutes */
+		
+		if(currentTime.getTime() - sessionTime.getTime() < tokenExpire){
+			return session.custom.textmasterToken;
+		}
+	}
+	
+	return false;
+}
+
 /*
 *	Converts Demandware locale ID format (eg:- en_US) to TextMaster locale ID format (eg:- en-us)
 */
