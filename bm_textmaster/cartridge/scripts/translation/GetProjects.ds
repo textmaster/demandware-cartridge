@@ -10,11 +10,6 @@ importPackage(dw.net);
 importPackage( dw.object);
 importPackage( dw.util);
 
-
-/* Script Modules */
-var app = require('~/cartridge/scripts/app');
-var guard = require('~/cartridge/scripts/guard');
-
 function execute( pdict : PipelineDictionary ) : Number
 {  
   var objectMgr : CustomObjectMgr = dw.object.CustomObjectMgr;

@@ -8,13 +8,15 @@
 /* API Includes */
 
 var Pipelet	 = require('dw/system/Pipelet'),
+	Site  = require('dw/system/Site'),
 	Resource = require('dw/web/Resource'),
 	Transaction	 = require('dw/system/Transaction'),
-	CustomObjMgr = require('dw/object/CustomObjectMgr');
+	CustomObjMgr = require('dw/object/CustomObjectMgr'),
+	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
 
 /* Script Modules */
-var app = require('~/cartridge/scripts/app'),
-	guard = require('~/cartridge/scripts/guard'),
+var app = require(SGContCartridge + '/cartridge/scripts/app'),
+	guard = require(SGContCartridge + '/cartridge/scripts/guard'),
 	utils = require('~/cartridge/scripts/utils/Utils');
 
 /**
