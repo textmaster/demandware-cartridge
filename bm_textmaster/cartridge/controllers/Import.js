@@ -39,7 +39,7 @@ function data(){
 			ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
 			jobResponse = utils.OCAPIClient("post", ocapiJobUrl,null);
 			
-			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending");
+			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending" || jobResponse.execution_status.toLowerCase() == "finished");
 			
 			if(!result){
 				log.error("Job '"+ jobName +"' is not found or not enabled");
