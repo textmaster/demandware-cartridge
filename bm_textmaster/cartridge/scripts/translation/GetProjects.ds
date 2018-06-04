@@ -10,6 +10,12 @@ importPackage(dw.net);
 importPackage( dw.object);
 importPackage( dw.util);
 
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global variables
+var log = LogUtils.getLogger("GetProjects");
+
 function execute( pdict : PipelineDictionary ) : Number
 {  
   var objectMgr : CustomObjectMgr = dw.object.CustomObjectMgr;
@@ -19,7 +25,7 @@ function execute( pdict : PipelineDictionary ) : Number
 	  pdict.TMProjects = projects.asList();
 	  projects.close();
   } catch(e){
-  	dw.system.Logger.error('Error in Script GetProjects',e);
+  	log.error('Error in Script GetProjects',e);
   	pdict.TMProjects = null;
   }
 

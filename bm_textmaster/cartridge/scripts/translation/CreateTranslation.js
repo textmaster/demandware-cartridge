@@ -192,7 +192,7 @@ function getOutput(input){
 				projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
 			}
 			else{
-				Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Quote-Send?projectid="+ projectID);
+				Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
 			}
 		}
 	}

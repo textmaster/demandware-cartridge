@@ -10,7 +10,6 @@ importPackage( dw.catalog );
 importPackage( dw.util );
 
 importClass( dw.web.Resource );
-importClass( dw.content.ContentMgr );
 
 // Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),

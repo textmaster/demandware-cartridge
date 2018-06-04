@@ -1,63 +1,41 @@
 'use strict';
 
 /**
- * Controller that provides functions to call a job in BusinessManager
+ * Controller that provides method to send a quotation
  * @module controllers/TMQuote
  */
 
 /* API Includes */
 
-var Pipelet	 = require('dw/system/Pipelet'),
-	Site  = require('dw/system/Site'),
-	Resource = require('dw/web/Resource'),
-	Transaction	 = require('dw/system/Transaction'),
-	CustomObjMgr = require('dw/object/CustomObjectMgr'),
+var Site  = require('dw/system/Site'),
 	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
 
 /* Script Modules */
 var app = require(SGContCartridge + '/cartridge/scripts/app'),
-	guard = require(SGContCartridge + '/cartridge/scripts/guard'),
-	utils = require('~/cartridge/scripts/utils/Utils');
+	guard = require(SGContCartridge + '/cartridge/scripts/guard');
+
+//Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global variables
+var log = LogUtils.getLogger("TMQuote");
 
 /**
-* Calls appropriate jobs 
+* Triggers job for sending quotation
 */
 function send()
 {		
-    try {
-    	var projectid = dw.util.StringUtils.trim(request.httpParameterMap.projectid.toString()),
-    		jobName, jobResponse, ocapiJobUrl;
-    	
-    	if(projectid){
-	    	var co = CustomObjMgr.getCustomObject('TextMasterProject', projectid);
-	    	if (co == null) {
-	    		Transaction.begin();
-	    		co = CustomObjMgr.createCustomObject('TextMasterProject', projectid);
-	    		Transaction.commit();
-	    	}
-	    	
-	    	jobName = Resource.msg("quote.jobname", "textmaster",null) + dw.system.Site.current.ID;
-	    	ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
-	    	jobResponse = utils.OCAPIClient("post", ocapiJobUrl,null);
-	    	
-	    	status = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending") ? 201 : 404;
-	    	sendResult(status);
-    	}
-    	else{
-    		sendResult(400);
-    	}
-    	
-	} catch(ex) {
-		sendResult(500);
-	}
-}
-
-/**
-* Send the result as response of HTTP request
-*/
-function sendResult(status){
+	var projectid, quote, input, output;
+	
+	projectid = dw.util.StringUtils.trim(request.httpParameterMap.projectid.stringValue);
+	quote = require('~/cartridge/scripts/translation/TMQuote');
+	input = {
+		ProjectID: projectid
+	};
+	output = quote.output(input);
+	
 	var result = {
-		status: status
+		Status: output.statusCode
 	};
 
 	app.getView(result).render('translation/tmquote');
