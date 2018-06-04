@@ -162,7 +162,7 @@ function execute( pdict : PipelineDictionary ) : Number
 			importStartNode = itemType == "content" ? "Content" : "Catalog";
 			
 			// Call Standard import pipeline
-			Pipeline.execute("Import-"+ importStartNode, {
+			Pipeline.execute("TMImportItem-"+ importStartNode, {
 				ImportFile: relativeFolder + File.SEPARATOR + fileName,
 				ItemType: itemType,
 				ItemID: itemID,

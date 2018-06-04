@@ -2,19 +2,19 @@
 <isinclude template="pagecomponents/htmlscript">
 <div class="quote">
 	<div class="notification">
-		<isif condition="${pdict.status == 201}">
+		<isif condition="${pdict.Status == 201}">
 			<div class="form-holder">
 				${Resource.msg("quote.success.201", "textmaster",null)}
 			</div>
-		<iselseif condition="${pdict.status == 400}">
+		<iselseif condition="${pdict.Status == 400}">
 			<div class="form-holder">
 				${Resource.msg("order.error.400", "textmaster",null)}
 			</div>
-		<iselseif condition="${pdict.status == 404}">
+		<iselseif condition="${pdict.Status == 404}">
 			<div class="form-holder">
 				${Resource.msg("order.error.404", "textmaster",null)}
 			</div>
-		<iselseif condition="${pdict.status == 500}">
+		<iselseif condition="${pdict.Status == 500}">
 			<div class="form-holder">
 				${Resource.msg("order.error.500", "textmaster",null)}
 			</div>

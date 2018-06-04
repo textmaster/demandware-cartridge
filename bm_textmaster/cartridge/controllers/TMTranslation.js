@@ -2,7 +2,7 @@
 
 /**
  * Controller that provides user interface for all pages
- * @module controllers/Translation
+ * @module controllers/TMTranslation
  */
 
 /* API Includes */

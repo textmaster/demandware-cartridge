@@ -30,7 +30,7 @@
       </node>
       <simple-transition/>
       <node>
-        <call-node start-name-ref="Translation-LoginCheck"/>
+        <call-node start-name-ref="TMTranslation-LoginCheck"/>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="Registered">
           <transition target-connector="in"/>
@@ -54,7 +54,7 @@
       </node>
       <simple-transition/>
       <node>
-        <call-node start-name-ref="Translation-LoginCheck"/>
+        <call-node start-name-ref="TMTranslation-LoginCheck"/>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="Registered">
           <transition target-connector="in"/>
@@ -364,7 +364,7 @@
         </transition-display>
       </simple-transition>
       <node>
-        <jump-node start-name-ref="Translation-Register"/>
+        <jump-node start-name-ref="TMTranslation-Register"/>
         <node-display orientation="horizontal" x="1" y="0"/>
       </node>
     </segment>

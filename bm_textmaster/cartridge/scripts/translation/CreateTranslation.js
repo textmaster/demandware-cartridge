@@ -42,12 +42,12 @@ function execute( pdict : PipelineDictionary ) : Number
 }
 
 function getOutput(input){
-	var localeFrom = JSON.parse(JSON.parse(input.LocaleFrom)),
-		localeTo = JSON.parse(JSON.parse(input.LocaleTo)),
+	var localeFrom = JSON.parse(input.LocaleFrom),
+		localeTo = JSON.parse(input.LocaleTo),
 		itemType = input.ItemType,
 		catalogID = input.CatalogID,
-		attributes = JSON.parse(JSON.parse(input.Attributes)),
-		items = JSON.parse(JSON.parse(input.Items)),
+		attributes = JSON.parse(input.Attributes),
+		items = JSON.parse(input.Items),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		calendarDate = Calendar(),
 		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "",
@@ -173,10 +173,10 @@ function getOutput(input){
 						document: {
 							callback: {
 								in_review: {
-									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Import-Data?projectid="+ projectID +"&documentid="+ documentID
+									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID
 								},
 								completed: {
-									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Import-Data?projectid="+ projectID +"&documentid="+ documentID
+									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID
 								}
 							},
 							word_count: wordCount
@@ -192,7 +192,7 @@ function getOutput(input){
 				projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
 			}
 			else{
-				Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/Quote-Send?projectid="+ projectID);
+				Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
 			}
 		}
 	}
