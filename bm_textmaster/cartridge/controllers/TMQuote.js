@@ -2,7 +2,7 @@
 
 /**
  * Controller that provides functions to call a job in BusinessManager
- * @module controllers/Quote
+ * @module controllers/TMQuote
  */
 
 /* API Includes */
@@ -60,12 +60,12 @@ function sendResult(status){
 		status: status
 	};
 
-	app.getView(result).render('translation/quote');
+	app.getView(result).render('translation/tmquote');
 }
 
 /*
 * Web exposed methods
 */
 /** Calls export functionalities
- * @see {@link module:controllers/Quote~Send} */
+ * @see {@link module:controllers/TMQuote~Send} */
 exports.Send = guard.ensure(['post'], send);

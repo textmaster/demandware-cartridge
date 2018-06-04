@@ -22,14 +22,14 @@
 				}
 			},
 			urls:{
-				getLanguageToList: "Components-GetLanguageToList",
-				categoryDropdown: "Components-CategoryDropdown",
-				translationItemList: "Components-ItemList",
-				attributeList: "Components-AttributeList",
-				getTemplatesResponse: "Components-GetTemplatesResponse",
-				createTranslation: "Components-CreateTranslation",
-				saveDefaultAttributes: "Components-SaveDefaultAttributes",
-				saveAPIConfigurations: "Components-SaveAPIConfigurations"
+				getLanguageToList: "TMComponents-GetLanguageToList",
+				categoryDropdown: "TMComponents-CategoryDropdown",
+				translationItemList: "TMComponents-ItemList",
+				attributeList: "TMComponents-AttributeList",
+				getTemplatesResponse: "TMComponents-GetTemplatesResponse",
+				createTranslation: "TMComponents-CreateTranslation",
+				saveDefaultAttributes: "TMComponents-SaveDefaultAttributes",
+				saveAPIConfigurations: "TMComponents-SaveAPIConfigurations"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData, items = [], itemID;

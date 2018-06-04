@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?demandware-pipeline version="2.0"?>
 
-<pipeline type="process">
+<pipeline type="view">
   <branch basename="_ANONYMOUS_BRANCH_1">
     <segment>
       <node>

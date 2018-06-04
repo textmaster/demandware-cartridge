@@ -712,4 +712,29 @@ Utils.mergeObjects = function(obj1, obj2){
     return obj3;
 }
 
+/*
+ * 	Save project id and document id into custom object for import job
+ */
+Utils.setImportJobQuery = function(projectid, documentid){
+	var dataHolder = Utils.getJobDataHolder(),
+		result, queue, queueObj;
+	
+	if(dataHolder){
+		queue = dataHolder.custom.QueuedDocuments || "[]";
+		queueObj = JSON.parse(queue);
+		queueObj.push({
+			projectid: projectid,
+			documentid: documentid
+		});
+	
+		Transaction.begin();
+		dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
+		Transaction.commit();
+		
+		result = dataHolder.custom.RunningDocument ? true : false;
+	}
+	
+	return result;
+}
+
 module.exports = Utils;

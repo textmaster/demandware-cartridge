@@ -2,7 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
-<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 <isscript>
 	var transParams = JSON.parse(pdict.TransParams);
 </isscript>
@@ -57,7 +57,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<form method="post" action="${URLUtils.url('Translation-Notification')}" id="notification-form">
+	<form method="post" action="${URLUtils.url('TMTranslation-Notification')}" id="notification-form">
 		<input type="hidden" name="autoLaunchCount" value="0">
 		<input type="hidden" name="noAutoLaunchCount" value="0">
 		<input type="hidden" name="projectID" value="">

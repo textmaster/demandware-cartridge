@@ -19,17 +19,17 @@
 		<description xml:lang="x-default">
 			Send content for translation to TextMaster
 		</description>
-		<exec pipeline="Translation" node="New"/>
+		<exec pipeline="TMTranslation" node="New"/>
 		<sub-pipelines>
-			<pipeline name="Translation-New" />
-			<pipeline name="Translation-PlaceOrder" />
-			<pipeline name="Translation-Notification" />
-			<pipeline name="Components-ItemList" />
-			<pipeline name="Components-CategoryDropdown" />
-			<pipeline name="Components-AttributeList" />
-			<pipeline name="Components-GetTemplatesResponse" />
-			<pipeline name="Components-CreateTranslation" />
-			<pipeline name="Components-GetLanguageToList" />
+			<pipeline name="TMTranslation-New" />
+			<pipeline name="TMTranslation-PlaceOrder" />
+			<pipeline name="TMTranslation-Notification" />
+			<pipeline name="TMComponents-ItemList" />
+			<pipeline name="TMComponents-CategoryDropdown" />
+			<pipeline name="TMComponents-AttributeList" />
+			<pipeline name="TMComponents-GetTemplatesResponse" />
+			<pipeline name="TMComponents-CreateTranslation" />
+			<pipeline name="TMComponents-GetLanguageToList" />
 		</sub-pipelines>
 		<icon>icons/tm_new_project.png</icon>
 	</menuaction>
@@ -42,9 +42,9 @@
 		<description xml:lang="x-default">
 			Real time follow-up and monitoring of TextMaster translation projects
 		</description>
-		<exec pipeline="Translation" node="FollowUp"/>
+		<exec pipeline="TMTranslation" node="FollowUp"/>
 		<sub-pipelines>
-			<pipeline name="Translation-FollowUp" />
+			<pipeline name="TMTranslation-FollowUp" />
 		</sub-pipelines>
 		<icon>icons/tm_dashboard.png</icon>
 	</menuaction>
@@ -57,11 +57,11 @@
 		<description xml:lang="x-default">
 			Set default item attributes to translate
 		</description>
-		<exec pipeline="Translation" node="DefaultAttributes"/>
+		<exec pipeline="TMTranslation" node="DefaultAttributes"/>
 		<sub-pipelines>
-			<pipeline name="Translation-DefaultAttributes" />
-			<pipeline name="Components-AttributeList" />
-			<pipeline name="Components-SaveDefaultAttributes" />
+			<pipeline name="TMTranslation-DefaultAttributes" />
+			<pipeline name="TMComponents-AttributeList" />
+			<pipeline name="TMComponents-SaveDefaultAttributes" />
 		</sub-pipelines>
 		<icon>icons/tm_attribute_setup.png</icon>
 	</menuaction>
@@ -74,10 +74,10 @@
 		<description xml:lang="x-default">
 			Set up API connection with TextMaster
 		</description>
-		<exec pipeline="Translation" node="Register"/>
+		<exec pipeline="TMTranslation" node="Register"/>
 		<sub-pipelines>
-			<pipeline name="Translation-Register" />
-			<pipeline name="Components-SaveAPIConfigurations" />
+			<pipeline name="TMTranslation-Register" />
+			<pipeline name="TMComponents-SaveAPIConfigurations" />
 		</sub-pipelines>
 		<icon>icons/tm_api_setup.png</icon>
 	</menuaction>

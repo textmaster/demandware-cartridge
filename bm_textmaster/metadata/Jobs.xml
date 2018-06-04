@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
-    <job job-id="AskForQuoteSiteGenesis" priority="0">
+    <job job-id="TMAskForQuoteSiteGenesis" priority="0">
         <description/>
         <parameters/>
         <flow>
@@ -8,28 +8,7 @@
             <step step-id="QuoteSiteGenesis" type="ExecutePipeline" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">AskForQuote-AskForQuote</parameter>
-                </parameters>
-            </step>
-        </flow>
-        <rules/>
-        <triggers>
-            <run-once enabled="true">
-                <date>2017-01-13Z</date>
-                <time>16:38:10.000Z</time>
-            </run-once>
-        </triggers>
-    </job>
-    
-    <job job-id="AskForQuoteSiteGenesisGlobal" priority="0">
-        <description/>
-        <parameters/>
-        <flow>
-            <context site-id="SiteGenesisGlobal"/>
-            <step step-id="QuoteSiteGenesisGlobal" type="ExecutePipeline" enforce-restart="false">
-                <description/>
-                <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">AskForQuote-AskForQuote</parameter>
+                    <parameter name="ExecutePipeline.Pipeline">TMAskForQuote-AskForQuote</parameter>
                 </parameters>
             </step>
         </flow>
@@ -50,7 +29,7 @@
             <step step-id="TMImportDataSiteGenesis" type="ExecutePipeline" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">Import-Start</parameter>
+                    <parameter name="ExecutePipeline.Pipeline">TMImportItem-Start</parameter>
                 </parameters>
             </step>
         </flow>
@@ -59,27 +38,6 @@
             <run-once enabled="true">
                 <date>2017-02-27Z</date>
                 <time>11:52:48.000Z</time>
-            </run-once>
-        </triggers>
-    </job>
-
-    <job job-id="ImportDataFromTextMasterSiteGenesisGlobal" priority="1">
-        <description/>
-        <parameters/>
-        <flow>
-            <context site-id="SiteGenesisGlobal"/>
-            <step step-id="TMImportDataSiteGenesisGlobal" type="ExecutePipeline" enforce-restart="false">
-                <description/>
-                <parameters>
-                    <parameter name="ExecutePipeline.Pipeline">Import-Start</parameter>
-                </parameters>
-            </step>
-        </flow>
-        <rules/>
-        <triggers>
-            <run-once enabled="true">
-                <date>2017-03-13Z</date>
-                <time>11:44:54.000Z</time>
             </run-once>
         </triggers>
     </job>

@@ -8,7 +8,7 @@
 	var creation = 0, progress = 0, review = 0, completed = 0,
 		total = pdict.Documents.length || 1;
 </isscript>
-<isbreadcrumbs bcurl1="${URLUtils.url('Translation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" />
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" />
 <div class="followup">
 	<h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
 	<table class="table" id="filtertableProjects" width="100%" border="0" cellspacing="0" cellpadding="0">

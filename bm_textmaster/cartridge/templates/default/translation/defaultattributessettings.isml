@@ -2,7 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
-	<isbreadcrumbs bcurl1="${URLUtils.url('Translation-DefaultAttributes')}" bctext1="${Resource.msg('attributes.main.title','textmaster',null)}" />
+	<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-DefaultAttributes')}" bctext1="${Resource.msg('attributes.main.title','textmaster',null)}" />
 	
 	<div class="default-attributes">
 		<h1>${Resource.msg('attributes.main.title','textmaster',null)}</h1>

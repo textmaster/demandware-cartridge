@@ -2,14 +2,14 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
-	<isbreadcrumbs bcurl1="${URLUtils.url('Translation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
+	<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 	<isscript>
 		var Utils = require('~/cartridge/scripts/utils/Utils'),
 			languages = Utils.getLanguageFromList(),
 			catalog = dw.catalog.CatalogMgr.getSiteCatalog();
 	</isscript>
 	<div class="new-translation">
-		<form method="post" action="${URLUtils.url('Translation-PlaceOrder')}" id="filter-item-form">
+		<form method="post" action="${URLUtils.url('TMTranslation-PlaceOrder')}" id="filter-item-form">
 		<h1>${Resource.msg('translation.title','textmaster',null)}</h1>
 		<div class="form-holder">
 			<div class="field-holder title-holder">

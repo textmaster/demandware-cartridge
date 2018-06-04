@@ -2,7 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/MenuFrame">
-<isbreadcrumbs bcurl1="${URLUtils.url('Translation-Register')}" bctext1="${Resource.msg('register.title', 'textmaster',null)}" />
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-Register')}" bctext1="${Resource.msg('register.title', 'textmaster',null)}" />
 <div class="registration">
 	<h1>${Resource.msg('register.title', 'textmaster',null)}</h1>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">

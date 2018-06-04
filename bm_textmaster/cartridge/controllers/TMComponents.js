@@ -2,7 +2,7 @@
 
 /**
  * Controller that provides ajax features for translation pages
- * @module controllers/Components
+ * @module controllers/TMComponents
  */
 
 /* API Includes */
