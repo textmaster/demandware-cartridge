@@ -35,7 +35,7 @@ Utils.attributes.content = [
 *	Accessible attributes of Category
 */
 Utils.attributes.category = [
-	"displayName","pageDescription","pageKeywords","pageTitle","pageURL"
+	"description","displayName","pageDescription","pageKeywords","pageTitle","pageURL"
 ];
 
 /*
