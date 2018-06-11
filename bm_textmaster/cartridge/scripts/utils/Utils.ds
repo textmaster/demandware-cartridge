@@ -389,6 +389,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	        service.addHeader('Apikey', args.apiKey);
 	        service.addHeader('Date', args.date);
 	        service.addHeader('Signature', args.signatureString);
+	        service.addHeader('HTTP_X_PARTNER_ID', Resource.msg("general.sfcc.partner.id","textmaster",null));
 	        
 	        return args.request;
 	    },
