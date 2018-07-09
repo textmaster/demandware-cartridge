@@ -202,20 +202,29 @@ Utils.getLanguageAbilityList = function(){
 	}
 	
 	var abilityEndPoint = Resource.msg('api.get.abilities','textmaster',null),
-		abilities = Utils.TextMasterClient("GET",abilityEndPoint,null),
-		result = [], ability;
+		result = [], fetchNextPage = true, page = 1, maxPages = 65, abilities, ability, abilityEndPointPage;
 	
-	if(abilities){
-		abilities = abilities.data;
-	}
-	
-	for each(ability in abilities){
-		if(Utils.isTranslationLanguage(ability.language_to)){
-			result.push({
-				from: ability.language_from,
-				to: ability.language_to
-			});
+	while(fetchNextPage && page <= maxPages){
+		abilityEndPointPage = (abilityEndPoint + "&page=" + page);
+		abilities = Utils.TextMasterClient("GET",abilityEndPointPage,null)
+		
+		if(abilities && abilities.data && abilities.data.length > 0){
+			abilities = abilities.data;
 		}
+		else{
+			fetchNextPage = false;
+		}
+		
+		for each(ability in abilities){
+			if(Utils.isTranslationLanguage(ability.language_to)){
+				result.push({
+					from: ability.language_from,
+					to: ability.language_to
+				});
+			}
+		}
+		
+		page++;
 	}
 	
 	if(dataHolder){
