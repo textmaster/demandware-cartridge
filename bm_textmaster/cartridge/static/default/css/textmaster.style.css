@@ -351,6 +351,16 @@
 .place-order #reload-templates {
 	margin:0 0 5px 10px;
 }
+.place-order #progress-holder {
+	border: 1px solid #3AB5CF;
+	display: none;
+}
+.place-order #progress-holder .progress-bar {
+	background-color: #3AB5CF;
+    width: 0%;
+    height: 10px;
+    transition: width linear 0.5s;
+}
 .translation-module .place-order select {
 	min-width:150px;
 }

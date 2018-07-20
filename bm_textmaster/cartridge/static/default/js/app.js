@@ -22,14 +22,15 @@
 				}
 			},
 			urls:{
-				getLanguageToList: "TMComponents-GetLanguageToList",
-				categoryDropdown: "TMComponents-CategoryDropdown",
-				translationItemList: "TMComponents-ItemList",
 				attributeList: "TMComponents-AttributeList",
-				getTemplatesResponse: "TMComponents-GetTemplatesResponse",
+				categoryDropdown: "TMComponents-CategoryDropdown",
 				createTranslation: "TMComponents-CreateTranslation",
+				getLanguageToList: "TMComponents-GetLanguageToList",
+				getTemplatesResponse: "TMComponents-GetTemplatesResponse",
+				handleAutoLaunch: "TMComponents-HandleAutoLaunch",
+				saveAPIConfigurations: "TMComponents-SaveAPIConfigurations",
 				saveDefaultAttributes: "TMComponents-SaveDefaultAttributes",
-				saveAPIConfigurations: "TMComponents-SaveAPIConfigurations"
+				translationItemList: "TMComponents-ItemList"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData, items = [], itemID;
@@ -314,25 +315,96 @@
 							}
 						}
 						
-						postData = {
-							localeFrom: JSON.stringify(JSON.stringify(transParams.localeFrom)),
-							localeTo: JSON.stringify(transParams.localeTo),
-							itemType: transParams.itemType,
-							catalogID: transParams.catalogID,
-							attributes: JSON.stringify(transParams.attributes),
-							items: JSON.stringify(transParams.items)
-						};
+						transParams.projectIDs = [];
+						transParams.projectID = "";
+						transParams.itemLimit = $('input#itemrequestlimit').val();
+						transParams.itemLimit = isNaN(transParams.itemLimit) ? 20 : transParams.itemLimit;
+						transParams.itemProgress = 0;
+						transParams.localeCount = 0;
+						transParams.itemCount = 0;
+						transParams.autoLaunchCount = autoLaunchCount;
+						transParams.noAutoLaunchCount = noAutoLaunchCount
 						
-						$.post(app.urls.createTranslation, postData, function(data){
-							$('input[name=autoLaunchCount]').val(autoLaunchCount);
-							$('input[name=noAutoLaunchCount]').val(noAutoLaunchCount);
-							$('input[name=projectID]').val(data);
-							$('#notification-form').submit();
-						});
+						app.triggerExportRequest(transParams);
+						$('#progress-holder').show();
 					}
 				});
 				
 				$('#reload-templates').trigger("click");
+			},
+			triggerExportRequest: function(transParams){
+				var localeTo, items, postData;
+				
+				if(transParams.itemCount == transParams.items.length){
+					localeTo = transParams.localeTo[transParams.localeCount];
+					postData = {
+						projectID: transParams.projectID,
+						autoLaunch: localeTo.autoLaunch
+					};
+					
+					$.ajax({
+						type: 'POST',
+						url: app.urls.handleAutoLaunch,
+						data: postData,
+						success: function(output){
+							//no actions
+						}
+					});
+					
+					transParams.localeCount++;
+					transParams.itemCount = 0;
+					transParams.projectID = "";
+				}
+				
+				if(transParams.itemProgress >= transParams.items.length * transParams.localeTo.length){
+					$('input[name=autoLaunchCount]').val(transParams.autoLaunchCount);
+					$('input[name=noAutoLaunchCount]').val(transParams.noAutoLaunchCount);
+					$('input[name=projectID]').val(transParams.projectIDs.length == 1 ? transParams.projectIDs[0] : "");
+					$('#notification-form').submit();
+				}
+				else{
+					localeTo = transParams.localeTo[transParams.localeCount];
+					
+					items = transParams.items.slice(transParams.itemCount, (transParams.itemCount + transParams.itemLimit));
+					transParams.itemCount += items.length;
+					postData = {
+						projectID: transParams.projectID,
+						localeFrom: transParams.localeFrom.id,
+						localeTo: JSON.stringify(localeTo),
+						itemType: transParams.itemType,
+						catalogID: transParams.catalogID,
+						attributes: JSON.stringify(transParams.attributes),
+						items: JSON.stringify(items)
+					};
+
+					transParams.itemProgress += items.length;
+					var itemsSize = transParams.items.length * transParams.localeTo.length;
+					
+					$.ajax({
+						type: 'POST',
+						url: app.urls.createTranslation,
+						data: postData,
+						success: function(output){
+							transParams.projectID = output;
+							
+							if(transParams.projectIDs.indexOf(output) < 0){
+								transParams.projectIDs.push(output);
+							}
+							
+							var itemsSize = transParams.items.length * transParams.localeTo.length;
+							app.updateTranslationProgress(itemsSize, transParams.itemProgress);
+							
+							setTimeout(function(){
+								app.triggerExportRequest(transParams);
+							}, 1500);
+						}
+					});
+				}
+			},
+			updateTranslationProgress: function(itemsSize, itemProgress){
+				var percent = (itemProgress / itemsSize) * 100;
+				
+				$('#progress-holder .progress-bar').css("width", percent + "%");
 			},
 			setDefaultAttributes: function(){
 				$('select[name=attribute-item-type]').on('change',function(){

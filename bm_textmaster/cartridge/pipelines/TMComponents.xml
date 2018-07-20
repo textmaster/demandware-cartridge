@@ -280,6 +280,7 @@
           <key-binding alias="CurrentHttpParameterMap.localeFrom.stringValue" key="LocaleFrom"/>
           <key-binding alias="CurrentHttpParameterMap.localeTo.stringValue" key="LocaleTo"/>
           <key-binding alias="CurrentHttpParameterMap.catalogID.stringValue" key="CatalogID"/>
+          <key-binding alias="CurrentHttpParameterMap.projectID.stringValue" key="ProjectID"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
@@ -387,6 +388,16 @@
       </node>
     </segment>
   </branch>
+  <branch basename="_ANONYMOUS_BRANCH_15">
+    <segment>
+      <node>
+        <text-node>
+          <description>If the project is autoLaunch enabled then finalize it; Else send Quote</description>
+        </text-node>
+        <node-display x="5" y="11"/>
+      </node>
+    </segment>
+  </branch>
   <branch basename="SaveAPIConfigurations">
     <segment>
       <node>
@@ -480,6 +491,54 @@
       <node>
         <interaction-node transaction-required="false">
           <template buffered="true" dynamic="false" name="translation/languagetolist"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="HandleAutoLaunch">
+    <segment>
+      <node>
+        <start-node name="HandleAutoLaunch" secure="false"/>
+        <node-display x="5" y="12"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/HandleAutoLaunch.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('autoLaunch').stringValue" key="AutoLaunch"/>
+          <key-binding alias="CurrentHttpParameterMap.get('projectID').stringValue" key="ProjectID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
         </interaction-node>
         <node-display x="0" y="1"/>
       </node>

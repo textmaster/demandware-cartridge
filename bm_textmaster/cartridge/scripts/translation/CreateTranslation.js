@@ -1,6 +1,7 @@
 /**
 *	Creates translation documents
 *
+*	@input ProjectID: String
 *	@input LocaleFrom: String
 *	@input LocaleTo: String
 *	@input ItemType: String
@@ -21,13 +22,14 @@ var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
 	Utils = require('~/cartridge/scripts/utils/Utils');
 
 // Global variables
-var log;
+var log = LogUtils.getLogger("CreateTranslation");
 
 function execute( pdict : PipelineDictionary ) : Number
 {
 	var input, output;
 	
 	input = {
+		ProjectID: pdict.ProjectID,
 		LocaleFrom: pdict.LocaleFrom,
 		LocaleTo: pdict.LocaleTo,
 		ItemType: pdict.ItemType,
@@ -42,7 +44,8 @@ function execute( pdict : PipelineDictionary ) : Number
 }
 
 function getOutput(input){
-	var localeFrom = JSON.parse(input.LocaleFrom),
+	var projectID = input.ProjectID,
+		localeFrom = input.LocaleFrom,
 		localeTo = JSON.parse(input.LocaleTo),
 		itemType = input.ItemType,
 		catalogID = input.CatalogID,
@@ -50,39 +53,44 @@ function getOutput(input){
 		items = JSON.parse(input.Items),
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		calendarDate = Calendar(),
-		projectPostData, projectEndPoint, project, langTo, projectResult, projectID = "",
-		documentID = "", documents, document, documentPostData, documentResult, documentEndPoint, wordCount,
-		item, customData, itemData, markupFlag, contentValue, i, attr, itemAttrs, itemAttr, attrData, updateRequest, projectIDs = [];
+		bulkLimit = Resource.msg("api.bulk.doc.limit","textmaster",null) || 20,
+		bulkLimitCount = 0,
+		itemCount = 0,
+		projectPostData, projectEndPoint, project, projectResult,
+		documents, document, item, customData, itemData, markupFlag, contentValue, i, attr, itemAttrs, itemAttr,
+		attrData, updateRequest;
 	
-	log = LogUtils.getLogger("CreateTranslation");
+	bulkLimit = isNaN(bulkLimit) ? 25 : parseInt(bulkLimit, 10);
 	
-	for each(langTo in localeTo){
-		projectPostData = {};
-		project = {};
-		
-		project.name = Utils.firstLetterCapital(itemType) +" - "+ langTo.template.name + " - " + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd') ;
-		project.ctype = Resource.msg("constant.translation","textmaster",null);
-		project.language_from = localeFrom.id;
-		project.language_to = langTo.id;
-		project.category = categoryCode;
-		project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
-		project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
-		project.api_template_id = langTo.template.id;
-		project.custom_data = {
-			itemType: itemType,
-			catalogID: catalogID
-		};
-		
-		projectPostData.project = project;
-		projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
-		
-		projectResult = Utils.TextMasterClient("POST",projectEndPoint, JSON.stringify(projectPostData));
-		
-		if(projectResult && projectResult.id != undefined){
-			projectID = projectResult.id;
-			projectIDs.push(projectID);
+	if(localeTo){
+		if(empty(projectID)){
+			projectPostData = {};
+			project = {};
 			
-			documentPostData = {};
+			project.name = Utils.firstLetterCapital(itemType) +" - "+ localeTo.template.name + " - " + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd') ;
+			project.ctype = Resource.msg("constant.translation","textmaster",null);
+			project.language_from = localeFrom;
+			project.language_to = localeTo.id;
+			project.category = categoryCode;
+			project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
+			project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
+			project.api_template_id = localeTo.template.id;
+			project.custom_data = {
+				itemType: itemType,
+				catalogID: catalogID
+			};
+			
+			projectPostData.project = project;
+			projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
+			
+			projectResult = Utils.TextMasterClient("POST",projectEndPoint, JSON.stringify(projectPostData));
+			
+			if(projectResult && projectResult.id != undefined){
+				projectID = projectResult.id;
+			}
+		}
+		
+		if(projectID){
 			documents = [];
 			
 			for each(i in items){
@@ -152,53 +160,63 @@ function getOutput(input){
 				};
 				
 				documents.push(document);
-			}
-			
-			documentPostData.documents = documents;
-			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
-			documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
-			
-			if(documentResult){
-				for each(document in documentResult){
-					documentID = document.id;
-					// document edit
-					documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.get.documents","textmaster",null) + "/" + documentID;
+				bulkLimitCount++;
+				itemCount++;
+				
+				if(bulkLimitCount == bulkLimit || itemCount == items.length){
+					postBulkDocuments(documents, projectID);
 					
-					wordCount = 0;
-					for(var key in document.original_content){
-						wordCount += Utils.getWordCount(document.original_content[key].original_phrase);
-					}
-					
-					documentPostData = {
-						document: {
-							callback: {
-								in_review: {
-									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID
-								},
-								completed: {
-									url: "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID
-								}
-							},
-							word_count: wordCount
-						}
-					};
-					documentResult = Utils.TextMasterClient("PUT",documentEndPoint, JSON.stringify(documentPostData));
+					bulkLimitCount = 0;
+					documents = [];
 				}
-			}
-			
-			if(langTo.autoLaunch){
-				// finalize project
-				projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
-				projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
-			}
-			else{
-				Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
 			}
 		}
 	}
 	
 	// Returns project ID if only one project is created. On result page template this project ID is used to go to TextMaster specific project page. Else to go to project list page. 
-	return (projectIDs.length == 1 ? projectIDs[0] : "");
+	return projectID;
+}
+
+/*
+ * Send documents to API to create bulk documents
+ * */
+function postBulkDocuments(documents, projectID){
+	var documentPostData = {},
+		documentEndPoint, documentResult, documentID, wordCount, key, callBackURL;
+	
+	documentPostData.documents = documents;
+	documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
+	documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
+	
+	if(documentResult){
+		for each(document in documentResult){
+			documentID = document.id;
+			// document edit
+			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.get.documents","textmaster",null) + "/" + documentID;
+			
+			wordCount = 0;
+			for(key in document.original_content){
+				wordCount += Utils.getWordCount(document.original_content[key].original_phrase);
+			}
+			
+			callBackURL = "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID;
+			
+			documentPostData = {
+				document: {
+					callback: {
+						in_review: {
+							url: callBackURL
+						},
+						completed: {
+							url: callBackURL
+						}
+					},
+					word_count: wordCount
+				}
+			};
+			documentResult = Utils.TextMasterClient("PUT",documentEndPoint, JSON.stringify(documentPostData));
+		}
+	}
 }
 
 module.exports = {

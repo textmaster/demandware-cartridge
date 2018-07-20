@@ -52,11 +52,13 @@
 					<a href="${Resource.msg('link.create.templates','textmaster',null)}" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
 				</td>
 				<td class="table_detail right">
+					<input type="hidden" id="itemrequestlimit" value="${Resource.msg('api.bulk.doc.limit','textmaster',null)}">
 					<input type="button" class="main-action" id="place-order" value="${Resource.msg('order.place.order','textmaster',null)}">
 				</td>
 			</tr>
 		</tbody>
 	</table>
+	<div id="progress-holder"><div class="progress-bar"></div></div>
 	<form method="post" action="${URLUtils.url('TMTranslation-Notification')}" id="notification-form">
 		<input type="hidden" name="autoLaunchCount" value="0">
 		<input type="hidden" name="noAutoLaunchCount" value="0">
