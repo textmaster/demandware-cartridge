@@ -111,6 +111,7 @@ function createTranslation(){
 		input, output;
 	
 	input = {
+		ProjectID: request.httpParameterMap.get("projectID").stringValue,
 		LocaleFrom: request.httpParameterMap.get("localeFrom").stringValue,
 		LocaleTo: request.httpParameterMap.get("localeTo").stringValue,
 		ItemType: request.httpParameterMap.get("itemType").stringValue,
@@ -154,6 +155,18 @@ function saveAPIConfigurations(){
 }
 
 /*
+ * If the project is autoLaunch enabled then finalize it; Else send Quote
+ **/
+function handleAutoLaunch(){
+	var autoLaunch = require('~/cartridge/scripts/translation/HandleAutoLaunch'),
+		input = {
+			ProjectID: request.httpParameterMap.get('projectID').stringValue,
+			AutoLaunch: request.httpParameterMap.get('autoLaunch').stringValue
+		};
+	autoLaunch.output(input);
+}
+
+/*
 * Web exposed methods
 */
 /**
@@ -167,3 +180,4 @@ exports.GetTemplatesResponse = guard.ensure(['get'], getTemplatesResponse);
 exports.CreateTranslation = guard.ensure(['post'], createTranslation);
 exports.SaveDefaultAttributes = guard.ensure(['post'], saveDefaultAttributes);
 exports.SaveAPIConfigurations = guard.ensure(['post'], saveAPIConfigurations);
+exports.HandleAutoLaunch = guard.ensure(['post'], handleAutoLaunch);

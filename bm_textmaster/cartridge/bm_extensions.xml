@@ -30,6 +30,7 @@
 			<pipeline name="TMComponents-GetTemplatesResponse" />
 			<pipeline name="TMComponents-CreateTranslation" />
 			<pipeline name="TMComponents-GetLanguageToList" />
+			<pipeline name="TMComponents-HandleAutoLaunch" />
 		</sub-pipelines>
 		<icon>icons/tm_new_project.png</icon>
 	</menuaction>
