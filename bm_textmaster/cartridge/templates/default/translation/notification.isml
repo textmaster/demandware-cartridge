@@ -1,7 +1,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isscript>
-	var projectLink = pdict.projectID ? Resource.msgf("link.edit.project", "textmaster", null, pdict.projectID) : Resource.msg("link.list.projects", "textmaster",null) ;
+	var projectLink = pdict.projectID ? Resource.msgf("link.view.project", "textmaster", null, pdict.projectID) : Resource.msg("link.list.projects", "textmaster",null) ;
 </isscript>
 <isdecorate template="application/MenuFrame">
     <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
