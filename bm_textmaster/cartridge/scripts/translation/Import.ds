@@ -1,0 +1,175 @@
+/**
+*	Imports translation data from textMaster projects
+*
+*	@input ProjectID: String
+*	@input DocumentID: String
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+
+importClass( dw.web.Resource );
+
+
+/* Script Modules */
+var logUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	utils = require('~/cartridge/scripts/utils/Utils');
+
+/* Global variables */
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var projectID = pdict.ProjectID,
+		documentID = pdict.DocumentID,
+		projectEndPoint = Resource.msg("api.get.projects","textmaster",null) +"/"+ projectID,
+		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null) +"/"+ documentID,
+		canImport = false,
+		project, doc, content, baseFolder, relativeFolder, fileName,
+		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID,
+		pageAttrs = {
+			pageTitle: {},
+			pageDescription: {},
+			pageKeywords: {},
+			pageURL: {}
+		};
+	
+	log = logUtils.getLogger("ImportScript");
+	
+	
+	project = utils.TextMasterClient("GET", projectEndPoint, "");
+	
+	if(project && project.custom_data.itemType){
+		itemType = project.custom_data.itemType;
+		catalogID = project.custom_data.catalogID;
+		language = utils.toDemandwareLocaleID(project.language_to_code);
+		
+		if(itemType == "product" && !catalogID){
+			return PIPELET_NEXT;
+		}
+		
+		try{
+			baseFolder = File.IMPEX + File.SEPARATOR + "src";
+			relativeFolder = "textmaster" + File.SEPARATOR + itemType;
+			fileName = documentID +".xml";
+			
+			var importDir : File = new File(baseFolder + File.SEPARATOR + relativeFolder);
+			
+			if(!importDir.exists()){
+				importDir.mkdirs();
+			}
+			
+			//xml file
+			var importXML : File = new File(baseFolder + File.SEPARATOR + relativeFolder + File.SEPARATOR + fileName);
+			
+			if(importXML.exists()) {
+				importXML.remove();
+		    }
+		    
+		    importXML.createNewFile();
+			
+			swriter= new FileWriter(importXML);
+		    writer = new XMLIndentingStreamWriter(swriter);
+		    writer.writeStartDocument("UTF-8","1.0");
+		    
+		    startElement = itemType == "product" || itemType == "category" ? "catalog" : "library";
+		    writer.writeStartElement(startElement);
+		    writer.writeAttribute("xmlns","http://www.demandware.com/xml/impex/"+ startElement +"/2006-10-31");
+		    
+		    if(itemType == "product" || itemType == "category"){
+		    	writer.writeAttribute("catalog-id",catalogID);
+		    }
+		    else{
+		    	writer.writeAttribute("library-id",dw.content.ContentMgr.getSiteLibrary().ID);
+		    }
+			
+			doc = utils.TextMasterClient("GET", docEndPoint, "");
+			
+			if(doc && (doc.status.toLowerCase() == 'in_review' || doc.status.toLowerCase() == 'completed')){
+				itemID = doc.custom_data.item.id || "";
+				attrList = doc.custom_data.attribute || [];
+				content = doc.author_work ? doc.author_work : {};
+				
+				writer.writeStartElement(itemType);
+			    writer.writeAttribute(itemType+"-id", itemID);
+				
+				// each system attribute without page attributes
+				for each (attr in attrList){
+					if(attr.type == "system" && attr.id.indexOf("page") != 0 && content[attr.id]){
+						writer.writeStartElement(utils.idToXMLTag(attr.id == "name" ? "displayName" : attr.id));
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(content[attr.id]);
+						writer.writeEndElement();
+					}
+				}
+				
+				// keep each system page attribute ordered list
+				for each (attr in attrList){
+					if(attr.type == "system" && attr.id.indexOf("page") == 0 && content[attr.id]){
+						pageAttrs[attr.id] = {
+							id: attr.id,
+							value: content[attr.id]
+						};
+					}
+				}
+				
+				// each system attribute
+				writer.writeStartElement("page-attributes");
+				
+				for each(pageAttr in pageAttrs){
+					if(pageAttr.id){
+						writer.writeStartElement(utils.idToXMLTag(pageAttr.id));
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(pageAttr.value);
+						writer.writeEndElement();
+					}
+				}
+				
+				writer.writeEndElement();
+				
+				// each custom attribute
+				writer.writeStartElement("custom-attributes");
+				
+				for each (attr in attrList){
+					if(attr.type == "custom" && content[attr.id]){
+						writer.writeStartElement("custom-attribute");
+						writer.writeAttribute("attribute-id",attr.id);
+						writer.writeAttribute("xml:lang",language);
+							writer.writeCharacters(content[attr.id]);
+						writer.writeEndElement();
+					}
+				}
+				
+				writer.writeEndElement();//custom-attributes
+				
+				writer.writeEndElement();//itemType
+				canImport = true;
+			}
+			
+			writer.writeEndElement();//startElement
+			writer.writeEndDocument();
+		}
+		catch(ex){
+			log.error(ex.message);
+		}
+		finally{
+			if(writer != null){
+				writer.flush();
+				writer.close();
+			}
+		}
+		
+		if(canImport){
+			importStartNode = itemType == "content" ? "Content" : "Catalog";
+			
+			// Call Standard import pipeline
+			Pipeline.execute("TMImportItem-"+ importStartNode, {
+				ImportFile: relativeFolder + File.SEPARATOR + fileName,
+				ItemType: itemType,
+				ItemID: itemID,
+				Language: language
+			});
+		}
+	}
+	
+	return PIPELET_NEXT;
+}

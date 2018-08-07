@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline type="view">
+  <branch basename="_ANONYMOUS_BRANCH_1">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets item list in ajax call</description>
+        </text-node>
+        <node-display x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_2">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets category dropdown options of a catalog</description>
+        </text-node>
+        <node-display x="3" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="ItemList">
+    <segment>
+      <node>
+        <start-node name="ItemList" secure="false"/>
+        <node-display x="1" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetItemList.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="Catalog"/>
+          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="Category"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="ItemList" key="ItemList"/>
+          <key-binding alias="Type" key="Type"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetFilterCategoryList.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="CatalogID"/>
+          <key-binding alias="CategoryList" key="CategoryList"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="ItemList" key="ItemList"/>
+          <key-binding alias="CurrentHttpParameterMap.category.stringValue" key="CategoryIDs"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b3" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/itemlist"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="CategoryDropdown">
+    <segment>
+      <node>
+        <start-node name="CategoryDropdown" secure="false"/>
+        <node-display x="3" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetCategoryList.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.catalog.stringValue" key="CatalogID"/>
+          <key-binding alias="CategoryList" key="CategoryList"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/categorydropdown"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_5">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets attribute list</description>
+        </text-node>
+        <node-display x="5" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="AttributeList">
+    <segment>
+      <node>
+        <start-node name="AttributeList" secure="false"/>
+        <node-display x="5" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetAttributeList.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="Attributes" key="Attributes"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/attributelist"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_7">
+    <segment>
+      <node>
+        <text-node>
+          <description>Gets template response from TextMaster</description>
+        </text-node>
+        <node-display x="1" y="5"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_8">
+    <segment>
+      <node>
+        <text-node>
+          <description>Create translation document in TextMaster</description>
+        </text-node>
+        <node-display x="3" y="5"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="GetTemplatesResponse">
+    <segment>
+      <node>
+        <start-node call-mode="public" name="GetTemplatesResponse" secure="false"/>
+        <node-display x="1" y="6"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetTemplatesResponse.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="CreateTranslation">
+    <segment>
+      <node>
+        <start-node name="CreateTranslation" secure="false"/>
+        <node-display x="3" y="6"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/CreateTranslation.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.attributes.stringValue" key="Attributes"/>
+          <key-binding alias="CurrentHttpParameterMap.items.stringValue" key="Items"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+          <key-binding alias="CurrentHttpParameterMap.localeFrom.stringValue" key="LocaleFrom"/>
+          <key-binding alias="CurrentHttpParameterMap.localeTo.stringValue" key="LocaleTo"/>
+          <key-binding alias="CurrentHttpParameterMap.catalogID.stringValue" key="CatalogID"/>
+          <key-binding alias="CurrentHttpParameterMap.projectID.stringValue" key="ProjectID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_11">
+    <segment>
+      <node>
+        <text-node>
+          <description>Save default attribute settings</description>
+        </text-node>
+        <node-display x="5" y="5"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="SaveDefaultAttributes">
+    <segment>
+      <node>
+        <start-node name="SaveDefaultAttributes" secure="false"/>
+        <node-display x="5" y="6"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/SaveDefaultAttributes.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('attributes[]').values" key="Attributes"/>
+          <key-binding alias="CurrentHttpParameterMap.itemType.stringValue" key="ItemType"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node name="Error"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_13">
+    <segment>
+      <node>
+        <text-node>
+          <description>Save API Configurations</description>
+        </text-node>
+        <node-display x="1" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_14">
+    <segment>
+      <node>
+        <text-node>
+          <description>Get 'language to' list</description>
+        </text-node>
+        <node-display x="3" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_15">
+    <segment>
+      <node>
+        <text-node>
+          <description>If the project is autoLaunch enabled then finalize it; Else send Quote</description>
+        </text-node>
+        <node-display x="5" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="SaveAPIConfigurations">
+    <segment>
+      <node>
+        <start-node name="SaveAPIConfigurations" secure="false"/>
+        <node-display x="1" y="12"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/SetAPIConfigurations.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiCategory').stringValue" key="APICategory"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiKey').stringValue" key="APIKey"/>
+          <key-binding alias="CurrentHttpParameterMap.get('apiSecret').stringValue" key="APISecret"/>
+          <key-binding alias="CurrentHttpParameterMap.get('catalogID').stringValue" key="APICatalogID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="GetLanguageToList">
+    <segment>
+      <node>
+        <start-node name="GetLanguageToList" secure="false"/>
+        <node-display x="3" y="12"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/GetLanguageToList.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('languageFrom').stringValue" key="LanguageFrom"/>
+          <key-binding alias="LanguageToList" key="LanguageToList"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/languagetolist"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="HandleAutoLaunch">
+    <segment>
+      <node>
+        <start-node name="HandleAutoLaunch" secure="false"/>
+        <node-display x="5" y="12"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="translation/HandleAutoLaunch.js"/>
+          <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('autoLaunch').stringValue" key="AutoLaunch"/>
+          <key-binding alias="CurrentHttpParameterMap.get('projectID').stringValue" key="ProjectID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="translation/emptytemplate"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

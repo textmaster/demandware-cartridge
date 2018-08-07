@@ -1,0 +1,117 @@
+<!--- TEMPLATENAME: followUp.isml --->
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.js')}"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
+<isscript>
+	var creation = 0, progress = 0, review = 0, completed = 0,
+		total = pdict.Documents.length || 1;
+</isscript>
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" />
+<div class="followup">
+	<h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
+	<table class="table" id="filtertableProjects" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+		<tr>
+			<th class="table_header n w e s center">${Resource.msg("follow.project.title","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.date","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.id","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.name","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("general.item.type","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("general.locale","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.status","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.action","textmaster",null)}</th>
+		</tr>
+		</thead>
+		<isloop items="${pdict.Documents}" var="document" status="innerloopstate">
+			<tr class="contentslistentry" align="center">
+				<td class="table_detail w e s left">${document.project_name + document.project_launch_date}</td>
+				<isset name="createdAt" value="${document.created_at.full}" scope="page">
+				<isscript>
+					var datePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
+					var timePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[1] : '';
+					var hour = timePart ? timePart.split(':')[0] : '00';
+					var minute = timePart ? timePart.split(':')[1] : '00';
+				</isscript>
+				<td class="table_detail e s left"><span class="spContentId">
+					${datePart + " " + hour + ":" + minute}
+					</span></td>
+				<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item ? document.custom_data.item.id : ""}</span></td>
+				<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item ? document.custom_data.item.name : ""}</span></td>
+				<td class="table_detail e s capitalize">${document.item_type}</td>
+				<td class="table_detail e s left">${document.locale}</td>
+				<td class="table_detail e s">${document.status}</td>
+				<td class="table_detail e s left action">
+					<ul>
+						<isloop items="${document.actions}" var="action" status="loopstate">
+							<li><a ${action.link ? 'href='+ action.link +' target=_blank' : 'class=review-link'} title="${action.title ? action.title : ''}">${action.text}</a></li>
+						</isloop>
+					</ul>
+				</td>
+			</tr>
+			<isscript>
+				switch(document.status.toLowerCase()){
+					case "in_creation":
+						creation++;
+						break;
+					case "in_progress":
+					case "incomplete":
+						progress++;
+						break;
+					case "in_review":
+						review++;
+						break;
+					case "completed":
+						completed++;
+						break;
+				}
+			</isscript>
+		</isloop>
+	</table>
+	<div class="status-diagram">
+		<table cellpadding="0" cellspacing="1" width="100%" align="center">
+			<thead>
+				<tr>
+					<th>${Resource.msg("follow.status.in_creation","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_progress","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_review","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.completed","textmaster",null)}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<span class="percent">${Number((creation/total)*100).toFixed()}%</span>
+						<span class="count">${Number(creation).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((progress/total)*100).toFixed()}%</span>
+						<span class="count">${Number(progress).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((review/total)*100).toFixed()}%</span>
+						<span class="count">${Number(review).toFixed()}</span>
+					</td>
+					<td>
+						<span class="percent">${Number((completed/total)*100).toFixed()}%</span>
+						<span class="count">${Number(completed).toFixed()}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+(function($){
+	$(document).ready(function(){
+		$("${'#'}filtertableProjects").dataTable( {
+	        stateSave: true,
+	        order: [[ 1, "desc" ]]
+	    } );
+	})
+})(jQuery);
+</script>
+
+</isdecorate>
