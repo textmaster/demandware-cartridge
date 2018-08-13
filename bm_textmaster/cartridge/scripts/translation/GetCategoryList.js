@@ -2,6 +2,7 @@
 *	Gets category dropdown list of a catalog
 *
 *	@input CatalogID: String
+*	@input ItemType: String
 *
 *	@output CategoryList: Array
 *
@@ -19,7 +20,8 @@ var log;
 
 function execute( pdict : PipelineDictionary ) : Number {
 	var input = {
-		CatalogID: pdict.CatalogID
+		CatalogID: pdict.CatalogID,
+		ItemType: pdict.ItemType
 	},
 	output;
 	
@@ -37,7 +39,7 @@ function getOutput(input){
 	if(input.CatalogID){
 		catalog = CatalogMgr.getCatalog(input.CatalogID);
 		rootCategory = catalog.getRoot();
-		subCategories = Utils.getAllSubCategories(rootCategory);
+		subCategories = Utils.getAllSubCategoriesHierarchy(rootCategory, input.ItemType);
 	}
 	
 	return {

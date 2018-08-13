@@ -1,0 +1,7 @@
+<iscomment>
+	Render sub category hierarchy list
+</iscomment>
+<ismodule template="translation/subcategoryhierarchy.isml"
+	name="subcathierarchy"
+	attribute="categorylist"
+/>

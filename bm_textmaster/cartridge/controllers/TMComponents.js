@@ -40,7 +40,8 @@ function attributeList(){
 */
 function categoryDropdown(){
 	var input = {
-			CatalogID: request.httpParameterMap.get("catalog").stringValue
+			CatalogID: request.httpParameterMap.get("catalog").stringValue,
+			ItemType: request.httpParameterMap.get("itemType").stringValue
 		},
 		categories = require('~/cartridge/scripts/translation/GetCategoryList'),
 		output;
@@ -70,25 +71,14 @@ function getLanguageToList(){
 */
 function itemList(){
 	var items = require('~/cartridge/scripts/translation/GetItemList'),
-		filterCategories = require('~/cartridge/scripts/translation/GetFilterCategoryList'),
-		input1, input2, output, output1, output2;
+		input, output;
 	
-	input1 = {
+	input = {
 		Catalog: request.httpParameterMap.get("catalog").stringValue,
 		Category: request.httpParameterMap.get("category").stringValue,
 		ItemType: request.httpParameterMap.get("itemType").stringValue
 	};
-	output1 = items.output(input1);
-	
-	input2 = {
-		CatalogID: request.httpParameterMap.get("catalog").stringValue,
-		CategoryIDs: request.httpParameterMap.get("category").stringValue,
-		ItemType: request.httpParameterMap.get("itemType").stringValue,
-		ItemList: output1.ItemList
-	};
-	output2 = filterCategories.output(input2);
-	
-	output = utils.mergeObjects(output1, output2);
+	output = items.output(input);
 	
 	app.getView(output).render('translation/itemlist');
 }
