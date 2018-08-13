@@ -290,6 +290,27 @@ Utils.makeArrayUnique = function(arr, key){
 }
 
 /*
+*	Gets all underlying subcategories of a root category, in hierarchy object
+*/
+Utils.getAllSubCategoriesHierarchy = function(root, itemType){
+	var subCategories, category, nextLevelCategories, catObject,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		if(itemType == 'product' || (itemType == 'category' && category.subCategories && category.subCategories.length)){
+			catObject = {
+				cat: category,
+				sub: Utils.getAllSubCategoriesHierarchy(category, itemType)
+			};
+			output.push(catObject);
+		}
+	}
+	
+	return output;
+}
+
+/*
 *	Gets all underlying subcategories of a root category, in a single array
 */
 Utils.getAllSubCategories = function(root){
@@ -331,6 +352,24 @@ Utils.getFilterSubCategories = function(root){
 	return output;
 }
 
+/*
+*	Check product already exists in product list
+*/
+Utils.isProductExistInList = function(productList, product){
+	var prod;
+	
+	if(product == null){
+		return true;
+	}
+	
+	for each(prod in productList){
+		if(prod.ID == product.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}
 
 /*
 *	Check category already exists in category list

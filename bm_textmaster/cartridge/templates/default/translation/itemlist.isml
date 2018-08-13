@@ -74,7 +74,24 @@
 	        		<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'searchable' in item && item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	</isif>
 	            <isif condition="${pdict.Type != 'content'}">
-	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${pdict.Type == 'category' ? item.parent.displayName :('primaryCategory' in item && item.primaryCategory ? item.primaryCategory.displayName : '')}</label></td>
+	            	<isscript>
+	            		var categoryName = '',
+	            			allCategories, category;
+	            		
+	            		if(pdict.Type == 'category'){
+	            			categoryName = item.parent.displayName;
+	            		}
+	            		else{
+	            			allCategories = item.allCategories;
+	            			
+	            			for each(category in allCategories){
+	            				if(Utils.isCategoryExistInList(pdict.CategoryList, category)){
+	            					categoryName = category.displayName;
+	            				}
+	            			}
+	            		}
+	            	</isscript>
+	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${categoryName}</label></td>
 	            </isif>
 	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>

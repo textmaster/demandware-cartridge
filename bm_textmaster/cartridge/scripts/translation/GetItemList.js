@@ -7,6 +7,7 @@
 *
 *	@output ItemList: Array
 *	@output Type: String
+*	@output CategoryList: Array
 *
 */
 
@@ -34,6 +35,7 @@ function execute( pdict : PipelineDictionary ) : Number {
 	
 	pdict.Type = output.Type;
 	pdict.ItemList = output.ItemList;
+	pdict.CategoryList = output.CategoryList;
 	
 	return PIPELET_NEXT;
 }
@@ -62,12 +64,16 @@ function getOutput(input){
 			for each(categoryID in categoryIDs){
 				category = CatalogMgr.getCategory(categoryID);
 				allCategories.push(category);
-				allCategories.push.apply(allCategories, Utils.getAllSubCategories(category));
 			}
 			
 			for each(category in allCategories){
 				products = category.getProducts();
-				items.push.apply(items, products.toArray());
+				
+				for each(product in products){
+					if(!(Utils.isProductExistInList(items, product))){
+						items.push(product);
+					}
+				}
 			}
 			break;
 		case "category":
@@ -79,6 +85,10 @@ function getOutput(input){
 					if(!(Utils.isCategoryExistInList(items, category))){
 						items.push(category);
 					}
+				}
+				
+				if(subCategories.length){
+					allCategories.push(rootCategory);
 				}
 			}
 			break;
@@ -101,7 +111,8 @@ function getOutput(input){
 	
 	return {
 		Type: itemType,
-		ItemList: items
+		ItemList: items,
+		CategoryList: allCategories
 	}
 }
 

@@ -49,6 +49,10 @@
 					if($(this).val() == "product" || $(this).val() == "category"){
 						$('.field-holder.catalog-list').addClass("show");
 						$('.category').addClass('show');
+						
+						if($('select[name="catalog"]').val() != ""){
+							$('select[name="catalog"]').trigger('change');
+						}
 					}
 					else{
 						$('.field-holder.catalog-list').removeClass("show");
@@ -77,22 +81,25 @@
 				
 				$('select[name="catalog"]').on('change',function(){
 					catalog = $(this).val();
+					itemType = $('select[name=item-type]').val();
 					$('ul.select-category').html('');
 					$('.common-error.search').removeClass('show');
-					url = app.urls.categoryDropdown + "?catalog=" + catalog;
-					$.get(url, function(data){
-						$('.input-holder.category').html(data);
-					});
-					$(this).removeClass('error-field');
+					
+					if(catalog != ""){
+						url = app.urls.categoryDropdown + "?catalog=" + catalog + "&itemType=" + itemType;
+						$.get(url, function(data){
+							$('.input-holder.category').html(data);
+						});
+						$(this).removeClass('error-field');
+					}
 				});
 				
 				$('.input-holder.category').on('click', '#category-select-all', function(){
-					if($(this).is(':checked')){
-						$('input[name="category[]"]').prop("checked",true);
-					}
-					else{
-						$('input[name="category[]"]').prop("checked",false);
-					}
+					$('input[name="category[]"]').prop("checked", $(this).is(':checked'));
+				}).on('click', 'input[name="category[]"]', function(){
+					var parentLi = $(this).closest('li');
+					
+					parentLi.find('ul li input[name="category[]"]').prop("checked", $(this).is(':checked'));
 				});
 				
 				$('.new-translation').on('click', '.show-all-attributes input[type=button]', function(){
