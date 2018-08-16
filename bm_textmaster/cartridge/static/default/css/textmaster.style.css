@@ -246,6 +246,14 @@
 .new-translation .field-holder.category.show {
 	display:block;
 }
+.new-translation .items-limit-error {
+    color: red;
+    float: left;
+    display: none;
+}
+.new-translation .items-limit-error.show {
+	display:inline;
+}
 .translation-module .new-translation #items-holder input[type=text],
 .translation-module .new-translation #items-holder select {
 	min-width:initial;

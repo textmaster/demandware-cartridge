@@ -33,7 +33,10 @@
 				translationItemList: "TMComponents-ItemList"
 			},
 			newTranslation: function(){
-				var localeFrom, itemType, catalog, url, postData, items = [], itemID;
+				var localeFrom, itemType, catalog, url, postData, items = [], itemID, errorTimeID,
+					itemsLimit = $('#itemsLimit').val();
+				
+				itemsLimit = parseInt(itemsLimit, 10);
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
@@ -164,7 +167,10 @@
 					itemID = $(this).val();
 					
 					if($(this).prop("checked")){
-						addItem(itemID);
+						var itemAdded = addItem(itemID);
+						if(!itemAdded){
+							$(this).prop("checked", false);
+						}
 					}
 					else{
 						removeItem(itemID);
@@ -172,11 +178,25 @@
 				});
 				
 				var addItem = function(itemID){
-					items.push(itemID);
+					if(items.length < itemsLimit){
+						if(items.indexOf(itemID) < 0){
+							items.push(itemID);
+						}
+						return true;
+					}
+					else{
+						$('.items-limit-error').addClass('show');
+						clearTimeout(errorTimeID);
+						errorTimeID = setTimeout(function(){
+							$('.items-limit-error').removeClass('show');
+						}, 4000);
+						return false;
+					}
 				};
 				
 				var removeItem = function(itemID){
 					var index = items.indexOf(itemID);
+					$('.items-limit-error').removeClass('show');
 					
 					if(index > -1){
 						items.splice(index, 1);
@@ -184,11 +204,18 @@
 				};
 				
 				$('#button-select-all').on('click',function(){
-					$('input[type="checkbox"][name="item[]"]').prop("checked",true);
+					var itemAdded;
 					
 					$('input[type="checkbox"][name="item[]"]').each(function(){
 						itemID = $(this).val();
-						addItem(itemID);
+						itemAdded = addItem(itemID);
+						
+						if(itemAdded){
+							$(this).prop("checked", true);
+						}
+						else{
+							return false;
+						}
 					});
 				});
 				
@@ -202,7 +229,7 @@
 				});
 				
 				$('#filter-item-form').on('submit',function(){
-					var errors = ["Fix following errors"], message = "", ul = $('<ul>'), itemType;
+					var errors = ["Fix following errors"], ul = $('<ul>'), itemType;
 					
 					itemType = $('select[name=item-type]').val();
 					if(itemType == ""){
