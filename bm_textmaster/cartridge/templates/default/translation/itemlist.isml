@@ -100,7 +100,7 @@
 	        </tr>
 	    </isloop>
     </tbody>
-</table>  
+</table>
 
 <script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
 <script>
