@@ -139,7 +139,9 @@ function saveAPIConfigurations(){
 			APIKey: request.httpParameterMap.get('apiKey').stringValue,
 			APISecret: request.httpParameterMap.get('apiSecret').stringValue,
 			APICategory: request.httpParameterMap.get('apiCategory').stringValue,
-			APICatalogID: request.httpParameterMap.get('catalogID').stringValue
+			APICatalogID: request.httpParameterMap.get('catalogID').stringValue,
+			APIEnv: request.httpParameterMap.get('apiEnv').stringValue,
+			APIPageSize: request.httpParameterMap.get('apiPageSize').intValue
 		};
 	apiConfig.output(input);
 }
@@ -157,6 +159,33 @@ function handleAutoLaunch(){
 }
 
 /*
+ * Loads first row of dashboard data table
+ * */
+function dashboardFirstRow(){
+	var document = request.httpParameterMap.get('document').stringValue;
+	
+	app.getView({Document: JSON.parse(document)}).render('translation/followuptablerow');
+}
+
+/*
+ * Gets Dashboard data for each 'Load more'
+ * */
+function getDashboardData(){
+	var input = {
+		projectPageCount: request.httpParameterMap.get('projectPageCount').intValue,
+		docPageCount: request.httpParameterMap.get('docPageCount').intValue,
+		projectCountInPage: request.httpParameterMap.get('projectCountInPage').intValue,
+		docCountInPage: request.httpParameterMap.get('docCountInPage').intValue
+	},
+	followUpList, output;
+	
+	followUpList = require('~/cartridge/scripts/translation/GetFollowUpList')
+	output = followUpList.output(input);
+	
+	response.getWriter().print(JSON.stringify(output));
+}
+
+/*
 * Web exposed methods
 */
 /**
@@ -171,3 +200,5 @@ exports.CreateTranslation = guard.ensure(['post'], createTranslation);
 exports.SaveDefaultAttributes = guard.ensure(['post'], saveDefaultAttributes);
 exports.SaveAPIConfigurations = guard.ensure(['post'], saveAPIConfigurations);
 exports.HandleAutoLaunch = guard.ensure(['post'], handleAutoLaunch);
+exports.DashboardData = guard.ensure(['post'], getDashboardData);
+exports.DashboardFirstRow = guard.ensure(['post'], dashboardFirstRow);

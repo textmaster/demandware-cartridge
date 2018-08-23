@@ -41,6 +41,8 @@ function getOutput(input){
 	site.setCustomPreferenceValue("TMApiSecret",input.APISecret);
 	site.setCustomPreferenceValue("TMCategoryCode",input.APICategory);
 	site.setCustomPreferenceValue("TMMasterCatalogID",input.APICatalogID);
+	site.setCustomPreferenceValue("TMAPIEnvironment",input.APIEnv);
+	site.setCustomPreferenceValue("TMDashboardPageSize",input.APIPageSize);
 	Transaction.commit();
 	
 	return true;

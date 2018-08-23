@@ -1,0 +1,20 @@
+<isset name="document" value="${pdict.Document}" scope="page">
+<tr class="contentslistentry" align="center">
+	<td class="table_detail w e s left">${document.project_name + document.project_launch_date}</td>
+	<isset name="createdAt" value="${document.created_at.full}" scope="page">
+	<isscript>
+		var datePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
+		var timePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[1] : '';
+		var hour = timePart ? timePart.split(':')[0] : '00';
+		var minute = timePart ? timePart.split(':')[1] : '00';
+	</isscript>
+	<td class="table_detail e s left"><span class="spContentId">
+		${datePart + " " + hour + ":" + minute}
+		</span></td>
+	<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item ? document.custom_data.item.id : ""}</span></td>
+	<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item ? document.custom_data.item.name : ""}</span></td>
+	<td class="table_detail e s capitalize">${document.item_type}</td>
+	<td class="table_detail e s left">${document.locale}</td>
+	<td class="table_detail e s">${document.status}</td>
+	<td class="table_detail e s left action"></td>
+</tr>

@@ -45,11 +45,13 @@ function getOutput(){
 	}
 	
 	return {
+		APIEnv: site.getCustomPreferenceValue("TMAPIEnvironment"),
 		APIKey: site.getCustomPreferenceValue("TMApiKey") || "",
 		APISecret: site.getCustomPreferenceValue("TMApiSecret") || "",
 		APICategory: site.getCustomPreferenceValue("TMCategoryCode") || "",
 		APICatalogID: site.getCustomPreferenceValue("TMMasterCatalogID") || "",
-		APICategories: categories
+		APICategories: categories,
+		TMPageSize: site.getCustomPreferenceValue("TMDashboardPageSize") || 100,
 	}
 }
 

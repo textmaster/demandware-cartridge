@@ -38,6 +38,17 @@
 		<tbody>
 			<tr>
 				<td class="table_detail e s w right">
+					${Resource.msg('api.environment.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<select name="api-env">
+						<option value="demo" ${pdict.APIEnv == 'demo' ? 'selected="selected"' : ''}>${Resource.msg('api.demo', 'textmaster',null)}</option>
+						<option value="live" ${pdict.APIEnv == 'live' ? 'selected="selected"' : ''}>${Resource.msg('api.live', 'textmaster',null)}</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td class="table_detail e s w right">
 					${Resource.msg('api.key.label', 'textmaster',null)}
 				</td>
 				<td class="table_detail e s">
@@ -71,6 +82,15 @@
 				</td>
 				<td class="table_detail e s">
 					<input type="text" name="api-catalog-id" value="${pdict.APICatalogID}"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.page.size.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="number" name="api-page-size" value="${pdict.TMPageSize}"/>
+					<span>${Resource.msg('api.page.size.desc', 'textmaster',null)}</span>
 				</td>
 			</tr>
 			<tr>

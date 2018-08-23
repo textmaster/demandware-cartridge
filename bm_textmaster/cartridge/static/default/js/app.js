@@ -1,4 +1,5 @@
 (function($){
+	var $ = $.noConflict();
 	var app = {
 			init: function(){
 				if($('.new-translation').length){
@@ -18,7 +19,7 @@
 				}
 				
 				if($('.followup').length){
-					this.followup();
+					this.followup.init();
 				}
 			},
 			urls:{
@@ -30,7 +31,9 @@
 				handleAutoLaunch: "TMComponents-HandleAutoLaunch",
 				saveAPIConfigurations: "TMComponents-SaveAPIConfigurations",
 				saveDefaultAttributes: "TMComponents-SaveDefaultAttributes",
-				translationItemList: "TMComponents-ItemList"
+				translationItemList: "TMComponents-ItemList",
+				dashboardData: "TMComponents-DashboardData",
+				dashboardFirstRow: "TMComponents-DashboardFirstRow"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData, items = [], itemID, errorTimeID,
@@ -510,10 +513,21 @@
 						apiSecret = $('input[name=api-secret]').val().trim(),
 						apiCategory = $('select[name=api-category]').val(),
 						catalogID = $('input[name=api-catalog-id]').val().trim(),
+						apiEnv = $('select[name=api-env]').val(),
+						apiPageSize = $('input[name=api-page-size]').val().trim(),
 						postData;
 					
-					if(apiKey == "" || apiSecret == "" || apiCategory == "" || catalogID == ""){
+					if(apiKey == "" || apiSecret == "" || catalogID == "" || apiPageSize == "" || (apiCategory == "" && $('select[name=api-category] option').length > 1)){
 						$('.error').text("All fields are required");
+						return false;
+					}
+					
+					if(isNaN(apiPageSize)){
+						$('.error').text("Dashboard Page Size must a number");
+						return false;
+					}
+					else if(parseInt(apiPageSize, 10) < 10){
+						$('.error').text("Dashboard Page Size minimum value is 10");
 						return false;
 					}
 					
@@ -522,7 +536,9 @@
 						apiKey: apiKey,
 						apiSecret: apiSecret,
 						apiCategory: apiCategory,
-						catalogID: catalogID
+						catalogID: catalogID,
+						apiEnv: apiEnv,
+						apiPageSize: apiPageSize
 					};
 					$.post(app.urls.saveAPIConfigurations, postData, function(data){
 						$('.success-message').addClass('show');
@@ -533,18 +549,171 @@
 					});
 				});
 			},
-			followup: function(){
-				var tooltip;
-				
-				$('.status-diagram').insertAfter('.followup h1');
-				
-				$('.followup').on("mousedown","a.review-link", function(){
-					tooltip = $(this).attr("title");
-					$(this).closest('li').append('<span class="tooltip">'+ tooltip +'</span>');
-				})
-				.on("mouseup","a.review-link", function(){
-					$('span.tooltip').remove();
-				});
+			followup:{
+				dataTable: {},
+				config: {
+					projectPageNumber: 0,
+			   		docPageNumber: 0,
+			   		projectCountInPage: 0,
+			   		docCountInPage: 0,
+			   		showMore: true,
+			   		lastPage: 1
+				},
+				statusValues: {
+					creation: 0,
+					progress: 0,
+					review: 0,
+					completed: 0
+				},
+				init: function(){
+					var tooltip;
+					
+					$('.status-diagram').insertAfter('.followup h1');
+					
+					$('.followup').on("mousedown","a.review-link", function(){
+						tooltip = $(this).attr("title");
+						$(this).closest('li').append('<span class="tooltip">'+ tooltip +'</span>');
+					})
+					.on("mouseup","a.review-link", function(){
+						$('span.tooltip').remove();
+					});
+					
+					this.loadData(true);
+				},
+				loadData: function(initialLoad){
+					var follow = this,
+						button = $('.followup .load-more input[type=button]');
+					
+					button.prop('disabled', true);
+					button.val('Loading...');
+					
+					$.post(app.urls.dashboardData, follow.config, function(data){
+						try{
+							var output = JSON.parse(data),
+								documents = output.Documents,
+								firstDocument;
+							
+							follow.config.docCountInPage = output.DocCountInPage;
+							follow.config.docPageNumber = output.DocPageNumber;
+							follow.config.projectCountInPage = output.ProjectCountInPage;
+							follow.config.projectPageNumber = output.ProjectPageNumber;
+							follow.config.showMore = output.ShowMore;
+							
+							if(initialLoad && documents.length){
+								firstDocument = documents[0];
+								//load DataTables with one row
+								$.post(app.urls.dashboardFirstRow, {document: JSON.stringify(firstDocument)}, function(data){
+									$('#filtertableProjects tbody').html(data);
+									
+									var retry = true;
+									
+									while(retry){
+										if(window.dataTablesLoaded){
+											follow.dataTable = window.tmjdt("#filtertableProjects").DataTable( {
+										        "order": [[ 1, "desc" ]]
+										    } );
+											
+											retry = false;
+										}
+									}
+									//remove the only one row and add all the rows
+									follow.dataTable.row(':eq(0)').remove().draw();
+									follow.populateMoreData(documents);
+									follow.showMoreButton();
+									follow.customEvents();
+								});
+							}
+							else{
+								follow.config.lastPage = parseInt($('#filtertableProjects_paginate span a.paginate_button:last-of-type').text(), 10);
+								follow.populateMoreData(documents);
+							}
+						}
+						catch(err){
+							alert("Error on loading data: "+ err.message);
+						}
+					});
+				},
+				populateMoreData: function(documents){
+					var docTitle, createdAt, datePart, timePart, hour, minute, docDate, itemID, itemName, itemType, docLocale, docStatus, actions,
+						follow = this;
+						
+					documents.forEach(function(document){
+						docTitle = document.project_name + document.project_launch_date;
+						createdAt = document.created_at.full;
+						datePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
+						timePart = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[1] : '';
+						hour = timePart ? timePart.split(':')[0] : '00';
+						minute = timePart ? timePart.split(':')[1] : '00';
+						docDate = datePart + " " + hour + ":" + minute;
+						itemID = document.custom_data.item && document.custom_data.item.id ? document.custom_data.item.id : "";
+						itemName = document.custom_data && document.custom_data.item.name ? document.custom_data.item.name : "";
+						itemType = document.item_type;
+						docLocale = document.locale;
+						docStatus = document.status;
+						
+						actions = '<ul>';
+						document.actions.forEach(function(action){
+							actions += '<li><a ' + (action.link ? 'href="'+ action.link +'" target="_blank"' : '') +' class="review-link" title="'+ (action.title ? action.title : '') + '">' + action.text +'</a></li>';
+						});
+						actions += '</ul>';
+						
+						follow.dataTable.row.add([docTitle, docDate, itemID, itemName, itemType, docLocale, docStatus, actions]).draw();
+						
+						if(docStatus){
+							switch(docStatus.toLowerCase()){
+								case "in_creation":
+									follow.statusValues.creation++;
+									break;
+								case "in_progress":
+								case "incomplete":
+									follow.statusValues.progress++;
+									break;
+								case "in_review":
+									follow.statusValues.review++;
+									break;
+								case "completed":
+									follow.statusValues.completed++;
+									break;
+							}
+						}
+					});
+					
+					follow.dataTable.page(follow.config.lastPage - 1).draw(false);
+					follow.populateStatusDiagram();
+				},
+				populateStatusDiagram: function(){
+					var follow = this,
+						statusObj = follow.statusValues,
+						total = statusObj.creation + statusObj.progress + statusObj.review + statusObj.completed;
+					
+					for(var key in statusObj){
+						$('.status-diagram table td.' + key + ' .count').text(statusObj[key]);
+						$('.status-diagram table td.' + key + ' .percent').text(Math.round(statusObj[key] / total * 100) + '%');
+					}
+				},
+				customEvents: function(){
+					var follow = this;
+					
+					follow.dataTable.on('draw', function(){
+						follow.showMoreButton();
+					});
+					
+					$('.followup .load-more input[type=button]').on('click', function(){
+						follow.loadData(false);
+					});
+				},
+				showMoreButton: function(){
+					if($('#filtertableProjects_paginate span a.paginate_button:last-of-type').hasClass('current')
+							&& $('#filtertableProjects_filter input[type=search]').val() == ""
+								&& this.config.showMore){
+						$('.followup .load-more').addClass('show');
+						$('.followup .load-more input[type=button]').prop('disabled', false);
+						$('.followup .load-more input[type=button]').val($('.followup .load-more input[type=button]').attr('title'));
+					}
+					else{
+						$('.followup .load-more').removeClass('show');
+					}
+				}
 			},
 			utils: {
 				firstLetterCapital: function(str){

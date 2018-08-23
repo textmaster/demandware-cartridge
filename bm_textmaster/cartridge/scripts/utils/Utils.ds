@@ -39,6 +39,46 @@ Utils.attributes.category = [
 ];
 
 /*
+*	Common configurations
+*/
+Utils.config = {
+	apiEnv: Site.current.getCustomPreferenceValue("TMAPIEnvironment") || 'demo',
+	demandwareLanguages: []
+};
+
+/*
+*	Product types
+*/
+Utils.productTypes = {
+	variant: 'Variation Product',
+	master: 'Variation Master',
+	product: 'Simple Product',
+	bundle: 'Product Bundle',
+	bundled: 'Bundled Product',
+	optionProduct: 'Option Product',
+	productSet: 'Product Set',
+	productSetProduct: 'Product Set Product',
+	variationGroup: 'Variation Group'
+};
+
+/*
+*	Get product type string
+*/
+Utils.getProductType = function(product){
+	var productType = "",
+		pt;
+	
+	for(pt in Utils.productTypes){
+		if(product[pt]){
+			productType = Utils.productTypes[pt];
+			break;
+		}
+	}
+	
+	return productType;
+}
+
+/*
 *	Checks whether the attribute is accessible or not
 */
 Utils.isAttributeAccessible = function(itemType, attribute){
@@ -85,9 +125,74 @@ Utils.getFileNameExtension = function(fileName : String){
 *	Gets Demandware languages in JSON
 */
 Utils.getDWLanguages = function(){
-	var languages = Site.getCurrent().getCustomPreferenceValue('TMDemandwareLanguages').toString() || "[]";
-	languages = JSON.parse(languages);
+	var languages = [];
+	
+	if(Utils.config.demandwareLanguages.length){
+		languages = Utils.config.demandwareLanguages;
+	}
+	else{
+		var ocapiLocaleUrl = Resource.msg("ocapi.locale.get","textmaster",null),
+			locale = Utils.OCAPIClient("GET", ocapiLocaleUrl, null),
+			totalCount = locale.total,
+			ocapiAllLocaleUrl = Resource.msg("ocapi.all.locale.get","textmaster",null) + totalCount,
+			locales = Utils.OCAPIClient("GET", ocapiAllLocaleUrl, null),
+			lang;
+			
+		if(locales && locales.hits){
+			for each(lang in locales.hits){
+				if(Utils.isLocaleEnabled(lang.id) && lang.id != "default"){
+					languages.push({
+						id: lang.id.toLowerCase(),
+						name: lang.name
+					});
+				}
+			}
+		}
+		
+		if(languages.length){
+			Utils.config.demandwareLanguages = languages;
+		}
+	}
+	
 	return languages;
+}
+
+/*
+*	Checks if the locale is enabled in store
+*/
+Utils.isLocaleEnabled = function(localeID){
+	var index,
+		allLocales = Site.current.allowedLocales;
+	
+	localeID = Utils.formatLocaleDemandware(localeID);	
+	index = allLocales.indexOf(localeID);
+	
+	return index > -1;
+}
+
+/*
+*	Format the locale string in to Demandware import standard, Eg:- fr_FR
+*/
+Utils.formatLocaleDemandware = function(localeID){
+	localeID = Utils.formatLocaleStandard(localeID);
+	localeID = localeID.replace(/-/g, '_');
+	
+	return localeID;
+}
+
+/*
+*	Converts Datawords locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
+*/
+Utils.formatLocaleStandard = function(locale){
+	var localePart = locale.split("-");
+	
+	locale = localePart[0];
+	
+	if(localePart[1] != undefined){
+		locale += ("-" + localePart[1].toUpperCase());
+	}
+	
+	return locale;
 }
 
 /*
@@ -451,7 +556,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
 		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
 		signatureString: String = signature.toString(),
-		endPointUrl: String = Resource.msg("api.base","textmaster",null) + endPoint,
+		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + endPoint,
 		response: Object, serviceArgs, service, result;
 	
 	request = request || "";
@@ -487,7 +592,7 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 	    parseResponse: Utils.serviceParseResponse
 	});
 	
-	var endPointUrl: String = Resource.msg("api.public.base","textmaster",null) + endPoint,
+	var endPointUrl: String = Resource.msg("api.public.base." + Utils.config.apiEnv,"textmaster",null) + endPoint,
 		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		response, serviceArgs, service, result;
 	

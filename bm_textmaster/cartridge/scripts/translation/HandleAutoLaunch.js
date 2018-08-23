@@ -36,7 +36,7 @@ function getOutput(input){
 	
 	if(autoLaunch.toLowerCase() === "true"){
 		// finalize project
-		projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+		projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
 		projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
 	}
 	else{

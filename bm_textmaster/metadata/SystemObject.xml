@@ -80,6 +80,7 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
+				<default-value>C020</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMContentAttributes">
                 <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>

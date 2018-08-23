@@ -5,11 +5,12 @@
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 <isscript>
 	var transParams = JSON.parse(pdict.TransParams);
+	var Utils = require('~/cartridge/scripts/utils/Utils');
 </isscript>
 <div class="place-order">
 	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
 	<div class="right">
-		<a href="${Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
+		<a href="${Resource.msg('link.list.templates.' + Utils.config.apiEnv,'textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
 		<a id="reload-templates" class="button">${Resource.msg('order.reload.templates','textmaster',null)}</a>
 	</div>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -49,7 +50,7 @@
 		<tbody>
 			<tr>
 				<td class="table_detail center">
-					<a href="${Resource.msg('link.create.templates','textmaster',null)}" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
+					<a href="${Resource.msg('link.create.templates.' + Utils.config.apiEnv,'textmaster',null)}" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
 				</td>
 				<td class="table_detail right">
 					<input type="hidden" id="itemrequestlimit" value="${Resource.msg('api.bulk.doc.limit','textmaster',null)}">
