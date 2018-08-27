@@ -43,9 +43,9 @@ function getOutput(input){
    	resultLimit = Site.current.getCustomPreferenceValue("TMDashboardPageSize") || 100;
    	resultLimit = isNaN(resultLimit) ? 100 : parseInt(resultLimit, 10);
    	projectRequestFlag = true;
-   	projectPageNumber = input.projectPageNumber ? (input.projectPageNumber - 1) : 0;
-   	projectCountInPage = input.projectCountInPage || 0;
-   	projectCount = projectPageNumber * projectPageSize + projectCountInPage;
+   	projectPageNumber = input.projectPageNumber ? (input.projectPageNumber - 1) : 0;//input.projectPageNumber is the project API page number in last dashboard load
+   	projectCountInPage = input.projectCountInPage || 0;//input.projectCountInPage is the project count in project API page in last dashboard load 
+   	projectCount = projectPageNumber * projectPageSize + projectCountInPage;//projectCount is the total number of project loaded so far
    	
    	while(projectRequestFlag){
    		projectPageNumber++;
@@ -58,13 +58,13 @@ function getOutput(input){
 	   		docRequestFlag = true;
 	   		projectLoopCount++;
 	   		
-	   		if(projectLoopCount < projectCountInPage){
+	   		if(projectLoopCount < projectCountInPage){//skip all the projects already shown in this API page of last dashboard load
 	   			continue;
 	   		}
 	   		
 	   		projectCount++;
 	   		
-	   		if(projectLoopCount == projectCountInPage){
+	   		if(projectLoopCount == projectCountInPage){//if loop reached the same project as last project shown in last dashboard load
 	   			docPageNumber = input.docPageNumber ? (input.docPageNumber - 1) : 0;
 	   		   	docCountInPage = input.docCountInPage || 0;
 		   		docCountCurrProj = docPageNumber * resultLimit + docCountInPage;
@@ -87,6 +87,7 @@ function getOutput(input){
 		   				docLoopCount++;
 		   				
 		   				if(projectLoopCount == projectCountInPage && docPageNumber == input.docPageNumber && docLoopCount <= docCountInPage){
+		   				//skip all the documents already shown in this API page of last dashboard load
 		   		   			continue;
 		   		   		}
 		   				
@@ -96,6 +97,7 @@ function getOutput(input){
 		   				documents.push(doc);
 		   				
 		   				if(documents.length >= resultLimit){
+		   				//stop the document loop
 		   					docRequestFlag = false;
 		   					break;
 		   				}
@@ -105,11 +107,13 @@ function getOutput(input){
 		   		}
 		   		
 		   		if(documents.length >= resultLimit || docCountCurrProj >= documentResult.count){
+		   		//stop the document loop
 		   			docRequestFlag = false;
 		   		}
 	   		}
 	   		
 	   		if(documents.length >= resultLimit){
+	   		//stop the project loop
 	   			projectRequestFlag = false;
 	   			break;
 	   		}
@@ -118,11 +122,11 @@ function getOutput(input){
 	   	projectCountInPage = projectLoopCount;
 	   	
 	   	if(documents.length >= resultLimit || projectCount >= projectResult.count){
+	   	//stop the project loop
 	   		projectRequestFlag = false;
 	   	}
    	}
    	
-	//dw.system.Logger.getLogger("debug").error("totalDocs: "+ totalDocs);
    	return {
    		Documents: documents,
    		ProjectPageNumber: projectPageNumber,
