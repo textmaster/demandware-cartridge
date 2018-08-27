@@ -43,6 +43,15 @@
     </type-extension>
     <type-extension type-id="SitePreferences">
         <custom-attribute-definitions>
+            <attribute-definition attribute-id="TMAPIEnvironment">
+                <display-name xml:lang="x-default">API Environment</display-name>
+                <description xml:lang="x-default">demo OR live</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>demo</default-value>
+            </attribute-definition>
             <attribute-definition attribute-id="TMAPITimeout">
                 <display-name xml:lang="x-default">API Timeout</display-name>
                 <description xml:lang="x-default">HTTP Client timeout in milli seconds</description>
@@ -80,7 +89,7 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
-				<default-value>C020</default-value>
+                <default-value>C020</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMContentAttributes">
                 <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>
@@ -91,13 +100,13 @@
                 <min-length>0</min-length>
                 <default-value>[]</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="TMDemandwareLanguages">
-                <display-name xml:lang="x-default">Demadware Languages</display-name>
-                <type>string</type>
+            <attribute-definition attribute-id="TMDashboardPageSize">
+                <display-name xml:lang="x-default">Dashboard Data Size</display-name>
+                <description xml:lang="x-default">Number of documents fetch from API on Dashboard in a single data load</description>
+                <type>int</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[{"id":"zh","name":"Chinese"},{"id":"zh-cn","name":"Chinese (China)"},{"id":"nl","name":"Dutch"},{"id":"en","name":"English"},{"id":"en-ca","name":"English (Canada)"},{"id":"en-gb","name":"English (United Kingdom)"},{"id":"en-us","name":"English (United States)"},{"id":"fr","name":"French"},{"id":"fr-ca","name":"French (Canada)"},{"id":"fr-fr","name":"French (France)"},{"id":"de","name":"German"},{"id":"de-de","name":"German (Germany)"},{"id":"it","name":"Italian"},{"id":"it-it","name":"Italian (Italy)"},{"id":"ja","name":"Japanese"},{"id":"ja-jp","name":"Japanese (Japan)"},{"id":"es","name":"Spanish"}]</default-value>
+                <default-value>100</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMEmail">
                 <display-name xml:lang="x-default">TM Email</display-name>
@@ -154,13 +163,14 @@
                 <attribute attribute-id="TMProductAttributes"/>
                 <attribute attribute-id="TMContentAttributes"/>
                 <attribute attribute-id="TMCategoryCode"/>
-                <attribute attribute-id="TMDemandwareLanguages"/>
                 <attribute attribute-id="TMEmail"/>
                 <attribute attribute-id="TMMasterCatalogID"/>
                 <attribute attribute-id="TMAPITimeout"/>
                 <attribute attribute-id="TMOCAPIid"/>
                 <attribute attribute-id="TMOCAPIpassword"/>
                 <attribute attribute-id="TMSGController"/>
+                <attribute attribute-id="TMAPIEnvironment"/>
+                <attribute attribute-id="TMDashboardPageSize"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

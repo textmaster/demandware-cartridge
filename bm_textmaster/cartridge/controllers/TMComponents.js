@@ -141,7 +141,7 @@ function saveAPIConfigurations(){
 			APICategory: request.httpParameterMap.get('apiCategory').stringValue,
 			APICatalogID: request.httpParameterMap.get('catalogID').stringValue,
 			APIEnv: request.httpParameterMap.get('apiEnv').stringValue,
-			APIPageSize: request.httpParameterMap.get('apiPageSize').intValue
+			TMPageSize: request.httpParameterMap.get('tmPageSize').intValue
 		};
 	apiConfig.output(input);
 }

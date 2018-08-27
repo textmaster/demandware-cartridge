@@ -102,6 +102,8 @@
           <key-binding alias="APICategories" key="APICategories"/>
           <key-binding alias="APICategory" key="APICategory"/>
           <key-binding alias="APICatalogID" key="APICatalogID"/>
+          <key-binding alias="APIEnv" key="APIEnv"/>
+          <key-binding alias="TMPageSize" key="TMPageSize"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

@@ -514,19 +514,19 @@
 						apiCategory = $('select[name=api-category]').val(),
 						catalogID = $('input[name=api-catalog-id]').val().trim(),
 						apiEnv = $('select[name=api-env]').val(),
-						apiPageSize = $('input[name=api-page-size]').val().trim(),
+						tmPageSize = $('input[name=api-page-size]').val().trim(),
 						postData;
 					
-					if(apiKey == "" || apiSecret == "" || catalogID == "" || apiPageSize == "" || (apiCategory == "" && $('select[name=api-category] option').length > 1)){
+					if(apiKey == "" || apiSecret == "" || catalogID == "" || tmPageSize == "" || (apiCategory == "" && $('select[name=api-category] option').length > 1)){
 						$('.error').text("All fields are required");
 						return false;
 					}
 					
-					if(isNaN(apiPageSize)){
+					if(isNaN(tmPageSize)){
 						$('.error').text("Dashboard Page Size must a number");
 						return false;
 					}
-					else if(parseInt(apiPageSize, 10) < 10){
+					else if(parseInt(tmPageSize, 10) < 10){
 						$('.error').text("Dashboard Page Size minimum value is 10");
 						return false;
 					}
@@ -538,7 +538,7 @@
 						apiCategory: apiCategory,
 						catalogID: catalogID,
 						apiEnv: apiEnv,
-						apiPageSize: apiPageSize
+						tmPageSize: tmPageSize
 					};
 					$.post(app.urls.saveAPIConfigurations, postData, function(data){
 						$('.success-message').addClass('show');

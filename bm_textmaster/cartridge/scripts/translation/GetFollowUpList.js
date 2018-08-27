@@ -2,7 +2,10 @@
 /**
 * 	Return Projects data to Follow up:    
 *   
-*	@output Documents : Array
+*	@input ProjectPageCount : Number
+*	@input DocPageCount : Number
+*	@input ProjectCountInPage : Number
+*	@input DocCountInPage : Number
 *
 */
 
@@ -18,11 +21,17 @@ var log = LogUtils.getLogger("getFollowUpList");
 
 function execute( pdict : PipelineDictionary ) : Number
 {
-	var output = getOutput();
+	var input = {
+		projectPageCount: pdict.ProjectPageCount,
+		docPageCount: pdict.DocPageCount,
+		projectCountInPage: pdict.ProjectCountInPage,
+		docCountInPage: pdict.DocCountInPage
+	},
+	output = getOutput(input);
 	
-	pdict.Documents = output.Documents;
-   	
-   	return PIPELET_NEXT;
+	response.getWriter().print(JSON.stringify(output));
+	
+	return PIPELET_NEXT;
 }
 
 function getOutput(input){
