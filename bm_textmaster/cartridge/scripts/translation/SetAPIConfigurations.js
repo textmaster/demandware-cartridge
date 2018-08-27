@@ -5,6 +5,8 @@
 *	@input APISecret: String
 *	@input APICategory: String
 *	@input APICatalogID: String
+*	@input APIEnv: String
+*	@input TMPageSize: Number
 *
 */
 importPackage( dw.system );
@@ -24,7 +26,9 @@ function execute( pdict : PipelineDictionary ) : Number
 		APIKey: pdict.APIKey,
 		APISecret: pdict.APISecret,
 		APICategory: pdict.APICategory,
-		APICatalogID: pdict.APICatalogID
+		APICatalogID: pdict.APICatalogID,
+		APIEnv: pdict.APIEnv,
+		TMPageSize: pdict.TMPageSize
 	};
 	output = getOutput(input);
 	
@@ -41,6 +45,8 @@ function getOutput(input){
 	site.setCustomPreferenceValue("TMApiSecret",input.APISecret);
 	site.setCustomPreferenceValue("TMCategoryCode",input.APICategory);
 	site.setCustomPreferenceValue("TMMasterCatalogID",input.APICatalogID);
+	site.setCustomPreferenceValue("TMAPIEnvironment",input.APIEnv);
+	site.setCustomPreferenceValue("TMDashboardPageSize",input.TMPageSize);
 	Transaction.commit();
 	
 	return true;

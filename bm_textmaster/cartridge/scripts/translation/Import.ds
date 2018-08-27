@@ -21,8 +21,8 @@ function execute( pdict : PipelineDictionary ) : Number
 {
 	var projectID = pdict.ProjectID,
 		documentID = pdict.DocumentID,
-		projectEndPoint = Resource.msg("api.get.projects","textmaster",null) +"/"+ projectID,
-		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.documents","textmaster",null) +"/"+ documentID,
+		projectEndPoint = Resource.msg("api.get.project","textmaster",null) +"/"+ projectID,
+		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.document","textmaster",null) +"/"+ documentID,
 		canImport = false,
 		project, doc, content, baseFolder, relativeFolder, fileName,
 		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID,

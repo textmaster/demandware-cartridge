@@ -8,6 +8,8 @@
 *	@output APICategory: String
 *	@output APICategories: Array
 *	@output APICatalogID: String
+*	@output APIEnv: String
+*	@output TMPageSize: Number
 *
 */
 importPackage(dw.system);
@@ -28,6 +30,8 @@ function execute( pdict : PipelineDictionary ) : Number
 	pdict.APICategory = output.APICategory;
 	pdict.APICatalogID = output.APICatalogID;
 	pdict.APICategories = output.APICategories;
+	pdict.APIEnv = output.APIEnv;
+	pdict.TMPageSize = output.TMPageSize;
 	
 	return PIPELET_NEXT;
 }
@@ -45,11 +49,13 @@ function getOutput(){
 	}
 	
 	return {
+		APIEnv: site.getCustomPreferenceValue("TMAPIEnvironment"),
 		APIKey: site.getCustomPreferenceValue("TMApiKey") || "",
 		APISecret: site.getCustomPreferenceValue("TMApiSecret") || "",
 		APICategory: site.getCustomPreferenceValue("TMCategoryCode") || "",
 		APICatalogID: site.getCustomPreferenceValue("TMMasterCatalogID") || "",
-		APICategories: categories
+		APICategories: categories,
+		TMPageSize: site.getCustomPreferenceValue("TMDashboardPageSize") || 100,
 	}
 }
 

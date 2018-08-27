@@ -46,6 +46,8 @@
 		<exec pipeline="TMTranslation" node="FollowUp"/>
 		<sub-pipelines>
 			<pipeline name="TMTranslation-FollowUp" />
+			<pipeline name="TMComponents-DashboardData" />
+			<pipeline name="TMComponents-DashboardFirstRow" />
 		</sub-pipelines>
 		<icon>icons/tm_dashboard.png</icon>
 	</menuaction>

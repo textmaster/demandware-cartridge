@@ -23,7 +23,7 @@ var log;
 function execute( pdict : PipelineDictionary ) : Number
 {  
     var projectID = pdict.TMProject.custom.projectid;
-    var projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
+    var projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID;
     var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
     var mail = null, mContent = {}, projectOptions = {}, updateRequest, costs = 0, currency = "", wordCount = 0;
     
@@ -49,7 +49,7 @@ function execute( pdict : PipelineDictionary ) : Number
 			}
 	  }
 	  
-	  projectEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID;
+	  projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID;
 	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
 
 	  mail = {};
@@ -58,7 +58,7 @@ function execute( pdict : PipelineDictionary ) : Number
   	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
   	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
   	      + costs.toFixed(2) + currency
-  	      + ". Please go to link " + Resource.msg("link.list.projects","textmaster",null) + "/"
+  	      + ". Please go to link " + Resource.msg("link.list.projects." + Utils.config.apiEnv,"textmaster",null) + "/"
   	      + projectResult.id + "/edit to check your project and launch it.";
   	  mContent.firstName = userResult.contact_information.first_name;
   	  mContent.wordCount = wordCount; /* total_word_count before updating the project */

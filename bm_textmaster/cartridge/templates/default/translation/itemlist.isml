@@ -1,4 +1,4 @@
-<script src="${URLUtils.staticURL('/js/jquery.dataTables.js')}"></script>
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.multiselect.css')}" />
 
@@ -14,7 +14,7 @@
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.name','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.online.flag','textmaster',null)}</th>
     	<isif condition="${pdict.Type != 'category'}">
-    		<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.search.status','textmaster',null)}</th>
+    		<th class="table_header left n e s" nowrap="nowrap" width="8%">${pdict.Type == 'product' ? Resource.msg('translation.product.type','textmaster',null) : Resource.msg('translation.search.status','textmaster',null)}</th>
     	</isif>
     	<isif condition="${pdict.Type != 'content'}">
     		<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.category','textmaster',null)}</th>
@@ -36,11 +36,27 @@
                 </th>
                 <isif condition="${pdict.Type != 'category'}">
 	                <th>
-	                    <select> 
-	                        <option value=""></option>
-	                        <option value="${Resource.msg('general.yes','textmaster',null)}">${Resource.msg('general.yes','textmaster',null)}</option>
-	                        <option value="${Resource.msg('general.no','textmaster',null)}">${Resource.msg('general.no','textmaster',null)}</option>
-	                    </select>
+	                	<isif condition="${pdict.Type == 'product'}">
+	                		<isscript>
+		                		var productTypes = [],
+		                			productTypesObj = Utils.productTypes;
+		                		
+		                		for(var key in productTypesObj){
+		                			productTypes.push(productTypesObj[key]);
+		                		}
+		                	</isscript>
+		                	<select multiple="multiple" id="producttype">
+		                        <isloop items="${productTypes}" var="productType" status="loopstate">
+			                        <option value="${productType}">${productType}</option>
+		                        </isloop>
+		                    </select>
+		                <iselse>
+		                    <select>
+		                        <option value=""></option>
+		                        <option value="${Resource.msg('general.yes','textmaster',null)}">${Resource.msg('general.yes','textmaster',null)}</option>
+		                        <option value="${Resource.msg('general.no','textmaster',null)}">${Resource.msg('general.no','textmaster',null)}</option>
+		                    </select>
+	                    </isif>
 	                </th>
 	            </isif>
 	            <isif condition="${pdict.Type != 'content'}">
@@ -71,7 +87,13 @@
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}" title="${itemName}">${itemName}</label></td>
 	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	<isif condition="${pdict.Type != 'category'}">
-	        		<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'searchable' in item && item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
+	        		<td class="table_detail left e s" nowrap="nowrap">
+	        				<isif condition="${pdict.Type == 'product'}">
+		                		<label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}"><isprint value="${Utils.getProductType(item)}"></label>
+			                <iselse>
+			                	<label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}"><isprint value="${'searchable' in item && item.searchable ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}"></label>
+		                    </isif>
+	        		</td>
 	        	</isif>
 	            <isif condition="${pdict.Type != 'content'}">
 	            	<isscript>
@@ -171,6 +193,31 @@
 	    			});
 		        column.draw();
 		    } );
+		    if(itemType == 'product'){
+			    $( 'select[multiple]#producttype', this.footer() ).on( 'change', function () {		    	
+			    	$.fn.dataTable.ext.search.push(
+		    			function( settings, data, dataIndex ) {
+		    			    var productTypeArray = $('select[multiple]#producttype').val();
+		    			    var productTypeData = data[4];
+		    			    var showData = false;
+		    			    
+		    			    if (!productTypeArray) {
+		    			        showData = true;
+		    			    } else {
+		    			        for (var i=0; i < productTypeArray.length; i++) {
+		    			        	console.log(productTypeArray[i] +' - '+ productTypeData);
+		    			        	if (productTypeArray[i] === productTypeData) {
+		    			        		showData = true;
+		    			        		break;
+		    			        	}
+		    			        }
+		    			    }
+		    			        
+		    			    return showData;
+		    			});
+			        column.draw();
+			    } );
+		    }
 		    $( 'select[multiple]#languagefield', this.footer() ).on( 'change', function () {
 		    	$.fn.dataTable.ext.search.push(
 	    			function( settings, data, dataIndex ) {

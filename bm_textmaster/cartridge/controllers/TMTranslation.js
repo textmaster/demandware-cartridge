@@ -32,21 +32,18 @@ function newTranslation(){
 }
 
 /**
-* 
+* Dashboard page
 */
 function followUp(){
-	var registered = loginCheck(),
-		output, followUpList;
+	var registered = loginCheck();
 	
 	if(registered){
-		followUpList = require('~/cartridge/scripts/translation/GetFollowUpList')
-		output = followUpList.output;
-		app.getView(output).render('translation/followupontranslation');
+		app.getView().render('translation/followupontranslation');
 	}
 }
 
 /**
-* Regitration link to TextMaster
+* Registration link to TextMaster
 */
 function register(){
 	var apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations'),

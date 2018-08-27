@@ -81,7 +81,7 @@ function getOutput(input){
 			};
 			
 			projectPostData.project = project;
-			projectEndPoint = Resource.msg("api.get.projects","textmaster",null);
+			projectEndPoint = Resource.msg("api.get.project","textmaster",null);
 			
 			projectResult = Utils.TextMasterClient("POST",projectEndPoint, JSON.stringify(projectPostData));
 			
@@ -185,14 +185,14 @@ function postBulkDocuments(documents, projectID){
 		documentEndPoint, documentResult, documentID, wordCount, key, callBackURL;
 	
 	documentPostData.documents = documents;
-	documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
+	documentEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
 	documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
 	
 	if(documentResult){
 		for each(document in documentResult){
 			documentID = document.id;
 			// document edit
-			documentEndPoint = Resource.msg("api.get.projects","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.get.documents","textmaster",null) + "/" + documentID;
+			documentEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.get.document","textmaster",null) + "/" + documentID;
 			
 			wordCount = 0;
 			for(key in document.original_content){
