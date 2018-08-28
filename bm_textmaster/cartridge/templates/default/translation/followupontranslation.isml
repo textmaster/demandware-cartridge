@@ -37,8 +37,8 @@
 				<td class="table_detail e s left"><span class="spContentId">
 					${datePart + " " + hour + ":" + minute}
 					</span></td>
-				<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item ? document.custom_data.item.id : ""}</span></td>
-				<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item ? document.custom_data.item.name : ""}</span></td>
+				<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item ? document.custom_data.item.id : (document.custom_data.id ? document.custom_data.id : "")}</span></td>
+				<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item ? document.custom_data.item.name : (document.custom_data.name ? document.custom_data.name : "")}</span></td>
 				<td class="table_detail e s capitalize">${document.item_type}</td>
 				<td class="table_detail e s left">${document.locale}</td>
 				<td class="table_detail e s">${document.status}</td>

@@ -28,14 +28,21 @@ Utils.log = LogUtils.getLogger("Utils");
 */
 Utils.attributes = {};
 Utils.attributes.content = [
-	"description","name","pageDescription","pageKeywords","pageMetaTags","pageTitle","pageURL"
+	"name","description","pageTitle","pageDescription","pageKeywords","pageURL"
 ];
 
 /*
 *	Accessible attributes of Category
 */
 Utils.attributes.category = [
-	"description","displayName","pageDescription","pageKeywords","pageTitle","pageURL"
+	"displayName","description","pageTitle","pageDescription","pageKeywords","pageURL"
+];
+
+/*
+*	Accessible attributes of Product
+*/
+Utils.attributes.product = [
+	"name","shortDescription","longDescription","pageTitle","pageDescription","pageKeywords","pageURL"
 ];
 
 /*
