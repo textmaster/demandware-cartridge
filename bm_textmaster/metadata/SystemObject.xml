@@ -115,6 +115,22 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>noreply@textmaster.com</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="TMLibraryType">
+                <display-name xml:lang="x-default">Site Library Type</display-name>
+                <type>enum-of-string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition default="true">
+                        <display xml:lang="x-default">Private</display>
+                        <value>private</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Shared</display>
+                        <value>shared</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
             <attribute-definition attribute-id="TMMasterCatalogID">
                 <display-name xml:lang="x-default">Master Catalog ID</display-name>
                 <type>string</type>
@@ -164,6 +180,7 @@
                 <attribute attribute-id="TMContentAttributes"/>
                 <attribute attribute-id="TMCategoryCode"/>
                 <attribute attribute-id="TMEmail"/>
+                <attribute attribute-id="TMLibraryType"/>
                 <attribute attribute-id="TMMasterCatalogID"/>
                 <attribute attribute-id="TMAPITimeout"/>
                 <attribute attribute-id="TMOCAPIid"/>

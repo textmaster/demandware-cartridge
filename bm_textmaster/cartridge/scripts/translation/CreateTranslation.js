@@ -120,7 +120,7 @@ function getOutput(input){
 						case "product":
 							for each(itemAttr in itemAttrs){
 								if(attr.id == itemAttr.ID){
-									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? (item[attr.id] ? item[attr.id].markup : "") : item.attributeModel.getDisplayValue(itemAttr);
+									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? (item[attr.id] ? (item[attr.id].source ? item[attr.id].source : item[attr.id]) : "") : item.attributeModel.getDisplayValue(itemAttr);
 									
 									if(contentValue){
 										itemData[attr.id] = contentValue;
@@ -130,7 +130,7 @@ function getOutput(input){
 							break;
 						case "content":
 						case "category":
-							contentValue = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? item.custom[attr.id].toString() : "");
+							contentValue = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? (item.custom[attr.id].source ? item.custom[attr.id].source : item.custom[attr.id]) : "");
 							
 							if(contentValue){
 								itemData[attr.id] = contentValue;

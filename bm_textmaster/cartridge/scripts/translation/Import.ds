@@ -15,7 +15,7 @@ var logUtils = require('~/cartridge/scripts/utils/LogUtils'),
 	utils = require('~/cartridge/scripts/utils/Utils');
 
 /* Global variables */
-var log;
+var log = logUtils.getLogger("ImportScript");
 
 function execute( pdict : PipelineDictionary ) : Number
 {
@@ -25,7 +25,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.document","textmaster",null) +"/"+ documentID,
 		canImport = false,
 		project, doc, content, baseFolder, relativeFolder, fileName,
-		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID,
+		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID, sysAttrList, sysAttr,
 		pageAttrs = {
 			pageTitle: {},
 			pageDescription: {},
@@ -33,15 +33,13 @@ function execute( pdict : PipelineDictionary ) : Number
 			pageURL: {}
 		};
 	
-	log = logUtils.getLogger("ImportScript");
-	
-	
 	project = utils.TextMasterClient("GET", projectEndPoint, "");
 	
 	if(project && project.custom_data.itemType){
 		itemType = project.custom_data.itemType;
 		catalogID = project.custom_data.catalogID;
 		language = utils.toDemandwareLocaleID(project.language_to_code);
+		sysAttrList = utils.attributes[itemType];
 		
 		if(itemType == "product" && !catalogID){
 			return PIPELET_NEXT;
@@ -78,7 +76,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		    if(itemType == "product" || itemType == "category"){
 		    	writer.writeAttribute("catalog-id",catalogID);
 		    }
-		    else{
+		    else if(Site.getCurrent().getCustomPreferenceValue('TMLibraryType').value == "shared"){
 		    	writer.writeAttribute("library-id",dw.content.ContentMgr.getSiteLibrary().ID);
 		    }
 			
@@ -93,11 +91,11 @@ function execute( pdict : PipelineDictionary ) : Number
 			    writer.writeAttribute(itemType+"-id", itemID);
 				
 				// each system attribute without page attributes
-				for each (attr in attrList){
-					if(attr.type == "system" && attr.id.indexOf("page") != 0 && content[attr.id]){
-						writer.writeStartElement(utils.idToXMLTag(attr.id == "name" ? "displayName" : attr.id));
+				for each (sysAttr in sysAttrList){
+					if(sysAttr.indexOf("page") != 0 && content[sysAttr]){
+						writer.writeStartElement(utils.idToXMLTag(sysAttr == "name" ? "displayName" : sysAttr));
 						writer.writeAttribute("xml:lang",language);
-							writer.writeCharacters(content[attr.id]);
+							writer.writeCharacters(content[sysAttr]);
 						writer.writeEndElement();
 					}
 				}
