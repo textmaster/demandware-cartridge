@@ -182,6 +182,8 @@ function getOutput(input){
  * */
 function postBulkDocuments(documents, projectID){
 	var documentPostData = {},
+		tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || "",
+		sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg("storefront.username","textmaster",null) + ":" + tmSFpassword + "@") : "",
 		documentEndPoint, documentResult, documentID, wordCount, key, callBackURL;
 	
 	documentPostData.documents = documents;
@@ -199,7 +201,7 @@ function postBulkDocuments(documents, projectID){
 				wordCount += Utils.getWordCount(document.original_content[key].original_phrase);
 			}
 			
-			callBackURL = "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID;
+			callBackURL = "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID;
 			
 			documentPostData = {
 				document: {

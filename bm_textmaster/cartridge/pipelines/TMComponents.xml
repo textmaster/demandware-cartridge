@@ -391,6 +391,7 @@
           <key-binding alias="CurrentHttpParameterMap.get('catalogID').stringValue" key="APICatalogID"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiEnv').stringValue" key="APIEnv"/>
           <key-binding alias="CurrentHttpParameterMap.get('tmPageSize').intValue" key="TMPageSize"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmSFpassword').stringValue" key="TMSFpassword"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
