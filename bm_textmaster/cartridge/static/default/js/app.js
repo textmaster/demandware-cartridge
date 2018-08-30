@@ -679,8 +679,9 @@
 							}
 						}
 					});
-					
-					follow.dataTable.page(follow.config.lastPage - 1).draw(false);
+					//show first page in next set of loaded data
+					var lastPage = parseInt($('#filtertableProjects_paginate span a.paginate_button:last-of-type').text(), 10);
+					follow.dataTable.page(follow.config.lastPage == lastPage ? (follow.config.lastPage - 1) : follow.config.lastPage).draw(false);
 					follow.populateStatusDiagram();
 				},
 				populateStatusDiagram: function(){

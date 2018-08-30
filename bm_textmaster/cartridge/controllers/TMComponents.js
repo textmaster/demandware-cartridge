@@ -173,8 +173,8 @@ function dashboardFirstRow(){
  * */
 function getDashboardData(){
 	var input = {
-		projectPageCount: request.httpParameterMap.get('projectPageCount').intValue,
-		docPageCount: request.httpParameterMap.get('docPageCount').intValue,
+		projectPageNumber: request.httpParameterMap.get('projectPageNumber').intValue,
+		docPageNumber: request.httpParameterMap.get('docPageNumber').intValue,
 		projectCountInPage: request.httpParameterMap.get('projectCountInPage').intValue,
 		docCountInPage: request.httpParameterMap.get('docCountInPage').intValue
 	},
