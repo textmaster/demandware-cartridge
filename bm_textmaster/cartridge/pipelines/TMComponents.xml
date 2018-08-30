@@ -391,6 +391,7 @@
           <key-binding alias="CurrentHttpParameterMap.get('catalogID').stringValue" key="APICatalogID"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiEnv').stringValue" key="APIEnv"/>
           <key-binding alias="CurrentHttpParameterMap.get('tmPageSize').intValue" key="TMPageSize"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmSFpassword').stringValue" key="TMSFpassword"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
@@ -595,6 +596,10 @@
           <config-property key="OnError" value="PIPELET_ERROR"/>
           <config-property key="ScriptFile" value="translation/GetFollowUpList.js"/>
           <key-binding alias="null" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.get('projectPageNumber').intValue" key="ProjectPageNumber"/>
+          <key-binding alias="CurrentHttpParameterMap.get('docPageNumber').intValue" key="DocPageNumber"/>
+          <key-binding alias="CurrentHttpParameterMap.get('projectCountInPage').intValue" key="ProjectCountInPage"/>
+          <key-binding alias="CurrentHttpParameterMap.get('docCountInPage').intValue" key="DocCountInPage"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

@@ -93,6 +93,16 @@
 					<span>${Resource.msg('api.page.size.desc', 'textmaster',null)}</span>
 				</td>
 			</tr>
+			<isif condition="${dw.system.Site.current.status === dw.system.Site.SITE_STATUS_PROTECTED}">
+				<tr>
+					<td class="table_detail e s w right">
+						${Resource.msg('storefront.password.label', 'textmaster',null)}
+					</td>
+					<td class="table_detail e s">
+						<input type="password" name="sf-password" value="${pdict.TMSFpassword}"/>
+					</td>
+				</tr>
+			</isif>
 			<tr>
 				<td colspan="2" class="table_detail e s w right input-holder">
 					<span class="error"></span>

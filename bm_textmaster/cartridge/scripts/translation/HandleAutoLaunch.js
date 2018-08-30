@@ -32,6 +32,8 @@ function execute( pdict : PipelineDictionary ) : Number
 function getOutput(input){
 	var projectID = input.ProjectID,
 		autoLaunch = input.AutoLaunch,
+		tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || "",
+		sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg("storefront.username","textmaster",null) + ":" + tmSFpassword + "@") : "",
 		projectEndPoint, projectResult;
 	
 	if(autoLaunch.toLowerCase() === "true"){
@@ -40,7 +42,7 @@ function getOutput(input){
 		projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
 	}
 	else{
-		Utils.TriggerURL("POST", "https://"+ System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
+		Utils.TriggerURL("POST", "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
 	}
 	
 	response.getWriter().println("success");

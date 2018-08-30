@@ -515,6 +515,7 @@
 						catalogID = $('input[name=api-catalog-id]').val().trim(),
 						apiEnv = $('select[name=api-env]').val(),
 						tmPageSize = $('input[name=api-page-size]').val().trim(),
+						tmSFpassword = $('input[name=sf-password]').val(),
 						postData;
 					
 					if(apiKey == "" || apiSecret == "" || catalogID == "" || tmPageSize == "" || (apiCategory == "" && $('select[name=api-category] option').length > 1)){
@@ -538,7 +539,8 @@
 						apiCategory: apiCategory,
 						catalogID: catalogID,
 						apiEnv: apiEnv,
-						tmPageSize: tmPageSize
+						tmPageSize: tmPageSize,
+						tmSFpassword: tmSFpassword
 					};
 					$.post(app.urls.saveAPIConfigurations, postData, function(data){
 						$('.success-message').addClass('show');
@@ -677,8 +679,9 @@
 							}
 						}
 					});
-					
-					follow.dataTable.page(follow.config.lastPage - 1).draw(false);
+					//show first page in next set of loaded data
+					var lastPage = parseInt($('#filtertableProjects_paginate span a.paginate_button:last-of-type').text(), 10);
+					follow.dataTable.page(follow.config.lastPage == lastPage ? (follow.config.lastPage - 1) : follow.config.lastPage).draw(false);
 					follow.populateStatusDiagram();
 				},
 				populateStatusDiagram: function(){

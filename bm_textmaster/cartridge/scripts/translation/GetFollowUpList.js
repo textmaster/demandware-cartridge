@@ -2,8 +2,8 @@
 /**
 * 	Return Projects data to Follow up:    
 *   
-*	@input ProjectPageCount : Number
-*	@input DocPageCount : Number
+*	@input ProjectPageNumber : Number
+*	@input DocPageNumber : Number
 *	@input ProjectCountInPage : Number
 *	@input DocCountInPage : Number
 *
@@ -83,6 +83,7 @@ function getOutput(input){
 		   		docLoopCount = 0;
 		   		
 		   		if(documentResult && documentResult.documents){
+		   			
 		   			for each(document in documentResult.documents){
 		   				docLoopCount++;
 		   				

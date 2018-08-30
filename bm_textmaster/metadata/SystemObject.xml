@@ -161,6 +161,12 @@
                 <min-length>0</min-length>
                 <default-value>[]</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="TMSFpassword">
+                <display-name xml:lang="x-default">Store front Password</display-name>
+                <type>password</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
             <attribute-definition attribute-id="TMSGController">
                 <display-name xml:lang="x-default">SiteGenesis Controller Cartridge</display-name>
                 <type>string</type>
@@ -185,6 +191,7 @@
                 <attribute attribute-id="TMAPITimeout"/>
                 <attribute attribute-id="TMOCAPIid"/>
                 <attribute attribute-id="TMOCAPIpassword"/>
+                <attribute attribute-id="TMSFpassword"/>
                 <attribute attribute-id="TMSGController"/>
                 <attribute attribute-id="TMAPIEnvironment"/>
                 <attribute attribute-id="TMDashboardPageSize"/>
