@@ -187,11 +187,27 @@ function getDashboardData(){
 }
 
 /*
+ * Check if API Key and Secret are valid in the API environment
+ * */
+function apiKeyTest(){
+	var input = {
+			apiKey: request.httpParameterMap.get('apiKey').stringValue,
+			apiSecret: request.httpParameterMap.get('apiSecret').stringValue,
+			apiEnv: request.httpParameterMap.get('apiEnv').stringValue
+		},
+		apiTest = require('~/cartridge/scripts/translation/APIKeyTest'),
+		output = apiTest.output(input);
+	
+	response.getWriter().print(output);
+}
+
+/*
 * Web exposed methods
 */
 /**
 * Calls ajax features for translation pages
 */
+exports.APIKeyTest = guard.ensure(['post'], apiKeyTest);
 exports.AttributeList = guard.ensure(['post'], attributeList);
 exports.CategoryDropdown = guard.ensure(['get'], categoryDropdown);
 exports.GetLanguageToList = guard.ensure(['post'], getLanguageToList);

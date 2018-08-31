@@ -538,9 +538,9 @@ Utils.serviceParseResponse = function(service : HTTPService, httpClient : HTTPCl
 }
 
 /*
-*	Communicates with TextMaster clients APIs
+*	Sets service registry for TextMasterClient
 */
-Utils.TextMasterClient = function(method, endPoint, request){
+Utils.setServiceRegistry = function(){
 	ServiceRegistry.configure("textmaster.http", {
 		createRequest: function(service : HTTPService, args){
 	        service.URL = args.endPointUrl;
@@ -555,26 +555,63 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	    },
 	    parseResponse: Utils.serviceParseResponse
 	});
-	
-	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
-		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
-		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
+}
+
+/*
+*	Gets service arguments
+*/
+Utils.getServiceArguments = function(apiKey, apiSecret, method, endPointUrl, request){
+	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
 		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
 		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
-		signatureString: String = signature.toString(),
+		signatureString: String = signature.toString();
+		
+		request = request || "";
+		
+		return {
+			apiKey: apiKey,
+			date: date,
+			signatureString: signatureString,
+			method: method,
+			endPointUrl: endPointUrl,
+			request: request
+		};
+}
+
+/*
+*	Communicates with TextMaster clients APIs
+*/
+Utils.TextMasterClient = function(method, endPoint, request){
+	Utils.setServiceRegistry();
+	
+	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
+		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
 		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + endPoint,
 		response: Object, serviceArgs, service, result;
 	
-	request = request || "";
-	serviceArgs = {
-		apiKey: apiKey,
-		date: date,
-		signatureString: signatureString,
-		method: method,
-		endPointUrl: endPointUrl,
-		request: request
-	};
+	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, method, endPointUrl, request);
+	
+	service = ServiceRegistry.get("textmaster.http");
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
+	
+	return response;
+}
+
+/*
+*	Communicates with TextMaster Test API
+*/
+Utils.TextMasterTest = function(request){
+	Utils.setServiceRegistry();
+	
+	var apiKey: String = request.apiKey || "",
+		apiSecret: String = request.apiSecret || "",
+		endPointUrl: String = Resource.msg("api.test." + request.apiEnv,"textmaster",null),
+		response: Object, serviceArgs, service, result;
+	
+	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, "GET", endPointUrl, null);
 	
 	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
