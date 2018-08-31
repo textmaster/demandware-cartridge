@@ -15,7 +15,7 @@
 				}
 				
 				if($('.registration').length){
-					this.registration();
+					this.registration.init();
 				}
 				
 				if($('.followup').length){
@@ -23,6 +23,7 @@
 				}
 			},
 			urls:{
+				apiKeyTest: "TMComponents-APIKeyTest",
 				attributeList: "TMComponents-AttributeList",
 				categoryDropdown: "TMComponents-CategoryDropdown",
 				createTranslation: "TMComponents-CreateTranslation",
@@ -507,49 +508,90 @@
 					}
 				});
 			},
-			registration: function(){
-				$('#api-config-save').on("click",function(){
-					var apiKey = $('input[name=api-key]').val().trim(),
-						apiSecret = $('input[name=api-secret]').val().trim(),
-						apiCategory = $('select[name=api-category]').val(),
-						catalogID = $('input[name=api-catalog-id]').val().trim(),
-						apiEnv = $('select[name=api-env]').val(),
-						tmPageSize = $('input[name=api-page-size]').val().trim(),
-						tmSFpassword = $('input[name=sf-password]').val(),
+			registration: {
+				data: {
+					
+				},
+				init: function(){
+					var reg = this;
+					
+					$('#api-config-save').on("click",function(){
+						reg.setData();
+						
+						if(reg.validate()){
+							$('.error').text("");
+							reg.saveData();
+						}
+					});
+					
+					$('select[name=api-env]').on('change',function(){
+						reg.setRegLink();
+					});
+				},
+				setData: function(){
+					var data = this.data;
+					data.apiKey = $('input[name=api-key]').val().trim();
+					data.apiSecret = $('input[name=api-secret]').val().trim();
+					data.apiCategory = $('select[name=api-category]').val();
+					data.catalogID = $('input[name=api-catalog-id]').val().trim();
+					data.apiEnv = $('select[name=api-env]').val();
+					data.tmPageSize = $('input[name=api-page-size]').val().trim();
+					data.tmSFpassword = $('input[name=sf-password]').val();
+				},
+				validate: function(){
+					var valid = true,
+						data = this.data,
 						postData;
 					
-					if(apiKey == "" || apiSecret == "" || catalogID == "" || tmPageSize == "" || (apiCategory == "" && $('select[name=api-category] option').length > 1)){
+					if(data.apiKey == "" || data.apiSecret == "" || data.catalogID == "" || data.tmPageSize == "" || (data.apiCategory == "" && $('select[name=api-category] option').length > 1)){
 						$('.error').text("All fields are required");
-						return false;
+						valid = false;
 					}
 					
-					if(isNaN(tmPageSize)){
+					if(valid && isNaN(data.tmPageSize)){
 						$('.error').text("Dashboard Page Size must a number");
-						return false;
+						valid = false;
 					}
-					else if(parseInt(tmPageSize, 10) < 10){
+					else if(valid && parseInt(data.tmPageSize, 10) < 10){
 						$('.error').text("Dashboard Page Size minimum value is 10");
-						return false;
+						valid = false;
 					}
 					
-					$('.error').text("");
-					postData = {
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						apiCategory: apiCategory,
-						catalogID: catalogID,
-						apiEnv: apiEnv,
-						tmPageSize: tmPageSize,
-						tmSFpassword: tmSFpassword
-					};
-					$.post(app.urls.saveAPIConfigurations, postData, function(data){
+					if(valid){
+						//Check if API Key and Secret are valid in the API environment
+						$.ajax({
+							type: 'POST',
+							url: app.urls.apiKeyTest,
+							data: data,
+							async: false,
+							success: function(output){
+								if(output.toLowerCase() != "success"){
+									$('.error').text("API Key or API Secret is invalid");
+									valid = false;
+								}
+							}
+						});
+					}
+					
+					return valid;
+				},
+				saveData: function(){
+					var reg = this;
+					
+					$.post(app.urls.saveAPIConfigurations, reg.data, function(){
 						$('.success-message').addClass('show');
 						
 						setTimeout(function(){
 							$('.success-message').removeClass('show');
 						}, 3000);
 					});
-				});
+				},
+				setRegLink: function(){
+					var apiEnv = $('select[name=api-env]').val(),
+						regLink = $('input[name=reg-link-'+ apiEnv +']').val();
+					
+					$('a#reg-link').attr('href', regLink);
+				}
 			},
 			followup:{
 				dataTable: {},

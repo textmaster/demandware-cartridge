@@ -23,7 +23,9 @@
 		<tbody>
 			<tr>
 				<td class="table_detail e s w right input-holder">
-					<a class="button" href="https://www.app.textmaster.com/sign_up" target="_blank">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
+					<a class="button" href="${Resource.msg('link.enter.textmaster.' + pdict.APIEnv, 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
+					<input type="hidden" name="reg-link-demo" value="${Resource.msg('link.enter.textmaster.demo', 'textmaster',null)}" />
+					<input type="hidden" name="reg-link-live" value="${Resource.msg('link.enter.textmaster.live', 'textmaster',null)}" />
 				</td>
 			</tr>
 		</tbody>
