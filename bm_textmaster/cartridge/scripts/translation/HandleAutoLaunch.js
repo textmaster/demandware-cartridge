@@ -1,5 +1,5 @@
 /**
-* 	set API configurations 
+* 	Handle auto launch or send quote 
 *
 *	@input ProjectID: String
 *	@input AutoLaunch: String

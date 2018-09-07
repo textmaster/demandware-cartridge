@@ -9,6 +9,7 @@
 *	@output APICategories: Array
 *	@output APICatalogID: String
 *	@output APIEnv: String
+*	@output APICache: String
 *	@output TMPageSize: Number
 *	@output TMSFpassword: String
 *
@@ -32,6 +33,7 @@ function execute( pdict : PipelineDictionary ) : Number
 	pdict.APICatalogID = output.APICatalogID;
 	pdict.APICategories = output.APICategories;
 	pdict.APIEnv = output.APIEnv;
+	pdict.APICache = output.APICache;
 	pdict.TMPageSize = output.TMPageSize;
 	pdict.TMSFpassword = output.TMSFpassword;
 	
@@ -52,6 +54,7 @@ function getOutput(){
 	
 	return {
 		APIEnv: site.getCustomPreferenceValue("TMAPIEnvironment"),
+		APICache: site.getCustomPreferenceValue("TMAPICache"),
 		APIKey: site.getCustomPreferenceValue("TMApiKey") || "",
 		APISecret: site.getCustomPreferenceValue("TMApiSecret") || "",
 		APICategory: site.getCustomPreferenceValue("TMCategoryCode") || "",

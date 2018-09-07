@@ -153,6 +153,7 @@
 					}
 					
 					if(error){
+						$('.common-error.search').text(itemType == "" ? "Select Item type" : (catalog == "" ? "Select Catalog" : "Select Categories"));
 						$('.common-error.search').addClass('show');
 						return false;
 					}
@@ -269,6 +270,11 @@
 					$('.submit-error').html("");
 					$('#filter-item-submit').prop("disabled",true).val("Please wait...");
 				});
+				
+				if($('select[name=locale-from] option').length == 1){
+					//Populate To Language List if only one language is on From Language list
+					$('select[name=locale-from]').trigger('change');
+				}
 			},
 			placeOrder: function(){
 				var result, transParams, localeFrom, localeTo, templateSelect, templates, listHolder, postData, select, count, autoLaunchCount, noAutoLaunchCount;
@@ -544,6 +550,7 @@
 					data.apiCategory = $('select[name=api-category]').val();
 					data.catalogID = $('input[name=api-catalog-id]').val().trim();
 					data.apiEnv = $('select[name=api-env]').val();
+					data.apiCache = $('select[name=api-cache]').val();
 					data.tmPageSize = $('input[name=api-page-size]').val().trim();
 					data.tmSFpassword = $('input[name=sf-password]').val();
 				},

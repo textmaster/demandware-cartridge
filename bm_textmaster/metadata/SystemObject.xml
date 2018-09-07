@@ -45,23 +45,25 @@
         <custom-attribute-definitions>
             <attribute-definition attribute-id="TMAPIEnvironment">
                 <display-name xml:lang="x-default">API Environment</display-name>
-                <description xml:lang="x-default">demo OR live</description>
+                <description xml:lang="x-default">demo OR live (Set via API Setup page)</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
                 <default-value>demo</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="TMAPITimeout">
-                <display-name xml:lang="x-default">API Timeout</display-name>
-                <description xml:lang="x-default">HTTP Client timeout in milli seconds</description>
-                <type>double</type>
+            <attribute-definition attribute-id="TMAPICache">
+                <display-name xml:lang="x-default">Language cache</display-name>
+                <description xml:lang="x-default">enabled or disabled (Set via API Setup page) [If disabled, language source always will be API]</description>
+                <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-                <default-value>15000.0</default-value>
+                <min-length>0</min-length>
+                <default-value>enabled</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMApiKey">
                 <display-name xml:lang="x-default">TextMaster API Key</display-name>
+                <description xml:lang="x-default">Set via API Setup page</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -69,6 +71,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMApiSecret">
                 <display-name xml:lang="x-default">TextMaster API Secret</display-name>
+                <description xml:lang="x-default">Set via API Setup page</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -76,7 +79,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMCategoryAttributes">
                 <display-name xml:lang="x-default">TextMaster Category Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default category attributes for translation</description>
+                <description xml:lang="x-default">TextMaster default category attributes for translation (Set via API Setup page)</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -85,6 +88,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMCategoryCode">
                 <display-name xml:lang="x-default">TextMaster Category Code</display-name>
+                <description xml:lang="x-default">Set via API Setup page</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -93,7 +97,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMContentAttributes">
                 <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default content asset attributes for translation</description>
+                <description xml:lang="x-default">TextMaster default content asset attributes for translation (Set via Default Attribute Setup page)</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -102,7 +106,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMDashboardPageSize">
                 <display-name xml:lang="x-default">Dashboard Data Size</display-name>
-                <description xml:lang="x-default">Number of documents fetch from API on Dashboard in a single data load</description>
+                <description xml:lang="x-default">Number of documents fetch from API on Dashboard in a single data load (Set via API Setup page)</description>
                 <type>int</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -133,6 +137,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMMasterCatalogID">
                 <display-name xml:lang="x-default">Master Catalog ID</display-name>
+                <description xml:lang="x-default">Set via API Setup page</description>
                 <type>string</type>
                 <mandatory-flag>true</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -163,6 +168,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="TMSFpassword">
                 <display-name xml:lang="x-default">Store front Password</display-name>
+                <description xml:lang="x-default">Set via API Setup page if Site status is Protected</description>
                 <type>password</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -188,13 +194,13 @@
                 <attribute attribute-id="TMEmail"/>
                 <attribute attribute-id="TMLibraryType"/>
                 <attribute attribute-id="TMMasterCatalogID"/>
-                <attribute attribute-id="TMAPITimeout"/>
                 <attribute attribute-id="TMOCAPIid"/>
                 <attribute attribute-id="TMOCAPIpassword"/>
                 <attribute attribute-id="TMSFpassword"/>
                 <attribute attribute-id="TMSGController"/>
                 <attribute attribute-id="TMAPIEnvironment"/>
                 <attribute attribute-id="TMDashboardPageSize"/>
+                <attribute attribute-id="TMAPICache"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

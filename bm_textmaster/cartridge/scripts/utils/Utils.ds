@@ -244,7 +244,13 @@ Utils.getTranslationLanguages = function(){
 *	Get 'language from' list
 */
 Utils.getLanguageFromList = function(){
-	Utils.resetLanguageSession();
+	var apiCache = Site.current.getCustomPreferenceValue("TMAPICache") || "enabled";
+	
+	if(apiCache.toLowerCase() == "disabled"){
+		// Cache settings checking is only here.
+		//In all other functions, data will be fetched from cache if data found in cache
+		Utils.resetLanguageCache();
+	}
 	
 	var dataHolder = Utils.getLanguageDataHolder();
 	
@@ -252,14 +258,36 @@ Utils.getLanguageFromList = function(){
 		return JSON.parse(dataHolder.custom.TMLanguageFromList);
 	}
 	
+	var defaultLocale = Site.current.defaultLocale;
 	var result = [],
-		language, languageToList,
-		languages = Utils.getTranslationLanguages();
+		languages, languageToList;
 	
-	for each(language in languages){
-		languageToList = Utils.getLanguageTo(language.id);
-		if(languageToList.length > 0){
-			result.push(language);
+	if(defaultLocale == "default"){
+		var language;
+		
+		languages = Utils.getTranslationLanguages();
+		
+		for each(language in languages){
+			languageToList = Utils.getLanguageTo(language.id);
+			if(languageToList.length > 0){
+				result.push(language);
+			}
+		}
+	}
+	else{
+		defaultLocale = Utils.toTextMasterLocaleID(defaultLocale);
+		languageToList = Utils.getLanguageTo(defaultLocale);
+		
+		var defaultLocaleName = Utils.getLocaleName(defaultLocale);
+		
+		if(languageToList.length && defaultLocaleName){
+			result.push({
+				id: defaultLocale,
+				name: defaultLocaleName
+			});
+		}
+		else{
+			Utils.log.error("Default locale ("+ defaultLocale +") is not matching with any of TextMaster languages");
 		}
 	}
 	
@@ -273,9 +301,9 @@ Utils.getLanguageFromList = function(){
 }
 
 /*
-*	Reset session values
+*	Reset cache values
 */
-Utils.resetLanguageSession = function(){
+Utils.resetLanguageCache = function(){
 	var dataHolder = Utils.getLanguageDataHolder();
 	
 	if(dataHolder){
@@ -561,8 +589,7 @@ Utils.setServiceRegistry = function(){
 *	Gets service arguments
 */
 Utils.getServiceArguments = function(apiKey, apiSecret, method, endPointUrl, request){
-	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
-		date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
+	var date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
 		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
 		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
 		signatureString: String = signature.toString();
@@ -637,7 +664,6 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 	});
 	
 	var endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.public","textmaster",null) + endPoint,
-		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		response, serviceArgs, service, result;
 	
 	request = request || "";
@@ -741,8 +767,7 @@ Utils.getOCAPIToken = function(){
 	    parseResponse: Utils.serviceParseResponse
 	});
 	
-	var timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
-		ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
+	var ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
 		ocapiPassword: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIpassword') || Resource.msg("ocapi.demo.password","textmaster",null),
 		endPointUrl: String = Resource.msg("ocapi.token.post","textmaster",null),
 		token = "",

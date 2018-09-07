@@ -95,6 +95,18 @@
 					<span>${Resource.msg('api.page.size.desc', 'textmaster',null)}</span>
 				</td>
 			</tr>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.cache.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<select name="api-cache">
+						<option value="enabled" ${pdict.APICache == 'enabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.enabled', 'textmaster',null)}</option>
+						<option value="disabled" ${pdict.APICache == 'disabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.disabled', 'textmaster',null)}</option>
+					</select>
+					<span>${Resource.msg('api.cache.desc', 'textmaster',null)}</span>
+				</td>
+			</tr>
 			<isif condition="${dw.system.Site.current.status === dw.system.Site.SITE_STATUS_PROTECTED}">
 				<tr>
 					<td class="table_detail e s w right">
