@@ -152,7 +152,7 @@ function getDocumentResult(doc, project){
 		case "in_creation":
 			actions.push({
 				text: Resource.msg("follow.action.view.project","textmaster",null),
-				link: Resource.msgf("link.view.project." + Utils.config.apiEnv,"textmaster",null,project.id)
+				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.project","textmaster",null,project.id)
 			});
 			break;
 		case "in_progress":
@@ -160,7 +160,7 @@ function getDocumentResult(doc, project){
 		case "quality_control":
 			actions.push({
 				text: Resource.msg("follow.action.view.document","textmaster",null),
-				link: Resource.msgf("link.view.document." + Utils.config.apiEnv,"textmaster",null,project.id,doc.id)
+				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 			});
 			break;
 		case "in_review":
@@ -191,7 +191,7 @@ function getDocumentResult(doc, project){
 				});
 				actions.push({
 					text: Resource.msg("follow.action.view.document","textmaster",null),
-					link: Resource.msgf("link.view.document." + Utils.config.apiEnv,"textmaster",null,project.id,doc.id)
+					link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 				});
 			}
 			else{
@@ -201,7 +201,7 @@ function getDocumentResult(doc, project){
 		case "incomplete":
 			actions.push({
 				text: Resource.msg("follow.action.communicate.translator","textmaster",null),
-				link: Resource.msgf("link.view.document." + Utils.config.apiEnv,"textmaster",null,project.id,doc.id)
+				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 			});
 			break;
 	}

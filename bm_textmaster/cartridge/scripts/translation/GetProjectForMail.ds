@@ -58,7 +58,7 @@ function execute( pdict : PipelineDictionary ) : Number
   	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
   	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
   	      + costs.toFixed(2) + currency
-  	      + ". Please go to link " + Resource.msg("link.list.projects." + Utils.config.apiEnv,"textmaster",null) + "/"
+  	      + ". Please go to link " + Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects","textmaster",null) + "/"
   	      + projectResult.id + "/edit to check your project and launch it.";
   	  mContent.firstName = userResult.contact_information.first_name;
   	  mContent.wordCount = wordCount; /* total_word_count before updating the project */

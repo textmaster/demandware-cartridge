@@ -587,7 +587,7 @@ Utils.TextMasterClient = function(method, endPoint, request){
 	
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
 		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
-		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + endPoint,
+		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.clients","textmaster",null) + endPoint,
 		response: Object, serviceArgs, service, result;
 	
 	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, method, endPointUrl, request);
@@ -608,7 +608,7 @@ Utils.TextMasterTest = function(request){
 	
 	var apiKey: String = request.apiKey || "",
 		apiSecret: String = request.apiSecret || "",
-		endPointUrl: String = Resource.msg("api.test." + request.apiEnv,"textmaster",null),
+		endPointUrl: String = Resource.msg("api.base." + request.apiEnv,"textmaster",null) + Resource.msg("api.test","textmaster",null),
 		response: Object, serviceArgs, service, result;
 	
 	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, "GET", endPointUrl, null);
@@ -636,7 +636,7 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 	    parseResponse: Utils.serviceParseResponse
 	});
 	
-	var endPointUrl: String = Resource.msg("api.public.base." + Utils.config.apiEnv,"textmaster",null) + endPoint,
+	var endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.public","textmaster",null) + endPoint,
 		timeout: Number = Site.getCurrent().getCustomPreferenceValue('TMAPITimeout') || 15000,
 		response, serviceArgs, service, result;
 	

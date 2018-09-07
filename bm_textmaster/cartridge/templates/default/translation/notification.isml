@@ -2,7 +2,9 @@
 <isinclude template="custom/modules"/>
 <isscript>
 	var Utils = require('~/cartridge/scripts/utils/Utils');
-	var projectLink = pdict.projectID ? Resource.msgf("link.view.project." + Utils.config.apiEnv, "textmaster", null, pdict.projectID) : Resource.msg("link.list.projects." + Utils.config.apiEnv, "textmaster",null);
+	var projectLink = pdict.projectID ?
+						Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.project", "textmaster", null, pdict.projectID) :
+						Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects", "textmaster",null);
 </isscript>
 <isdecorate template="application/MenuFrame">
     <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
