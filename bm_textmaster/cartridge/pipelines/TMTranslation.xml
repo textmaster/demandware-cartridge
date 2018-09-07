@@ -104,6 +104,7 @@
           <key-binding alias="APICatalogID" key="APICatalogID"/>
           <key-binding alias="APIEnv" key="APIEnv"/>
           <key-binding alias="TMPageSize" key="TMPageSize"/>
+          <key-binding alias="APICache" key="APICache"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

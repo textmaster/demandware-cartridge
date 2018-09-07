@@ -45,7 +45,10 @@
 				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
 				<div class="input-holder">
 					<select name="locale-from">
-						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<isif condition="${languages.length > 1}">
+							<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						</isif>
+						
 						<isloop items="${languages}" var="lang" status="loopstate">
 							<option value="${lang.id}">${lang.name}</option>
 						</isloop>
@@ -70,7 +73,8 @@
 				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
 			</div>
 			<div class="field-holder button-holder left">
-				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search"><span class="common-error search">${Resource.msg('general.error.category','textmaster',null)}</span>
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search">
+				<span class="common-error search"></span>
 			</div>
 		</div>
 		<div class="form-holder relative items">

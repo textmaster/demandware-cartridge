@@ -141,6 +141,7 @@ function saveAPIConfigurations(){
 			APICategory: request.httpParameterMap.get('apiCategory').stringValue,
 			APICatalogID: request.httpParameterMap.get('catalogID').stringValue,
 			APIEnv: request.httpParameterMap.get('apiEnv').stringValue,
+			APICache: request.httpParameterMap.get('apiCache').stringValue,
 			TMPageSize: request.httpParameterMap.get('tmPageSize').intValue,
 			TMSFpassword: request.httpParameterMap.get('tmSFpassword').stringValue
 		};

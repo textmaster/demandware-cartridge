@@ -6,6 +6,7 @@
 *	@input APICategory: String
 *	@input APICatalogID: String
 *	@input APIEnv: String
+*	@input APICache: String
 *	@input TMPageSize: Number
 *	@input TMSFpassword: String
 *
@@ -29,6 +30,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		APICategory: pdict.APICategory,
 		APICatalogID: pdict.APICatalogID,
 		APIEnv: pdict.APIEnv,
+		APICache: pdict.APICache,
 		TMPageSize: pdict.TMPageSize,
 		TMSFpassword: pdict.TMSFpassword
 	};
@@ -48,6 +50,7 @@ function getOutput(input){
 	site.setCustomPreferenceValue("TMCategoryCode",input.APICategory);
 	site.setCustomPreferenceValue("TMMasterCatalogID",input.APICatalogID);
 	site.setCustomPreferenceValue("TMAPIEnvironment",input.APIEnv);
+	site.setCustomPreferenceValue("TMAPICache",input.APICache);
 	site.setCustomPreferenceValue("TMDashboardPageSize",input.TMPageSize);
 	
 	if(Site.current.status === Site.SITE_STATUS_PROTECTED){
