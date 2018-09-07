@@ -509,18 +509,27 @@
 				});
 			},
 			registration: {
-				data: {
-					
-				},
+				data: {},
+				saveButton: {},
+				saveButtonLabel: "",
 				init: function(){
 					var reg = this;
 					
 					$('#api-config-save').on("click",function(){
+						reg.saveButton = $('input#api-config-save');
+						reg.saveButton.prop('disabled', true);
+						reg.saveButtonLabel = reg.saveButton.val();
+						reg.saveButton.val('Please wait...');
+						
 						reg.setData();
 						
 						if(reg.validate()){
 							$('.error').text("");
 							reg.saveData();
+						}
+						else{
+							reg.saveButton.val(reg.saveButtonLabel);
+							reg.saveButton.prop('disabled', false);
 						}
 					});
 					
@@ -540,8 +549,7 @@
 				},
 				validate: function(){
 					var valid = true,
-						data = this.data,
-						postData;
+						data = this.data;
 					
 					if(data.apiKey == "" || data.apiSecret == "" || data.catalogID == "" || data.tmPageSize == "" || (data.apiCategory == "" && $('select[name=api-category] option').length > 1)){
 						$('.error').text("All fields are required");
@@ -578,8 +586,13 @@
 				saveData: function(){
 					var reg = this;
 					
+					reg.saveButton.prop('disabled', true);
+					reg.saveButton.val('Please wait...');
+					
 					$.post(app.urls.saveAPIConfigurations, reg.data, function(){
 						$('.success-message').addClass('show');
+						reg.saveButton.val(reg.saveButtonLabel);
+						reg.saveButton.prop('disabled', false);
 						
 						setTimeout(function(){
 							$('.success-message').removeClass('show');
@@ -601,7 +614,7 @@
 			   		projectCountInPage: 0,
 			   		docCountInPage: 0,
 			   		showMore: true,
-			   		lastPage: 1
+			   		lastPage: 0
 				},
 				statusValues: {
 					creation: 0,

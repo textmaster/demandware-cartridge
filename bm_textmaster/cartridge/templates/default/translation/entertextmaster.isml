@@ -23,9 +23,9 @@
 		<tbody>
 			<tr>
 				<td class="table_detail e s w right input-holder">
-					<a class="button" href="${Resource.msg('link.enter.textmaster.' + pdict.APIEnv, 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
-					<input type="hidden" name="reg-link-demo" value="${Resource.msg('link.enter.textmaster.demo', 'textmaster',null)}" />
-					<input type="hidden" name="reg-link-live" value="${Resource.msg('link.enter.textmaster.live', 'textmaster',null)}" />
+					<a class="button" href="${Resource.msg('link.base.' + pdict.APIEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
+					<input type="hidden" name="reg-link-demo" value="${Resource.msg('link.base.demo','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" />
+					<input type="hidden" name="reg-link-live" value="${Resource.msg('link.base.live','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" />
 				</td>
 			</tr>
 		</tbody>
