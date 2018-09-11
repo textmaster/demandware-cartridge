@@ -58,7 +58,7 @@ function getOutput(input){
 		itemCount = 0,
 		projectPostData, projectEndPoint, project, projectResult,
 		documents, document, item, customData, itemData, markupFlag, contentValue, i, attr, itemAttrs, itemAttr,
-		attrData, updateRequest;
+		attrData, updateRequest, avoidItems = [];
 	
 	bulkLimit = isNaN(bulkLimit) ? 25 : parseInt(bulkLimit, 10);
 	
@@ -146,21 +146,28 @@ function getOutput(input){
 					}
 				}
 				
-				document.title = itemType +"-"+ i;
-				document.original_content = itemData;
-				document.type = Resource.msg("constant.key.value","textmaster",null);
-				document.perform_word_count = true;
-				document.markup_in_content = markupFlag;
-				document.custom_data = {
-					item:{
-						id: item.ID,
-						name: (itemType == "category" ? item.displayName : item.name)
-					},
-					attribute:customData
-				};
+				if(customData.length){
+					document.title = itemType +"-"+ i;
+					document.original_content = itemData;
+					document.type = Resource.msg("constant.key.value","textmaster",null);
+					document.perform_word_count = true;
+					document.markup_in_content = markupFlag;
+					document.custom_data = {
+						item:{
+							id: item.ID,
+							name: (itemType == "category" ? item.displayName : item.name)
+						},
+						attribute:customData
+					};
+					
+					documents.push(document);
+					bulkLimitCount++;
+				}
+				else{
+					// No content to be exported
+					avoidItems.push(item.ID);
+				}
 				
-				documents.push(document);
-				bulkLimitCount++;
 				itemCount++;
 				
 				if(bulkLimitCount == bulkLimit || itemCount == items.length){
@@ -169,6 +176,10 @@ function getOutput(input){
 					bulkLimitCount = 0;
 					documents = [];
 				}
+			}
+			
+			if(avoidItems.length){
+				log.debug("Failed ("+ avoidItems.length +") items to export [No contents]: " + JSON.stringify(avoidItems));
 			}
 		}
 	}
