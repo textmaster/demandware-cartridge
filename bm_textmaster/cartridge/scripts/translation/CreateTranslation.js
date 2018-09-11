@@ -179,7 +179,7 @@ function getOutput(input){
 			}
 			
 			if(avoidItems.length){
-				log.debug("Failed ("+ avoidItems.length +") items to export [No contents]: " + JSON.stringify(avoidItems));
+				log.debug("Failed ("+ avoidItems.length +") "+ Utils.firstLetterCapital(itemType) +" items to export [No contents]: " + JSON.stringify(avoidItems));
 			}
 		}
 	}
