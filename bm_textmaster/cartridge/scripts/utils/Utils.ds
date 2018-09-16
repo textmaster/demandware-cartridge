@@ -946,7 +946,7 @@ Utils.mergeObjects = function(obj1, obj2){
 }
 
 /*
- * 	Save project id and document id into custom object for import/autoLaunch job
+ * 	Save project id and document id into custom object for import job
  */
 Utils.setImportJobQuery = function(projectid, documentid){
 	var dataHolder = Utils.getJobDataHolder(),
