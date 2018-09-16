@@ -718,7 +718,7 @@ Utils.TriggerURL = function(method, endPoint){
 */
 Utils.OCAPIClient = function(method, endPoint, request){
 	var endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
-		token, response, serviceArgs, service, result;
+		token, response, serviceArgs, service, result, errorResponse;
 	
 	token = Utils.getOCAPIToken();
 	
@@ -746,7 +746,17 @@ Utils.OCAPIClient = function(method, endPoint, request){
 	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
     
-    response = result.status == "OK" ? result.object : null;
+    if(result.status == "ERROR"){
+    	try{
+    		errorResponse = JSON.parse(result.errorMessage);
+    	}
+    	catch(ex){
+    		Utils.log.error(result.errorMessage);
+    	}
+    }
+    
+    response = result.status == "OK" ? result.object
+    			: (errorResponse && errorResponse.fault && errorResponse.fault.type ? {execution_status: errorResponse.fault.type} : null);
 	
 	return response;
 }
@@ -936,25 +946,30 @@ Utils.mergeObjects = function(obj1, obj2){
 }
 
 /*
- * 	Save project id and document id into custom object for import job
+ * 	Save project id and document id into custom object for import/autoLaunch job
  */
 Utils.setImportJobQuery = function(projectid, documentid){
 	var dataHolder = Utils.getJobDataHolder(),
+		tryAgain = true,
 		result, queue, queueObj;
 	
-	if(dataHolder){
+	while(tryAgain){
 		queue = dataHolder.custom.QueuedDocuments || "[]";
 		queueObj = JSON.parse(queue);
 		queueObj.push({
 			projectid: projectid,
 			documentid: documentid
 		});
-	
-		Transaction.begin();
-		dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
-		Transaction.commit();
 		
-		result = dataHolder.custom.RunningDocument ? true : false;
+		try{
+			Transaction.begin();
+			dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
+			Transaction.commit();
+			
+			result = dataHolder.custom.RunningDocument ? true : false;
+			tryAgain = false;
+		}
+		catch(ex){}
 	}
 	
 	return result;

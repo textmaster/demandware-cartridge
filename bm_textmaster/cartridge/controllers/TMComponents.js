@@ -107,7 +107,8 @@ function createTranslation(){
 		ItemType: request.httpParameterMap.get("itemType").stringValue,
 		CatalogID: request.httpParameterMap.get("catalogID").stringValue,
 		Attributes: request.httpParameterMap.get("attributes").stringValue,
-		Items: request.httpParameterMap.get("items").stringValue
+		Items: request.httpParameterMap.get("items").stringValue,
+		AutoLaunch: request.httpParameterMap.get('autoLaunch').stringValue
 	};
 	output = translationCreation.output(input);
 	

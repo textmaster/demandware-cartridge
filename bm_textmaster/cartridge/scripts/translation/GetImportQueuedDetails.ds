@@ -18,7 +18,7 @@ function execute( pdict : PipelineDictionary ) : Number
 {
 	var projectID = "",
 		documentID = "",
-		jobDataHolder = utils.getJobDataHolder(),
+		jobDataHolder = utils.getJobDataHolder("import"),
 		query, queryObj, ids;
 		
 	log = logUtils.getLogger("GetQueuedProjectID");

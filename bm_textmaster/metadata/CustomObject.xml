@@ -36,6 +36,41 @@
             </attribute-group>
         </group-definitions>
     </custom-type>
+	<custom-type type-id="TMAutoLaunchDataHolder">
+        <display-name xml:lang="x-default">TMAutoLaunchDataHolder</display-name>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="ID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="documentCount">
+                <display-name xml:lang="x-default">Document Count</display-name>
+                <type>double</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="documents">
+                <display-name xml:lang="x-default">Document List</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="DefaultAttrs">
+                <display-name xml:lang="x-default">DefaultAttrs</display-name>
+            </attribute-group>
+            <attribute-group group-id="JobData">
+                <display-name xml:lang="x-default">JobData</display-name>
+                <attribute attribute-id="documents"/>
+                <attribute attribute-id="documentCount"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
     <custom-type type-id="TMLanguageDataHolder">
         <display-name xml:lang="x-default">TMLanguageDataHolder</display-name>
         <staging-mode>no-staging</staging-mode>

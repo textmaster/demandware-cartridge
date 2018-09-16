@@ -8,6 +8,7 @@
 *	@input CatalogID: String
 *	@input Attributes: String
 *	@input Items: String
+*	@input AutoLaunch: String
 *
 */
 importPackage( dw.system );
@@ -16,6 +17,7 @@ importPackage( dw.util );
 
 importClass( dw.web.Resource );
 importClass( dw.content.ContentMgr );
+importClass( dw.object.CustomObjectMgr );
 
 // Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
@@ -35,7 +37,8 @@ function execute( pdict : PipelineDictionary ) : Number
 		ItemType: pdict.ItemType,
 		CatalogID: pdict.CatalogID,
 		Attributes: pdict.Attributes,
-		Items: pdict.Items
+		Items: pdict.Items,
+		AutoLaunch: pdict.AutoLaunch
 	};
 	output = getOutput(input);
 	response.getWriter().println(output);
@@ -51,6 +54,7 @@ function getOutput(input){
 		catalogID = input.CatalogID,
 		attributes = JSON.parse(input.Attributes),
 		items = JSON.parse(input.Items),
+		autoLaunch = input.AutoLaunch,
 		categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || "",
 		calendarDate = Calendar(),
 		bulkLimit = Resource.msg("api.bulk.doc.limit","textmaster",null) || 20,
@@ -171,7 +175,11 @@ function getOutput(input){
 				itemCount++;
 				
 				if(bulkLimitCount == bulkLimit || itemCount == items.length){
-					postBulkDocuments(documents, projectID);
+					postBulkDocuments(documents, projectID, autoLaunch);
+					
+					if(autoLaunch.toLowerCase() == "true"){
+						setAutoLaunchCustomObject(projectID, documents.length);
+					}
 					
 					bulkLimitCount = 0;
 					documents = [];
@@ -191,11 +199,11 @@ function getOutput(input){
 /*
  * Send documents to API to create bulk documents
  * */
-function postBulkDocuments(documents, projectID){
+function postBulkDocuments(documents, projectID, autoLaunch){
 	var documentPostData = {},
 		tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || "",
 		sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg("storefront.username","textmaster",null) + ":" + tmSFpassword + "@") : "",
-		documentEndPoint, documentResult, documentID, wordCount, key, callBackURL;
+		documentEndPoint, documentResult, documentID, wordCount, key, callBackURL, autoLaunchCallBackURL;
 	
 	documentPostData.documents = documents;
 	documentEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
@@ -213,6 +221,7 @@ function postBulkDocuments(documents, projectID){
 			}
 			
 			callBackURL = "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMImport-Data?projectid="+ projectID +"&documentid="+ documentID;
+			autoLaunchCallBackURL = autoLaunch.toLowerCase() == "true" ? "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMAutoLaunch-Document?projectid="+ projectID +"&documentid="+ documentID : "";
 			
 			documentPostData = {
 				document: {
@@ -227,8 +236,40 @@ function postBulkDocuments(documents, projectID){
 					word_count: wordCount
 				}
 			};
+			
+			if(autoLaunchCallBackURL){
+				documentPostData.document.callback.word_count_finished = {url: autoLaunchCallBackURL};
+			}
+			
 			documentResult = Utils.TextMasterClient("PUT",documentEndPoint, JSON.stringify(documentPostData));
 		}
+	}
+}
+
+/* Prepare Custom Object for Auto Launch feature
+ * Keeping total number of documents in a project, in custom object.
+ * */
+function setAutoLaunchCustomObject(projectID, count){
+	var customObjectName = Resource.msg("autolaunch.customobject.name","textmaster",null),
+		customObjectInstanceID = projectID;
+	try{
+		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+		
+		if(dataHolder == null){
+			Transaction.begin();
+			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+			dataHolder.custom.documentCount = count;
+			dataHolder.custom.documents = "[]";
+			Transaction.commit();
+		}
+		else{
+			Transaction.begin();
+			dataHolder.custom.documentCount += count;
+			Transaction.commit();
+		}
+	}
+	catch(ex){
+		log.error(ex.message + " - No custom object found.");
 	}
 }
 

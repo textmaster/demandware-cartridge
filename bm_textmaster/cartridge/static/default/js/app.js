@@ -277,7 +277,7 @@
 				}
 			},
 			placeOrder: function(){
-				var result, transParams, localeFrom, localeTo, templateSelect, templates, listHolder, postData, select, count, autoLaunchCount, noAutoLaunchCount;
+				var result, transParams, localeFrom, localeTo, templateSelect, templates, listHolder, select, count, autoLaunchCount, noAutoLaunchCount;
 				
 				transParams = JSON.parse($('#hidden-values').text());
 				
@@ -418,7 +418,8 @@
 						itemType: transParams.itemType,
 						catalogID: transParams.catalogID,
 						attributes: JSON.stringify(transParams.attributes),
-						items: JSON.stringify(items)
+						items: JSON.stringify(items),
+						autoLaunch: localeTo.autoLaunch
 					};
 
 					transParams.itemProgress += items.length;

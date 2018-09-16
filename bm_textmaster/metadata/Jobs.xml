@@ -41,4 +41,25 @@
             </run-once>
         </triggers>
     </job>
+	
+	<job job-id="AutoLaunchTextMasterSiteGenesis" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="SiteGenesis"/>
+            <step step-id="TMAutoLaunchSiteGenesis" type="ExecutePipeline" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecutePipeline.Pipeline">TMAutoLaunchItem-Start</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
 </jobs>

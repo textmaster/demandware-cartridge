@@ -47,7 +47,7 @@ function getOutput(input){
 			ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
 			jobResponse = Utils.OCAPIClient("post", ocapiJobUrl,null);
 			
-			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending" || jobResponse.execution_status.toLowerCase() == "finished");
+			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending" || jobResponse.execution_status.toLowerCase() == "finished" || jobResponse.execution_status.toLowerCase() == "jobalreadyrunningexception");
 			
 			if(!result){
 				log.error("Job '"+ jobName +"' is not found or not enabled");
