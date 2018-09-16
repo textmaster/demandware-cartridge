@@ -1,0 +1,50 @@
+/**
+*	Imports translation data from textMaster projects
+*
+*	@input AutoLaunchObject: dw.object.CustomObject
+*
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+
+importClass( dw.web.Resource );
+importClass( dw.object.CustomObjectMgr );
+
+/* Script Modules */
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+/* Global variables */
+var log = LogUtils.getLogger("ImportScript");
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var autoLaunchObject = pdict.AutoLaunchObject,
+		documentsString = autoLaunchObject.custom.documents || "[]",
+		documents = JSON.parse(documentsString),
+		projectID = autoLaunchObject.custom.ID,
+		tryAgain = true,
+		oneDayTimeStamp = 60 * 60 * 24,
+		currentTimestamp = new Date().getTime(),
+		objectUpdatedTimeStamp = autoLaunchObject.lastModified.getTime(),
+		projectEndPoint, projectResult;
+	
+	if(autoLaunchObject.custom.documentCount == documents.length || currentTimestamp - objectUpdatedTimeStamp > oneDayTimeStamp){
+		log.debug("Auto launched Project ID: " + projectID);
+		projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
+		projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+		
+		while(tryAgain){
+			try{
+				Transaction.begin();
+				CustomObjectMgr.remove(autoLaunchObject);
+				Transaction.commit();
+				
+				tryAgain = false;
+			}
+			catch(ex){}
+		}
+	}
+	
+	return PIPELET_NEXT;
+}

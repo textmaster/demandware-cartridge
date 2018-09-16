@@ -36,13 +36,11 @@ function getOutput(input){
 		sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg("storefront.username","textmaster",null) + ":" + tmSFpassword + "@") : "",
 		projectEndPoint, projectResult;
 	
-	if(autoLaunch.toLowerCase() === "true"){
-		// finalize project
-		projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
-		projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
+	if(autoLaunch.toLowerCase() === "false"){
+		Utils.TriggerURL("POST", "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
 	}
 	else{
-		Utils.TriggerURL("POST", "https://"+ sfProtectionURLpart + System.instanceHostname +"/on/demandware.store/Sites-"+ Site.current.ID +"-Site/default/TMQuote-Send?projectid="+ projectID);
+		// AutoLaunch is handled by autoLaunch job
 	}
 	
 	response.getWriter().println("success");
