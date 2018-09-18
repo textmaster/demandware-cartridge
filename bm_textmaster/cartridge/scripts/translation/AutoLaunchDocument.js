@@ -38,20 +38,25 @@ function getOutput(input){
 	var result = false,
 		projectid = input.ProjectID,
 		documentid = input.DocumentID,
-		responseObj, jobRunning, jobName, ocapiJobUrl, jobResponse, responseMessage;
+		responseObj, triggerJob, jobName, ocapiJobUrl, jobResponse, responseMessage;
 	
 	if(projectid && documentid){
-		setAutoLaunchJobQuery(projectid, documentid);
+		triggerJob = setAutoLaunchJobQuery(projectid, documentid);
 		
-		jobName = Resource.msg("autolaunch.job.name","textmaster",null) + dw.system.Site.current.ID;
-		ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
-		jobResponse = Utils.OCAPIClient("post", ocapiJobUrl,null);
-		
-		result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending" || jobResponse.execution_status.toLowerCase() == "finished" || jobResponse.execution_status.toLowerCase() == "jobalreadyrunningexception");
-		
-		if(!result){
-			log.error("jobResponse.execution_status : " + jobResponse.execution_status.toLowerCase());
-			log.error("Job '"+ jobName +"' is not found or not enabled");
+		if(triggerJob){
+			jobName = Resource.msg("autolaunch.job.name","textmaster",null) + dw.system.Site.current.ID;
+			ocapiJobUrl = Resource.msgf("ocapi.jobs.post","textmaster",null,jobName);
+			jobResponse = Utils.OCAPIClient("post", ocapiJobUrl,null);
+			
+			result = jobResponse && (jobResponse.execution_status.toLowerCase() == "running" || jobResponse.execution_status.toLowerCase() == "pending" || jobResponse.execution_status.toLowerCase() == "finished" || jobResponse.execution_status.toLowerCase() == "jobalreadyrunningexception");
+			
+			if(!result){
+				log.error("jobResponse.execution_status : " + jobResponse.execution_status.toLowerCase());
+				log.error("Job '"+ jobName +"' is not found or not enabled");
+			}
+		}
+		else{
+			responseMessage = Resource.msg("autolaunch.waiting.message","textmaster",null);
 		}
 	}
 	else{
@@ -73,7 +78,7 @@ function getOutput(input){
 function setAutoLaunchJobQuery(projectid, documentid){
 	var customObjectName = Resource.msg("autolaunch.customobject.name","textmaster",null),
 		tryAgain = true,
-		documentsString, documents;
+		documentsString, documents, result = false;
 	
 	try{
 		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, projectid);
@@ -96,11 +101,18 @@ function setAutoLaunchJobQuery(projectid, documentid){
 				}
 				catch(ex){}
 			}
+			
+			documentsString = dataHolder.custom.documents || "[]";
+			documents = JSON.parse(documentsString);
+			
+			result = dataHolder.custom.documentCount == documents.length;
 		}
 	}
 	catch(ex){
 		log.error(ex.message + " - No custom object found.");
 	}
+	
+	return result;
 }
 
 module.exports = {
