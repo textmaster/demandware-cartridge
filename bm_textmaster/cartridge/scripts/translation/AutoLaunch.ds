@@ -24,12 +24,16 @@ function execute( pdict : PipelineDictionary ) : Number
 		documents = JSON.parse(documentsString),
 		projectID = autoLaunchObject.custom.ID,
 		tryAgain = true,
-		oneDayTimeStamp = 60 * 60 * 24,
+		waitingTime = Resource.msg("autolaunch.waiting.timestamp","textmaster",null),
 		currentTimestamp = new Date().getTime(),
 		objectUpdatedTimeStamp = autoLaunchObject.lastModified.getTime(),
-		projectEndPoint, projectResult;
+		projectEndPoint, projectResult, waitingTimeStamp;
+		
+	waitingTime = waitingTime && !isNaN(waitingTime) ? waitingTime : '86400';
+	waitingTimeStamp = parseInt(waitingTime, 10);
 	
-	if(autoLaunchObject.custom.documentCount == documents.length || currentTimestamp - objectUpdatedTimeStamp > oneDayTimeStamp){
+	// If all documents' call backs received by SFCC || if the Custom Object's last updated time is passed the waiting time
+	if(autoLaunchObject.custom.documentCount == documents.length || currentTimestamp - objectUpdatedTimeStamp > waitingTimeStamp){
 		log.debug("Auto launched Project ID: " + projectID);
 		projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.projects.finalize","textmaster",null);
 		projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify({}));
