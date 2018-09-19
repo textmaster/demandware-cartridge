@@ -127,6 +127,7 @@ function getOutput(input){
 									contentValue = (attr.id == "shortDescription" || attr.id == "longDescription") ? (item[attr.id] ? (item[attr.id].source ? item[attr.id].source : item[attr.id]) : "") : item.attributeModel.getDisplayValue(itemAttr);
 									
 									if(contentValue){
+										contentValue = contentValue.source ? contentValue.source : contentValue;
 										itemData[attr.id] = contentValue;
 									}
 								}
@@ -137,6 +138,7 @@ function getOutput(input){
 							contentValue = attr.type == "system" ? (item[attr.id] || "") : (item.custom[attr.id] ? (item.custom[attr.id].source ? item.custom[attr.id].source : item.custom[attr.id]) : "");
 							
 							if(contentValue){
+								contentValue = contentValue.source ? contentValue.source : contentValue;
 								itemData[attr.id] = contentValue;
 							}
 							break;
