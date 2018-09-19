@@ -568,21 +568,10 @@ Utils.serviceParseResponse = function(service : HTTPService, httpClient : HTTPCl
 /*
 *	Sets service registry for TextMasterClient
 */
-Utils.setServiceRegistry = function(){
-	ServiceRegistry.configure("textmaster.http", {
-		createRequest: function(service : HTTPService, args){
-	        service.URL = args.endPointUrl;
-	        service.setRequestMethod(args.method);
-	        service.addHeader('Content-Type', 'application/json');
-	        service.addHeader('Apikey', args.apiKey);
-	        service.addHeader('Date', args.date);
-	        service.addHeader('Signature', args.signatureString);
-	        service.addHeader('HTTP_X_PARTNER_ID', Resource.msg("general.sfcc.partner.id","textmaster",null));
-	        
-	        return args.request;
-	    },
-	    parseResponse: Utils.serviceParseResponse
-	});
+Utils.setServiceRegistry = function(config){
+	var service = LocalServiceRegistry.createService("textmaster.http", config);
+	
+	return service;
 }
 
 /*
@@ -607,19 +596,37 @@ Utils.getServiceArguments = function(apiKey, apiSecret, method, endPointUrl, req
 }
 
 /*
+* get service configuration for TextMasterClient and TextMasterTest
+*/
+Utils.getServiceConfigClient = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        service.addHeader('Apikey', args.apiKey);
+	        service.addHeader('Date', args.date);
+	        service.addHeader('Signature', args.signatureString);
+	        service.addHeader('HTTP_X_PARTNER_ID', Resource.msg("general.sfcc.partner.id","textmaster",null));
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	};
+};
+
+/*
 *	Communicates with TextMaster clients APIs
 */
 Utils.TextMasterClient = function(method, endPoint, request){
-	Utils.setServiceRegistry();
-	
 	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
 		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
 		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.clients","textmaster",null) + endPoint,
-		response: Object, serviceArgs, service, result;
+		response: Object, serviceArgs, service, result, serviceConfig;
 	
 	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, method, endPointUrl, request);
-	
-	service = ServiceRegistry.get("textmaster.http");
+	serviceConfig = Utils.getServiceConfigClient();
+	service = Utils.setServiceRegistry(serviceConfig);
     result = service.call(serviceArgs);
     
     response = result.status == "OK" ? result.object : null;
@@ -631,16 +638,14 @@ Utils.TextMasterClient = function(method, endPoint, request){
 *	Communicates with TextMaster Test API
 */
 Utils.TextMasterTest = function(request){
-	Utils.setServiceRegistry();
-	
 	var apiKey: String = request.apiKey || "",
 		apiSecret: String = request.apiSecret || "",
 		endPointUrl: String = Resource.msg("api.base." + request.apiEnv,"textmaster",null) + Resource.msg("api.test","textmaster",null),
-		response: Object, serviceArgs, service, result;
+		response: Object, serviceArgs, service, result, serviceConfig;
 	
 	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, "GET", endPointUrl, null);
-	
-	service = ServiceRegistry.get("textmaster.http");
+	serviceConfig = Utils.getServiceConfigClient();
+	service = Utils.setServiceRegistry(serviceConfig);
     result = service.call(serviceArgs);
     
     response = result.status == "OK" ? result.object : null;
@@ -649,10 +654,10 @@ Utils.TextMasterTest = function(request){
 }
 
 /*
-*	Communicates with TextMaster public APIs
+*	get service config for TextMasterPublic
 */
-Utils.TextMasterPublic = function(method, endPoint, request){
-	ServiceRegistry.configure("textmaster.http", {
+Utils.getServiceConfigPublic = function(){
+	return {
 		createRequest: function(service : HTTPService, args){
 	        service.URL = args.endPointUrl;
 	        service.setRequestMethod(args.method);
@@ -661,12 +666,19 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 	        return args.request;
 	    },
 	    parseResponse: Utils.serviceParseResponse
-	});
-	
+	};
+};
+
+/*
+*	Communicates with TextMaster public APIs
+*/
+Utils.TextMasterPublic = function(method, endPoint, request){
 	var endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.public","textmaster",null) + endPoint,
-		response, serviceArgs, service, result;
+		response, serviceArgs, service, result, serviceConfig;
 	
 	request = request || "";
+	serviceConfig = Utils.getServiceConfigPublic();
+	service = Utils.setServiceRegistry(serviceConfig);
 	
 	serviceArgs = {
 		method: method,
@@ -674,7 +686,6 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 		request: request
 	};
 	
-	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
     
     response = result.status == "OK" ? result.object : null;
@@ -683,10 +694,10 @@ Utils.TextMasterPublic = function(method, endPoint, request){
 }
 
 /*
-*	Execute callback URL
+* get service config for TriggerURL
 */
-Utils.TriggerURL = function(method, endPoint){
-	ServiceRegistry.configure("textmaster.http", {
+Utils.getServiceConfigTrigger = function(){
+	return {
 		createRequest: function(service : HTTPService, args){
 	        service.URL = args.endPointUrl;
 	        service.setRequestMethod(args.method);
@@ -699,30 +710,31 @@ Utils.TriggerURL = function(method, endPoint){
 				Utils.log.error("Error on http request: "+ httpClient.getErrorText());
 			}
 		}
-	});
-	
+	};
+};
+/*
+*	Execute callback URL
+*/
+Utils.TriggerURL = function(method, endPoint){
 	var endPointUrl = endPoint,
-		serviceArgs, service, result;
+		serviceArgs, service, result, serviceConfig;
+	
+	serviceConfig = Utils.getServiceConfigTrigger();
+	service = Utils.setServiceRegistry(serviceConfig);
 	
 	serviceArgs = {
 		method: method,
 		endPointUrl: endPointUrl
 	};
 	
-	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
 }
 
 /*
-*	Communicates with OCAPI
+* get service config for OCAPIClient
 */
-Utils.OCAPIClient = function(method, endPoint, request){
-	var endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
-		token, response, serviceArgs, service, result, errorResponse;
-	
-	token = Utils.getOCAPIToken();
-	
-	ServiceRegistry.configure("textmaster.http", {
+Utils.getServiceConfigOCAPIClient = function(){
+	return {
 		createRequest: function(service : HTTPService, args){
 	        service.URL = args.endPointUrl;
 	        service.setRequestMethod(args.method);
@@ -732,9 +744,22 @@ Utils.OCAPIClient = function(method, endPoint, request){
 	        return args.request;
 	    },
 	    parseResponse: Utils.serviceParseResponse
-	});
+	};
+};
+
+/*
+*	Communicates with OCAPI
+*/
+Utils.OCAPIClient = function(method, endPoint, request){
+	var endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
+		token, response, serviceArgs, service, result, errorResponse, serviceConfig;
+	
+	token = Utils.getOCAPIToken();
 	
 	request = request || "";
+	
+	serviceConfig = Utils.getServiceConfigOCAPIClient();
+	service = Utils.setServiceRegistry(serviceConfig);
 	
 	serviceArgs = {
 		method: method,
@@ -743,7 +768,6 @@ Utils.OCAPIClient = function(method, endPoint, request){
 		token: token
 	};
 	
-	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
     
     if(result.status == "ERROR"){
@@ -762,10 +786,10 @@ Utils.OCAPIClient = function(method, endPoint, request){
 }
 
 /*
-*	Gets OCAPI authorization token
+* get service config for OCAPIToken
 */
-Utils.getOCAPIToken = function(){
-	ServiceRegistry.configure("textmaster.http", {
+Utils.getServiceConfigOCAPIToken = function(){
+	return {
 		createRequest: function(service : HTTPService, args){
 	        service.URL = args.endPointUrl;
 	        service.setRequestMethod(args.method);
@@ -775,14 +799,19 @@ Utils.getOCAPIToken = function(){
 	        return "";
 	    },
 	    parseResponse: Utils.serviceParseResponse
-	});
-	
+	};
+};
+
+/*
+*	Gets OCAPI authorization token
+*/
+Utils.getOCAPIToken = function(){
 	var ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
 		ocapiPassword: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIpassword') || Resource.msg("ocapi.demo.password","textmaster",null),
 		endPointUrl: String = Resource.msg("ocapi.token.post","textmaster",null),
 		token = "",
 		auth = "Basic " + StringUtils.encodeBase64(ocapiID + ":" + ocapiPassword),
-		response, serviceArgs, service, result;
+		response, serviceArgs, service, result, serviceConfig;
 	
 	token = Utils.getSessionToken(auth);
 	
@@ -790,13 +819,15 @@ Utils.getOCAPIToken = function(){
 		return token;
 	}
 	
+	serviceConfig = Utils.getServiceConfigOCAPIToken();
+	service = Utils.setServiceRegistry(serviceConfig);
+	
 	serviceArgs = {
 		method: "post",
 		endPointUrl: endPointUrl,
 		auth: auth
 	};
 	
-	service = ServiceRegistry.get("textmaster.http");
     result = service.call(serviceArgs);
     
     response = result.status == "OK" ? result.object : null;
