@@ -29,7 +29,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		objectUpdatedTimeStamp = autoLaunchObject.lastModified.getTime(),
 		projectEndPoint, projectResult, waitingTimeStamp;
 		
-	waitingTime = waitingTime && !isNaN(waitingTime) ? waitingTime : '86400';
+	waitingTime = waitingTime && !isNaN(waitingTime) ? waitingTime : '3600000';
 	waitingTimeStamp = parseInt(waitingTime, 10);
 	
 	// If all documents' call backs received by SFCC || if the Custom Object's last updated time is passed the waiting time
