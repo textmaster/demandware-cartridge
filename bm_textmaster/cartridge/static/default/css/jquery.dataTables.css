@@ -6,7 +6,7 @@ table.dataTable {
   margin: 0 auto;
   clear: both;
   border-collapse: separate;
-  border-spacing: 0;
+  border-spacing: 1px;
   border-bottom: 1px solid #DADADA;
   /*
    * Header and footer styles
@@ -256,7 +256,9 @@ table.dataTable tbody th.dt-body-nowrap,
 table.dataTable tbody td.dt-body-nowrap {
   white-space: nowrap;
 }
-
+table.dataTable {
+    background-color: #eee;
+}
 table.dataTable,
 table.dataTable th,
 table.dataTable td {
