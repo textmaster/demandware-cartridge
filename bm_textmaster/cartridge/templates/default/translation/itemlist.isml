@@ -81,13 +81,13 @@
     <tbody>
     	<isloop items="${pdict.ItemList}" var="item" status="loopstate">
 	    	<tr>
-	        	<td class="table_detail center e s w" nowrap="nowrap"><input type="checkbox" name="item[]" id="${'item-'+pdict.Type+'-'+item.ID}" value="${item.ID}"></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.ID}</label></td>
+	        	<td class="table_detail center" nowrap="nowrap"><input type="checkbox" name="item[]" id="${'item-'+pdict.Type+'-'+item.ID}" value="${item.ID}"></td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.ID}</label></td>
 	        	<isset name="itemName" value="${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}" scope="page"/>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}" title="${itemName}">${itemName}</label></td>
-	        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}" title="${itemName}">${itemName}</label></td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
 	        	<isif condition="${pdict.Type != 'category'}">
-	        		<td class="table_detail left e s" nowrap="nowrap">
+	        		<td class="table_detail left" nowrap="nowrap">
 	        				<isif condition="${pdict.Type == 'product'}">
 		                		<label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}"><isprint value="${Utils.getProductType(item)}"></label>
 			                <iselse>
@@ -113,12 +113,12 @@
 	            			}
 	            		}
 	            	</isscript>
-	            	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${categoryName}</label></td>
+	            	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${categoryName}</label></td>
 	            </isif>
-	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
+	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
 	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
-	            <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
+	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
 	        </tr>
 	    </isloop>
     </tbody>
