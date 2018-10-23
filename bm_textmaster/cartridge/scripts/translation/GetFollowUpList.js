@@ -38,8 +38,9 @@ function getOutput(input){
    	var projects, project, projectResult, documentResult, documentEndPoint,
 		projectsEndPoint, documents = [], document, doc, actions, urlAction, urlparam, itemURL, itemPipeline, itemIDLabel, languageID,
 		projectPageNumber, docPageNumber, projectPageSize = 50, projectRequestFlag, docRequestFlag,
-		docCountCurrProj, resultLimit, projectCount, projectCountInPage, projectLoopCount, docLoopCount;
+		docCountCurrProj, resultLimit, projectCount, projectCountInPage, projectLoopCount, docLoopCount, platformID;
    	
+   	platformID = Resource.msg('general.sfcc.partner.id.' + Utils.config.apiEnv, 'textmaster', null);
    	resultLimit = Site.current.getCustomPreferenceValue("TMDashboardPageSize") || 100;
    	resultLimit = isNaN(resultLimit) ? 100 : parseInt(resultLimit, 10);
    	projectRequestFlag = true;
@@ -49,7 +50,7 @@ function getOutput(input){
    	
    	while(projectRequestFlag){
    		projectPageNumber++;
-	   	projectsEndPoint = Resource.msg("api.get.projects","textmaster",null) +"?page="+ projectPageNumber +"&per_page="+ projectPageSize +"&order=-created_at";
+	   	projectsEndPoint = Resource.msg("api.get.projects","textmaster",null) +"?page="+ projectPageNumber +"&per_page="+ projectPageSize +"&order=-created_at&platform_id=" + platformID;
 	   	projectResult = Utils.TextMasterClient("GET", projectsEndPoint );
 	   	projects = (projectResult && projectResult.projects) ? projectResult.projects : [];
 	   	projectLoopCount = 0;
