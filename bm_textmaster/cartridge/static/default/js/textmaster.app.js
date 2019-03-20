@@ -688,9 +688,12 @@
 									follow.customEvents();
 								});
 							}
-							else{
+							else if(documents.length){
 								follow.config.lastPage = parseInt($('#filtertableProjects_paginate span a.paginate_button:last-of-type').text(), 10);
 								follow.populateMoreData(documents);
+							}
+							else {
+								$('#filtertableProjects .ajax-loader').text("No records").css('padding-top','40px');
 							}
 						}
 						catch(err){
