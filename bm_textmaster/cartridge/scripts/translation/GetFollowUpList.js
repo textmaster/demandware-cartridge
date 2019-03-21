@@ -22,8 +22,8 @@ var log = LogUtils.getLogger("getFollowUpList");
 function execute( pdict : PipelineDictionary ) : Number
 {
 	var input = {
-		projectPageCount: pdict.ProjectPageCount,
-		docPageCount: pdict.DocPageCount,
+		projectPageNumber: pdict.ProjectPageNumber,
+		docPageNumber: pdict.DocPageNumber,
 		projectCountInPage: pdict.ProjectCountInPage,
 		docCountInPage: pdict.DocCountInPage
 	},
