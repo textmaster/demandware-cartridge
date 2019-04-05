@@ -105,6 +105,7 @@
           <key-binding alias="APIEnv" key="APIEnv"/>
           <key-binding alias="TMPageSize" key="TMPageSize"/>
           <key-binding alias="APICache" key="APICache"/>
+          <key-binding alias="TMSFpassword" key="TMSFpassword"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">
