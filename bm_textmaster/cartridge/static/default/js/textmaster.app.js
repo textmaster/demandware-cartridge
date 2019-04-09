@@ -714,8 +714,8 @@
 						minute = timePart ? timePart.split(':')[1] : '00';
 						docDate = datePart + " " + hour + ":" + minute;
 						itemID = document.custom_data.item && document.custom_data.item.id ? document.custom_data.item.id : "";
-						itemName = document.custom_data && document.custom_data.item.name ? document.custom_data.item.name : "";
-						itemType = document.item_type;
+						itemName = document.custom_data && document.custom_data.item && document.custom_data.item.name ? document.custom_data.item.name : "";
+						itemType = document.item_type ? document.item_type : "";
 						docLocale = document.locale;
 						docStatus = document.status;
 						
