@@ -6,16 +6,10 @@
  */
 
 /* API Includes */
-var Site  = require('dw/system/Site'),
- 	Resource = require('dw/web/Resource'),
- 	Transaction  = require('dw/system/Transaction'),
- 	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
+var ISML = require('dw/template/ISML');
 
 /* Script Modules */
-var app = require(SGContCartridge + '/cartridge/scripts/app'),
-	guard = require(SGContCartridge + '/cartridge/scripts/guard'),
-	logUtils = require('~/cartridge/scripts/utils/LogUtils'),
-	utils = require('~/cartridge/scripts/utils/Utils');
+var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
 /* Global variables */
 var log = logUtils.getLogger("ImportController");
@@ -44,4 +38,5 @@ function data(){
 */
 /** Calls export functionalities
   @see {@link module:controllers/TMImport~Data} */
-exports.Data = guard.ensure(['post'], data);
+data.public = true;
+exports.Data = data;
