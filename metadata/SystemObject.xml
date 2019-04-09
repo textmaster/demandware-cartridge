@@ -173,14 +173,6 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="TMSGController">
-                <display-name xml:lang="x-default">SiteGenesis Controller Cartridge</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>SiteGenesis_controllers</default-value>
-            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="TextMaster">
@@ -197,7 +189,6 @@
                 <attribute attribute-id="TMOCAPIid"/>
                 <attribute attribute-id="TMOCAPIpassword"/>
                 <attribute attribute-id="TMSFpassword"/>
-                <attribute attribute-id="TMSGController"/>
                 <attribute attribute-id="TMAPIEnvironment"/>
                 <attribute attribute-id="TMDashboardPageSize"/>
                 <attribute attribute-id="TMAPICache"/>
