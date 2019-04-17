@@ -6,16 +6,10 @@
  */
 
 /* API Includes */
-var Pipelet  = require('dw/system/Pipelet'),
-	Site  = require('dw/system/Site'),
- 	Resource = require('dw/web/Resource'),
- 	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
+var ISML = require('dw/template/ISML');
 
 /* Script Modules */
-var app = require(SGContCartridge + '/cartridge/scripts/app'),
-	guard = require(SGContCartridge + '/cartridge/scripts/guard'),
-	logUtils = require('~/cartridge/scripts/utils/LogUtils'),
-	utils = require('~/cartridge/scripts/utils/Utils');
+var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
@@ -32,7 +26,7 @@ function attributeList(){
 	
 	output = attributes.output(input);
 	
-	app.getView(output).render('translation/attributelist');
+	ISML.renderTemplate('translation/attributelist', output);
 }
 
 /**
@@ -48,7 +42,7 @@ function categoryDropdown(){
 	
 	output = categories.output(input);
 	
-	app.getView(output).render('translation/categorydropdown');
+	ISML.renderTemplate('translation/categorydropdown', output);
 }
 
 /**
@@ -63,7 +57,7 @@ function getLanguageToList(){
 	
 	output = toLanguages.output(input);
 	
-	app.getView(output).render('translation/languagetolist');
+	ISML.renderTemplate('translation/languagetolist', output);
 }
 
 /**
@@ -80,7 +74,7 @@ function itemList(){
 	};
 	output = items.output(input);
 	
-	app.getView(output).render('translation/itemlist');
+	ISML.renderTemplate('translation/itemlist', output);
 }
 
 /**
@@ -167,7 +161,7 @@ function handleAutoLaunch(){
 function dashboardFirstRow(){
 	var document = request.httpParameterMap.get('document').stringValue;
 	
-	app.getView({Document: JSON.parse(document)}).render('translation/followuptablerow');
+	ISML.renderTemplate('translation/followuptablerow', {Document: JSON.parse(document)});
 }
 
 /*
@@ -209,15 +203,29 @@ function apiKeyTest(){
 /**
 * Calls ajax features for translation pages
 */
-exports.APIKeyTest = guard.ensure(['post'], apiKeyTest);
-exports.AttributeList = guard.ensure(['post'], attributeList);
-exports.CategoryDropdown = guard.ensure(['get'], categoryDropdown);
-exports.GetLanguageToList = guard.ensure(['post'], getLanguageToList);
-exports.ItemList = guard.ensure(['post'], itemList);
-exports.GetTemplatesResponse = guard.ensure(['get'], getTemplatesResponse);
-exports.CreateTranslation = guard.ensure(['post'], createTranslation);
-exports.SaveDefaultAttributes = guard.ensure(['post'], saveDefaultAttributes);
-exports.SaveAPIConfigurations = guard.ensure(['post'], saveAPIConfigurations);
-exports.HandleAutoLaunch = guard.ensure(['post'], handleAutoLaunch);
-exports.DashboardData = guard.ensure(['post'], getDashboardData);
-exports.DashboardFirstRow = guard.ensure(['post'], dashboardFirstRow);
+apiKeyTest.public = true;
+attributeList.public = true;
+categoryDropdown.public = true;
+getLanguageToList.public = true;
+itemList.public = true;
+getTemplatesResponse.public = true;
+createTranslation.public = true;
+saveDefaultAttributes.public = true;
+saveAPIConfigurations.public = true;
+handleAutoLaunch.public = true;
+getDashboardData.public = true;
+dashboardFirstRow.public = true;
+
+
+exports.APIKeyTest = apiKeyTest;
+exports.AttributeList = attributeList;
+exports.CategoryDropdown =categoryDropdown;
+exports.GetLanguageToList = getLanguageToList;
+exports.ItemList = itemList;
+exports.GetTemplatesResponse = getTemplatesResponse;
+exports.CreateTranslation = createTranslation;
+exports.SaveDefaultAttributes = saveDefaultAttributes;
+exports.SaveAPIConfigurations = saveAPIConfigurations;
+exports.HandleAutoLaunch = handleAutoLaunch;
+exports.DashboardData = getDashboardData;
+exports.DashboardFirstRow =dashboardFirstRow;

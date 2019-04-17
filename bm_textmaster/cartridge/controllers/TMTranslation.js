@@ -6,16 +6,11 @@
  */
 
 /* API Includes */
-var Pipelet  = require('dw/system/Pipelet'),
-	Site  = require('dw/system/Site'),
- 	Resource = require('dw/web/Resource'),
- 	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
+var ISML = require('dw/template/ISML');
+var Site = require('dw/system/Site');
 
 /* Script Modules */
-var app = require(SGContCartridge + '/cartridge/scripts/app'),
-	guard = require(SGContCartridge + '/cartridge/scripts/guard'),
-	logUtils = require('~/cartridge/scripts/utils/LogUtils'),
-	utils = require('~/cartridge/scripts/utils/Utils');
+var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
@@ -27,7 +22,7 @@ function newTranslation(){
 	var registered = loginCheck();
 	
 	if(registered){
-		app.getView().render('translation/filtertranslationitems');
+		ISML.renderTemplate('translation/filtertranslationitems');
 	}
 }
 
@@ -38,7 +33,7 @@ function followUp(){
 	var registered = loginCheck();
 	
 	if(registered){
-		app.getView().render('translation/followupontranslation');
+		ISML.renderTemplate('translation/followupontranslation');
 	}
 }
 
@@ -49,13 +44,14 @@ function register(){
 	var apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations'),
 		config = apiConfig.output;
 	
-	app.getView(config).render('translation/entertextmaster');
+	ISML.renderTemplate('translation/entertextmaster', config);
 }
 
 /**
 * function 'newTranslation' posts data to this function
 */
 function placeOrder(){
+	var req = request.httpParameterMap;
 	var input = {
 			LocaleFrom: request.httpParameterMap.get("locale-from").stringValue,
 			ItemType: request.httpParameterMap.get("item-type").stringValue,
@@ -68,7 +64,7 @@ function placeOrder(){
 		output;
 	
 	output = transParams.output(input);
-	app.getView(output).render('translation/placeorder');
+	ISML.renderTemplate('translation/placeorder', output);
 }
 
 /**
@@ -81,14 +77,14 @@ function notification(){
 			projectID: request.httpParameterMap.get("projectID").stringValue
 		};
 	
-	app.getView(input).render('translation/notification');
+	ISML.renderTemplate('translation/notification', input);
 }
 
 /**
 * Default attributes settings
 */
 function defaultAttributes(){
-	app.getView().render('translation/defaultattributessettings');
+	ISML.renderTemplate('translation/defaultattributessettings');
 }
 
 /**
@@ -113,9 +109,16 @@ function loginCheck(){
 /**
 * Calls translation pages
 */
-exports.New = guard.ensure(['get'], newTranslation);
-exports.FollowUp = guard.ensure(['get'], followUp);
-exports.Register = guard.ensure(['get'], register);
-exports.PlaceOrder = guard.ensure(['post'], placeOrder);
-exports.Notification = guard.ensure(['post'], notification);
-exports.DefaultAttributes = guard.ensure(['get'], defaultAttributes);
+newTranslation.public = true;
+followUp.public = true;
+register.public = true;
+placeOrder.public = true;
+notification.public = true;
+defaultAttributes.public = true;
+
+exports.New = newTranslation;
+exports.FollowUp = followUp;
+exports.Register = register;
+exports.PlaceOrder = placeOrder;
+exports.Notification = notification;
+exports.DefaultAttributes = defaultAttributes;

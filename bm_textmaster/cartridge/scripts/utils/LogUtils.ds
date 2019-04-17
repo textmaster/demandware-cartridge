@@ -7,7 +7,7 @@ var Logger 	 = require('dw/system/Logger'),
 	Resource = require('dw/web/Resource');
 
 // Global Variables
-var defaultLogFilePrefix = Resource.msg("log.filename","textmaster",null);
+var defaultLogFilePrefix = "textmaster";
 
 var LoggerUtils = {};
 

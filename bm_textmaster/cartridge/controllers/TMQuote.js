@@ -7,12 +7,7 @@
 
 /* API Includes */
 
-var Site  = require('dw/system/Site'),
-	SGContCartridge = Site.current.getCustomPreferenceValue("TMSGController") || "";
-
-/* Script Modules */
-var app = require(SGContCartridge + '/cartridge/scripts/app'),
-	guard = require(SGContCartridge + '/cartridge/scripts/guard');
+var ISML = require('dw/template/ISML');
 
 //Lib Includes
 var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
@@ -38,7 +33,7 @@ function send()
 		Status: output.statusCode
 	};
 
-	app.getView(result).render('translation/tmquote');
+	ISML.renderTemplate('translation/tmquote', result);
 }
 
 /*
@@ -46,4 +41,5 @@ function send()
 */
 /** Calls export functionalities
  * @see {@link module:controllers/TMQuote~Send} */
-exports.Send = guard.ensure(['post'], send);
+send.public = true;
+exports.Send = send;
