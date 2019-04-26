@@ -1,0 +1,18 @@
+<!--- TEMPLATENAME: categorylist.isml --->
+<!--- For ajax call on getting category list of a catalog --->
+<isinclude template="util/modules.isml"/>
+
+<ul class="multi-select select-category">
+	<li title="${Resource.msg('translation.info.selectall','textmaster',null)}">
+		<input type="checkbox" id="category-select-all"><label class="checkbox-label" for="category-select-all">${Resource.msg('translation.all.categories','textmaster',null)}</label>
+	</li>
+	<isloop items="${pdict.CategoryList}" var="categoryObj" status="loopstate">
+		<isset name="category" value="${categoryObj.cat}" scope="page">
+		<li>
+			<input type="checkbox" name="category[]" id="category-${category.ID}" value="${category.ID}"><label class="checkbox-label" for="category-${category.ID}">${category.displayName}</label>
+			<isif condition="${categoryObj.sub.length > 0}">
+				<issubcathierarchy categorylist="${categoryObj.sub}">
+			</isif>
+		</li>
+	</isloop>
+</ul>

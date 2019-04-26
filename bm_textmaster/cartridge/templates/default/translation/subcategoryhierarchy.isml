@@ -1,0 +1,14 @@
+<isinclude template="util/modules.isml"/>
+
+<ul>
+	<isloop items="${pdict.categorylist}" var="categoryObj" status="loopstate">
+		<isset name="category" value="${categoryObj.cat}" scope="page">
+		<li>
+			<input type="checkbox" name="category[]" id="category-${category.ID}" value="${category.ID}">
+			<label class="checkbox-label" for="category-${category.ID}">${category.displayName}</label>
+			<isif condition="${categoryObj.sub.length > 0}">
+				<issubcathierarchy categorylist="${categoryObj.sub}">
+			</isif>
+		</li>
+	</isloop>
+</ul>

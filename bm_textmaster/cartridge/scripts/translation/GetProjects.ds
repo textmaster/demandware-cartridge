@@ -1,0 +1,33 @@
+/**
+* GetProjectsByStatus.ds
+* Returns custom objects TextMasterProject with status createJob.
+*
+*   @output TMProjects : dw.util.List existing jobs of desired status
+*
+*/
+importPackage( dw.system );
+importPackage(dw.net);
+importPackage( dw.object);
+importPackage( dw.util);
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global variables
+var log = LogUtils.getLogger("GetProjects");
+
+function execute( pdict : PipelineDictionary ) : Number
+{  
+  var objectMgr : CustomObjectMgr = dw.object.CustomObjectMgr;
+  
+  try{
+	  var projects : SeekableIterator = objectMgr.getAllCustomObjects('TextMasterProject');
+	  pdict.TMProjects = projects.asList();
+	  projects.close();
+  } catch(e){
+  	log.error('Error in Script GetProjects',e);
+  	pdict.TMProjects = null;
+  }
+
+   return PIPELET_NEXT;
+}

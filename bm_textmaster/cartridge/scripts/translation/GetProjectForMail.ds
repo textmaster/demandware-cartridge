@@ -1,0 +1,73 @@
+/**
+* GetProjectForMail.ds
+* Returns Mail object with Information about the Project.
+*
+*   @input TMProject : Object
+*   @output MailInfos : Object
+*
+*/
+importPackage( dw.system );
+importPackage(dw.net);
+importPackage( dw.object);
+importPackage( dw.util);
+importClass( dw.web.Resource );
+
+
+/* Script Modules */
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	Utils = require('~/cartridge/scripts/utils/Utils');
+
+/* Global variable */
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{  
+    var projectID = pdict.TMProject.custom.projectid;
+    var projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID;
+    var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
+    var mail = null, mContent = {}, projectOptions = {}, updateRequest, costs = 0, currency = "", wordCount = 0;
+    
+    log = LogUtils.getLogger("AskForQuote");
+    
+    if (projectResult != null) {
+  	  var userEndPoint = Resource.msg("api.get.user","textmaster",null);
+  	  var userResult = Utils.TextMasterClient("GET", userEndPoint);
+  	  
+  	  if (projectResult.total_costs != null && projectResult.total_costs[0] != null) {
+  	    costs = projectResult.total_costs[0].amount;
+  	    currency = projectResult.total_costs[0].currency;
+  	  }
+  	  
+  	  wordCount = projectResult.total_word_count;
+  	  projectOptions = projectResult.options;
+  	  projectOptions.translation_memory = true;
+  	  
+  	  // update project to add translation_memory: true
+  	  updateRequest = {
+			"project": {
+				"options": projectOptions
+			}
+	  }
+	  
+	  projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID;
+	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
+
+	  mail = {};
+  	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
+  	  mail.to = userResult.email;
+  	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
+  	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
+  	      + costs.toFixed(2) + currency
+  	      + ". Please go to link " + Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects","textmaster",null) + "/"
+  	      + projectResult.id + "/edit to check your project and launch it.";
+  	  mContent.firstName = userResult.contact_information.first_name;
+  	  mContent.wordCount = wordCount; /* total_word_count before updating the project */
+  	  mContent.weightedWordCount = projectResult.total_word_count;
+  	  
+  	  mail.content = mContent;
+    }
+  	
+    pdict.MailInfos = mail;
+
+    return PIPELET_NEXT;
+}

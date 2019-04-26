@@ -1,0 +1,99 @@
+<!--- TEMPLATENAME: filteritems.isml --->
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+	<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
+	<isscript>
+		var Utils = require('~/cartridge/scripts/utils/Utils'),
+			languages = Utils.getLanguageFromList(),
+			catalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	</isscript>
+	<div class="new-translation">
+		<form method="post" action="${URLUtils.url('TMTranslation-PlaceOrder')}" id="filter-item-form">
+		<h1>${Resource.msg('translation.title','textmaster',null)}</h1>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>${Resource.msg('translation.scope','textmaster',null)}</h2>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.itemtype','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="item-type">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="product">${Resource.msg('general.product','textmaster',null)}</option>
+						<option value="category">${Resource.msg('general.category','textmaster',null)}</option>
+						<option value="content">${Resource.msg('general.contentasset','textmaster',null)}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder catalog-list">
+				<div class="label-holder">${Resource.msg('translation.catalog','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="catalog">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="${catalog.ID}">${catalog.displayName}</option>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder category">
+				<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
+				<div class="input-holder category">
+					<ul class="multi-select select-category"></ul>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
+				<div class="input-holder">
+					<select name="locale-from">
+						<isif condition="${languages.length > 1}">
+							<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						</isif>
+						
+						<isloop items="${languages}" var="lang" status="loopstate">
+							<option value="${lang.id}">${lang.name}</option>
+						</isloop>
+					</select>
+				</div>
+			</div>
+			<div class="field-holder">
+				<div class="label-holder">${Resource.msg('translation.to','textmaster',null)}: </div>
+				<div class="input-holder locale-to">
+					<ul class="multi-select select-locale-to"></ul>
+				</div>
+			</div>
+		</div>
+		<div class="form-holder">
+			<div class="field-holder title-holder">
+				<h2>${Resource.msg('translation.select.attributes','textmaster',null)}</h2>
+			</div>
+			<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
+		</div>
+		<div class="form-holder filter-items">
+			<div class="field-holder title-holder">
+				<h2>${Resource.msg('general.search','textmaster',null)}</h2>
+			</div>
+			<div class="field-holder button-holder left">
+				<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search">
+				<span class="common-error search"></span>
+			</div>
+		</div>
+		<div class="form-holder relative items">
+			<div class="field-holder title-holder">
+				<h2>${Resource.msg('translation.select.items','textmaster',null)}</h2>
+			</div>
+			<div id="items-holder"></div>
+			<div class="field-holder button-holder">
+				<span class="items-limit-error">${Resource.msgf('translation.items.limit.error','textmaster',null,Resource.msg('translation.items.limit','textmaster',null))}</span>
+				<input type="button" id="button-select-all" value="${Resource.msg('general.select.all','textmaster',null)}">
+				<input type="button" id="button-deselect-all" value="${Resource.msg('general.deselect.all','textmaster',null)}">
+				<input type="hidden" id="itemsLimit" value="${Resource.msg('translation.items.limit','textmaster',null)}" />
+			</div>
+			<div class="ajax-loader"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}"></div>
+		</div>
+		<div class="submit-error"></div>
+		<div class="right">
+			<input type="submit" class="button main-action" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">
+		</div>
+		</form>
+	</div>
+</isdecorate>

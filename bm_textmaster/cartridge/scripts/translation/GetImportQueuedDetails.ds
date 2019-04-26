@@ -1,0 +1,45 @@
+/**
+*	Get queued project id
+*
+*	@output ProjectID: String
+*	@output DocumentID: String
+*/
+importPackage( dw.system );
+
+
+/* Script Modules */
+var logUtils = require('~/cartridge/scripts/utils/LogUtils'),
+	utils = require('~/cartridge/scripts/utils/Utils');
+
+/* Global variables */
+var log;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var projectID = "",
+		documentID = "",
+		jobDataHolder = utils.getJobDataHolder(),
+		query, queryObj, ids;
+		
+	log = logUtils.getLogger("GetQueuedProjectID");
+	
+	if(jobDataHolder){
+		query = jobDataHolder.custom.QueuedDocuments || "[]";
+		queryObj = JSON.parse(query);
+		ids = queryObj.shift();
+		
+		if(ids){
+			projectID = ids.projectid;
+			documentID = ids.documentid;
+		}
+		
+		Transaction.begin();
+		jobDataHolder.custom.QueuedDocuments = JSON.stringify(queryObj);
+		Transaction.commit();
+	}
+	
+	pdict.ProjectID = projectID || "";
+	pdict.DocumentID = documentID || "";
+	
+	return PIPELET_NEXT;
+}

@@ -1,0 +1,1009 @@
+/*
+*	Utility functions for the cartridge
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.svc );
+importPackage( dw.util );
+importPackage( dw.crypto );
+
+importClass( dw.web.Resource );
+importClass( dw.object.CustomObjectMgr );
+
+// API Includes
+var StringUtils = require('dw/util/StringUtils');
+
+// Lib Includes
+var LogUtils = require('~/cartridge/scripts/utils/LogUtils');
+
+// Global Variables
+var Utils = {};
+
+Utils.log = LogUtils.getLogger("Utils");
+
+/*
+*	Accessible attributes of Content
+*/
+Utils.attributes = {};
+Utils.attributes.content = [
+	"name","description","pageTitle","pageDescription","pageKeywords","pageURL"
+];
+
+/*
+*	Accessible attributes of Category
+*/
+Utils.attributes.category = [
+	"displayName","description","pageTitle","pageDescription","pageKeywords","pageURL"
+];
+
+/*
+*	Accessible attributes of Product
+*/
+Utils.attributes.product = [
+	"name","shortDescription","longDescription","pageTitle","pageDescription","pageKeywords","pageURL"
+];
+
+/*
+*	Common configurations
+*/
+Utils.config = {
+	apiEnv: Site.current.getCustomPreferenceValue("TMAPIEnvironment") || 'demo',
+	demandwareLanguages: []
+};
+
+/*
+*	Product types
+*/
+Utils.productTypes = {
+	variant: 'Variation Product',
+	master: 'Variation Master',
+	product: 'Simple Product',
+	bundle: 'Product Bundle',
+	bundled: 'Bundled Product',
+	optionProduct: 'Option Product',
+	productSet: 'Product Set',
+	productSetProduct: 'Product Set Product',
+	variationGroup: 'Variation Group'
+};
+
+/*
+*	Get product type string
+*/
+Utils.getProductType = function(product){
+	var productType = "",
+		pt;
+	
+	for(pt in Utils.productTypes){
+		if(product[pt]){
+			productType = Utils.productTypes[pt];
+			break;
+		}
+	}
+	
+	return productType;
+}
+
+/*
+*	Checks whether the attribute is accessible or not
+*/
+Utils.isAttributeAccessible = function(itemType, attribute){
+	var attrList = Utils.attributes[itemType],
+		strAttrs = attrList.join("|");
+	
+	return (strAttrs.indexOf("|"+ attribute) > -1 || strAttrs.indexOf(attribute +"|") > -1);
+}
+
+/**
+*	Gets folder path from absolute path of file
+*/
+Utils.getFolderPath = function(absPath : String){
+	var folderPath = "";
+	if(absPath){
+		folderPath = absPath.substring(0, absPath.lastIndexOf(File.SEPARATOR) + 1);
+	}
+	return folderPath;
+}
+
+/*
+*	Gets filename part without extension
+*/
+Utils.getFileNameNoExt = function(fileName : String){
+	var fileNamePart = "";
+	if(fileName){
+		fileNamePart = fileName.substring(0, fileName.lastIndexOf("."));
+	}
+	return fileNamePart;
+}
+
+/*
+*	Gets filename extension
+*/
+Utils.getFileNameExtension = function(fileName : String){
+	var fileNameExtension = "";
+	if(fileName){
+		fileNameExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+	}
+	return fileNameExtension;
+}
+
+/*
+*	Gets Demandware languages in JSON
+*/
+Utils.getDWLanguages = function(){
+	var languages = [];
+	
+	if(Utils.config.demandwareLanguages.length){
+		languages = Utils.config.demandwareLanguages;
+	}
+	else{
+		var ocapiLocaleUrl = Resource.msg("ocapi.locale.get","textmaster",null),
+			locale = Utils.OCAPIClient("GET", ocapiLocaleUrl, null),
+			totalCount = locale.total,
+			ocapiAllLocaleUrl = Resource.msg("ocapi.all.locale.get","textmaster",null) + totalCount,
+			locales = Utils.OCAPIClient("GET", ocapiAllLocaleUrl, null),
+			lang;
+			
+		if(locales && locales.hits){
+			for each(lang in locales.hits){
+				if(Utils.isLocaleEnabled(lang.id) && lang.id != "default"){
+					languages.push({
+						id: lang.id.toLowerCase(),
+						name: lang.name
+					});
+				}
+			}
+		}
+		
+		if(languages.length){
+			Utils.config.demandwareLanguages = languages;
+		}
+	}
+	
+	return languages;
+}
+
+/*
+*	Checks if the locale is enabled in store
+*/
+Utils.isLocaleEnabled = function(localeID){
+	var index,
+		allLocales = Site.current.allowedLocales;
+	
+	localeID = Utils.formatLocaleDemandware(localeID);	
+	index = allLocales.indexOf(localeID);
+	
+	return index > -1;
+}
+
+/*
+*	Format the locale string in to Demandware import standard, Eg:- fr_FR
+*/
+Utils.formatLocaleDemandware = function(localeID){
+	localeID = Utils.formatLocaleStandard(localeID);
+	localeID = localeID.replace(/-/g, '_');
+	
+	return localeID;
+}
+
+/*
+*	Converts Datawords locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
+*/
+Utils.formatLocaleStandard = function(locale){
+	var localePart = locale.split("-");
+	
+	locale = localePart[0];
+	
+	if(localePart[1] != undefined){
+		locale += ("-" + localePart[1].toUpperCase());
+	}
+	
+	return locale;
+}
+
+/*
+*	Gets Translation Languages - common languages in Demandware and TextMaster
+*/
+Utils.getTranslationLanguages = function(){
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMTranslationLanguages){
+		return JSON.parse(dataHolder.custom.TMTranslationLanguages);
+	}
+	
+	var dwLanguages = Utils.getDWLanguages(),
+		tmLanguageEndPoint = Resource.msg("api.get.languages","textmaster",null),
+		tmLanguages, languages = [], dwLang, tmLang;
+		
+	tmLanguages = Utils.TextMasterPublic("GET",tmLanguageEndPoint,null);
+	tmLanguages = tmLanguages ? tmLanguages.languages : [];
+	
+	for each(tmLang in tmLanguages){
+		for each(dwLang in dwLanguages){
+			if(tmLang.code == dwLang.id){
+				languages.push(dwLang);
+			}
+		}
+	}
+	
+	languages.sort(function(a, b) {
+		return a.name < b.name ? -1 : 1;
+	});
+	
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMTranslationLanguages = JSON.stringify(languages);
+		Transaction.commit();
+	}
+	
+	return languages;
+}
+
+/*
+*	Get 'language from' list
+*/
+Utils.getLanguageFromList = function(){
+	var apiCache = Site.current.getCustomPreferenceValue("TMAPICache") || "enabled";
+	
+	if(apiCache.toLowerCase() == "disabled"){
+		// Cache settings checking is only here.
+		//In all other functions, data will be fetched from cache if data found in cache
+		Utils.resetLanguageCache();
+	}
+	
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMLanguageFromList){
+		return JSON.parse(dataHolder.custom.TMLanguageFromList);
+	}
+	
+	var defaultLocale = Site.current.defaultLocale;
+	var result = [],
+		languages, languageToList;
+	
+	if(defaultLocale == "default"){
+		var language;
+		
+		languages = Utils.getTranslationLanguages();
+		
+		for each(language in languages){
+			languageToList = Utils.getLanguageTo(language.id);
+			if(languageToList.length > 0){
+				result.push(language);
+			}
+		}
+	}
+	else{
+		defaultLocale = Utils.toTextMasterLocaleID(defaultLocale);
+		languageToList = Utils.getLanguageTo(defaultLocale);
+		
+		var defaultLocaleName = Utils.getLocaleName(defaultLocale);
+		
+		if(languageToList.length && defaultLocaleName){
+			result.push({
+				id: defaultLocale,
+				name: defaultLocaleName
+			});
+		}
+		else{
+			Utils.log.error("Default locale ("+ defaultLocale +") is not matching with any of TextMaster languages");
+		}
+	}
+	
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMLanguageFromList = JSON.stringify(result);
+		Transaction.commit();
+	}
+	
+	return result;
+}
+
+/*
+*	Reset cache values
+*/
+Utils.resetLanguageCache = function(){
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMLanguageFromList = "";
+		dataHolder.custom.TMTranslationLanguages = "";
+		dataHolder.custom.TMAbilityList = "";
+		Transaction.commit();
+	}
+}
+
+/*
+*	Check whether language is in Demandware and TextMaster
+*/
+Utils.isTranslationLanguage = function(languageCheck){
+	var languages = Utils.getTranslationLanguages(),
+		language;
+	
+	for each(language in languages){
+		if(language.id == languageCheck){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Get all language ability list
+*/
+Utils.getLanguageAbilityList = function(){
+	var dataHolder = Utils.getLanguageDataHolder();
+	
+	if(dataHolder && dataHolder.custom.TMAbilityList){
+		return JSON.parse(dataHolder.custom.TMAbilityList);
+	}
+	
+	var abilityEndPoint = Resource.msg('api.get.abilities','textmaster',null),
+		result = [], fetchNextPage = true, page = 1, maxPages = 65, abilities, ability, abilityEndPointPage;
+	
+	while(fetchNextPage && page <= maxPages){
+		abilityEndPointPage = (abilityEndPoint + "&page=" + page);
+		abilities = Utils.TextMasterClient("GET",abilityEndPointPage,null)
+		
+		if(abilities && abilities.data && abilities.data.length > 0){
+			abilities = abilities.data;
+		}
+		else{
+			fetchNextPage = false;
+		}
+		
+		for each(ability in abilities){
+			if(Utils.isTranslationLanguage(ability.language_to)){
+				result.push({
+					from: ability.language_from,
+					to: ability.language_to
+				});
+			}
+		}
+		
+		page++;
+	}
+	
+	if(dataHolder){
+		Transaction.begin();
+		dataHolder.custom.TMAbilityList = JSON.stringify(result);
+		Transaction.commit();
+	}
+	
+	return result;
+}
+
+/*
+*	Get 'language to' list with dropped 'language from'
+*/
+Utils.getLanguageTo = function(languageFrom){
+	var languageTo = [],
+		abilityList = Utils.getLanguageAbilityList(),
+		language;
+		
+	for each(language in abilityList){
+		if(language.from == languageFrom && language.to != languageFrom){
+			languageTo.push({
+				id: language.to,
+				name: Utils.getLocaleName(language.to)
+			});
+		}
+	}
+	
+	languageTo.sort(function(a,b){
+		return a.name < b.name ? -1 : 1;
+	});
+	
+	languageTo = Utils.makeArrayUnique(languageTo, "id");
+	
+	return languageTo;
+}
+
+/*
+*	Remove duplicate values from array
+*/
+Utils.makeArrayUnique = function(arr, key){
+	var result = [],
+		el, count = 0, i, found;
+	
+	for each(el in arr){
+		found = false;
+		
+		for(i = 0; i < count; i++){
+			if(arr[i][key] == el[key]){
+				found = true;
+				break;
+			}
+		}
+		
+		if(!found){
+			result.push(el);
+		}
+		
+		count++;
+	}
+	
+	return result;
+}
+
+/*
+*	Gets all underlying subcategories of a root category, in hierarchy object
+*/
+Utils.getAllSubCategoriesHierarchy = function(root, itemType){
+	var subCategories, category, nextLevelCategories, catObject,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		if(itemType == 'product' || (itemType == 'category' && category.subCategories && category.subCategories.length)){
+			catObject = {
+				cat: category,
+				sub: Utils.getAllSubCategoriesHierarchy(category, itemType)
+			};
+			output.push(catObject);
+		}
+	}
+	
+	return output;
+}
+
+/*
+*	Gets all underlying subcategories of a root category, in a single array
+*/
+Utils.getAllSubCategories = function(root){
+	var subCategories, category, nextLevelCategories,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		output.push(category);
+	}
+	
+	for each(category in subCategories){
+		nextLevelCategories = Utils.getAllSubCategories(category);
+		output.push.apply(output, nextLevelCategories);
+	}
+	
+	return output;
+}
+
+/*
+*	Gets underlying subcategories having atleast one subcategory, in a single array
+*/
+Utils.getFilterSubCategories = function(root){
+	var subCategories, category, nextLevelCategories,
+		output = [];
+	
+	subCategories = root.getSubCategories();
+	for each(category in subCategories){
+		if(category.subCategories.length > 0){
+			output.push(category);
+		}
+	}
+	
+	for each(category in subCategories){
+		nextLevelCategories = Utils.getFilterSubCategories(category);
+		output.push.apply(output, nextLevelCategories);
+	}
+	
+	return output;
+}
+
+/*
+*	Check product already exists in product list
+*/
+Utils.isProductExistInList = function(productList, product){
+	var prod;
+	
+	if(product == null){
+		return true;
+	}
+	
+	for each(prod in productList){
+		if(prod.ID == product.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Check category already exists in category list
+*/
+Utils.isCategoryExistInList = function(categoryList, category){
+	var cat;
+	
+	if(category == null){
+		return true;
+	}
+	
+	for each(cat in categoryList){
+		if(cat.ID == category.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Gets name of the locale if locale ID is passed
+*/
+Utils.getLocaleName = function(localeID){
+	var localeName = "",
+		locales = Utils.getDWLanguages(),
+		locale;
+	
+	for each(locale in locales){
+		if(locale.id == localeID){
+			localeName = locale.name;
+			break;
+		}
+	}
+	
+	return localeName;
+}
+
+/*
+*	HTTPService configuration parseResponse
+*/
+Utils.serviceParseResponse = function(service : HTTPService, httpClient : HTTPClient) {
+	var resp;
+	
+    if (httpClient.statusCode == 200 || httpClient.statusCode == 201) {
+		resp = JSON.parse(httpClient.getText());
+	}
+	else{
+		Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+		resp = null;
+	}
+	
+	return resp;
+}
+
+/*
+*	Sets service registry for TextMasterClient
+*/
+Utils.setServiceRegistry = function(config){
+	var service = LocalServiceRegistry.createService("textmaster.http", config);
+	
+	return service;
+}
+
+/*
+*	Gets service arguments
+*/
+Utils.getServiceArguments = function(apiKey, apiSecret, method, endPointUrl, request){
+	var date: String = StringUtils.formatCalendar(dw.util.Calendar(), "yyyy-MM-dd HH:mm:ss"),
+		messageDigest: MessageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1),
+		signature: Bytes = messageDigest.digest(new Bytes(apiSecret + date, "UTF-8")), 
+		signatureString: String = signature.toString();
+		
+		request = request || "";
+		
+		return {
+			apiKey: apiKey,
+			date: date,
+			signatureString: signatureString,
+			method: method,
+			endPointUrl: endPointUrl,
+			request: request
+		};
+}
+
+/*
+* get service configuration for TextMasterClient and TextMasterTest
+*/
+Utils.getServiceConfigClient = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        service.addHeader('Apikey', args.apiKey);
+	        service.addHeader('Date', args.date);
+	        service.addHeader('Signature', args.signatureString);
+	        service.addHeader('X-Partner-Id', Resource.msg("general.sfcc.partner.id." + Utils.config.apiEnv,"textmaster",null));
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	};
+};
+
+/*
+*	Communicates with TextMaster clients APIs
+*/
+Utils.TextMasterClient = function(method, endPoint, request){
+	var apiKey: String = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || "",
+		apiSecret: String = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || "",
+		endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.clients","textmaster",null) + endPoint,
+		response: Object, serviceArgs, service, result, serviceConfig;
+	
+	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, method, endPointUrl, request);
+	serviceConfig = Utils.getServiceConfigClient();
+	service = Utils.setServiceRegistry(serviceConfig);
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
+	
+	return response;
+}
+
+/*
+*	Communicates with TextMaster Test API
+*/
+Utils.TextMasterTest = function(request){
+	var apiKey: String = request.apiKey || "",
+		apiSecret: String = request.apiSecret || "",
+		endPointUrl: String = Resource.msg("api.base." + request.apiEnv,"textmaster",null) + Resource.msg("api.test","textmaster",null),
+		response: Object, serviceArgs, service, result, serviceConfig;
+	
+	serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, "GET", endPointUrl, null);
+	serviceConfig = Utils.getServiceConfigClient();
+	service = Utils.setServiceRegistry(serviceConfig);
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
+	
+	return response;
+}
+
+/*
+*	get service config for TextMasterPublic
+*/
+Utils.getServiceConfigPublic = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	};
+};
+
+/*
+*	Communicates with TextMaster public APIs
+*/
+Utils.TextMasterPublic = function(method, endPoint, request){
+	var endPointUrl: String = Resource.msg("api.base." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.version." + Utils.config.apiEnv,"textmaster",null) + Resource.msg("api.public","textmaster",null) + endPoint,
+		response, serviceArgs, service, result, serviceConfig;
+	
+	request = request || "";
+	serviceConfig = Utils.getServiceConfigPublic();
+	service = Utils.setServiceRegistry(serviceConfig);
+	
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl,
+		request: request
+	};
+	
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
+	
+	return response;
+}
+
+/*
+* get service config for TriggerURL
+*/
+Utils.getServiceConfigTrigger = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        
+	        return service;
+	    },
+	    parseResponse: function(service : HTTPService, httpClient : HTTPClient) {
+		    if (httpClient.statusCode != 200 && httpClient.statusCode != 201) {
+				Utils.log.error("Error on http request: "+ httpClient.getErrorText());
+			}
+		}
+	};
+};
+/*
+*	Execute callback URL
+*/
+Utils.TriggerURL = function(method, endPoint){
+	var endPointUrl = endPoint,
+		serviceArgs, service, result, serviceConfig;
+	
+	serviceConfig = Utils.getServiceConfigTrigger();
+	service = Utils.setServiceRegistry(serviceConfig);
+	
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl
+	};
+	
+    result = service.call(serviceArgs);
+}
+
+/*
+* get service config for OCAPIClient
+*/
+Utils.getServiceConfigOCAPIClient = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/json');
+	        service.addHeader('Authorization', "Bearer " + args.token);
+	        
+	        return args.request;
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	};
+};
+
+/*
+*	Communicates with OCAPI
+*/
+Utils.OCAPIClient = function(method, endPoint, request){
+	var endPointUrl: String = "https://" + System.instanceHostname + "/s/-" + endPoint,
+		token, response, serviceArgs, service, result, errorResponse, serviceConfig;
+	
+	token = Utils.getOCAPIToken();
+	
+	request = request || "";
+	
+	serviceConfig = Utils.getServiceConfigOCAPIClient();
+	service = Utils.setServiceRegistry(serviceConfig);
+	
+	serviceArgs = {
+		method: method,
+		endPointUrl: endPointUrl,
+		request: request,
+		token: token
+	};
+	
+    result = service.call(serviceArgs);
+    
+    if(result.status == "ERROR"){
+    	try{
+    		errorResponse = JSON.parse(result.errorMessage);
+    	}
+    	catch(ex){
+    		Utils.log.error(result.errorMessage);
+    	}
+    }
+    
+    response = result.status == "OK" ? result.object
+    			: (errorResponse && errorResponse.fault && errorResponse.fault.type ? {execution_status: errorResponse.fault.type} : null);
+	
+	return response;
+}
+
+/*
+* get service config for OCAPIToken
+*/
+Utils.getServiceConfigOCAPIToken = function(){
+	return {
+		createRequest: function(service : HTTPService, args){
+	        service.URL = args.endPointUrl;
+	        service.setRequestMethod(args.method);
+	        service.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+	        service.addHeader('Authorization', args.auth);
+	        
+	        return "";
+	    },
+	    parseResponse: Utils.serviceParseResponse
+	};
+};
+
+/*
+*	Gets OCAPI authorization token
+*/
+Utils.getOCAPIToken = function(){
+	var ocapiID: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIid') || Resource.msg("ocapi.demo.id","textmaster",null),
+		ocapiPassword: String = Site.getCurrent().getCustomPreferenceValue('TMOCAPIpassword') || Resource.msg("ocapi.demo.password","textmaster",null),
+		endPointUrl: String = Resource.msg("ocapi.token.post","textmaster",null),
+		token = "",
+		auth = "Basic " + StringUtils.encodeBase64(ocapiID + ":" + ocapiPassword),
+		response, serviceArgs, service, result, serviceConfig;
+	
+	token = Utils.getSessionToken(auth);
+	
+	if(token){
+		return token;
+	}
+	
+	serviceConfig = Utils.getServiceConfigOCAPIToken();
+	service = Utils.setServiceRegistry(serviceConfig);
+	
+	serviceArgs = {
+		method: "post",
+		endPointUrl: endPointUrl,
+		auth: auth
+	};
+	
+    result = service.call(serviceArgs);
+    
+    response = result.status == "OK" ? result.object : null;
+	
+	if(response){
+		token = response.access_token;
+	}
+	
+	Transaction.begin();
+	session.custom.textmasterTokenAuth = auth;
+	session.custom.textmasterTokenTime = new Date();
+	session.custom.textmasterToken = token;
+	Transaction.commit();
+	
+	return token;
+}
+
+/*
+*	get token from Session if found
+*/
+Utils.getSessionToken = function(auth){
+	if(session.custom.textmasterTokenAuth && session.custom.textmasterTokenAuth == auth){
+		var sessionTime = new Date(session.custom.textmasterTokenTime),
+			currentTime = new Date(),
+			tokenExpire = 300000; /* 5 minutes */
+		
+		if(currentTime.getTime() - sessionTime.getTime() < tokenExpire){
+			return session.custom.textmasterToken;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Converts Demandware locale ID format (eg:- en_US) to TextMaster locale ID format (eg:- en-us)
+*/
+Utils.toTextMasterLocaleID = function(locale){
+	locale = locale.toLowerCase().replace("_", "-");
+	
+	return locale;
+}
+
+/*
+*	Converts TextMaster locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
+*/
+Utils.toDemandwareLocaleID = function(locale){
+	var localePart = locale.split("-");
+	
+	locale = localePart[0];
+	
+	if(localePart[1] != undefined){
+		locale += ("-" + localePart[1].toUpperCase());
+	}
+	
+	return locale;
+}
+
+/*
+*	Convert first letter to uppercase
+*/
+Utils.firstLetterCapital = function(str){
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/*
+*	Gets word count
+*/
+Utils.getWordCount = function(str){
+	return str.split(" ").length;
+}
+
+/**
+* Get custom object to keep job triggering settings
+*/
+ Utils.getJobDataHolder = function(){
+	var customObjectName = Resource.msg("import.customobject.name","textmaster",null),
+		customObjectInstanceID = Resource.msg("import.customobject.instanceid","textmaster",null);
+	try{
+		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+		if(dataHolder == null){
+			Transaction.begin();
+			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+			Transaction.commit();
+		}
+		return dataHolder;
+	}
+	catch(ex){
+		Utils.log.error(ex.message + " - No custom object found.");
+		return null;
+	}
+}
+
+/**
+* Get custom object to keep Language list
+*/
+ Utils.getLanguageDataHolder = function(){
+	var customObjectName = Resource.msg("language.customobject.name","textmaster",null),
+		customObjectInstanceID = Resource.msg("language.customobject.instanceid","textmaster",null);
+	try{
+		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+		if(dataHolder == null){
+			Transaction.begin();
+			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+			Transaction.commit();
+		}
+		return dataHolder;
+	}
+	catch(ex){
+		Utils.log.error(ex.message + " - No custom object found.");
+		return null;
+	}
+}
+
+/*
+*	convert an ID text to XML tag format
+*/
+Utils.idToXMLTag = function(str){
+	var i = 1,
+		tagName = str[0].toLowerCase();
+	
+	while(i < str.length){
+		if(str[i - 1] == str[i - 1].toUpperCase()){
+			tagName += str[i].toLowerCase();
+		}
+		else if(str[i] == str[i].toUpperCase()){
+				tagName += "-" + str[i].toLowerCase();
+			}
+			else{
+				tagName += str[i];
+			}
+		
+		i++;
+	}
+	
+	return tagName;
+}
+
+/*
+*	merge two objects
+*/
+Utils.mergeObjects = function(obj1, obj2){
+    var obj3 = {};
+    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    return obj3;
+}
+
+/*
+ * 	Save project id and document id into custom object for import job
+ */
+Utils.setImportJobQuery = function(projectid, documentid){
+	var dataHolder = Utils.getJobDataHolder(),
+		tryAgain = true,
+		result, queue, queueObj;
+	
+	while(tryAgain){
+		queue = dataHolder.custom.QueuedDocuments || "[]";
+		queueObj = JSON.parse(queue);
+		queueObj.push({
+			projectid: projectid,
+			documentid: documentid
+		});
+		
+		try{
+			Transaction.begin();
+			dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
+			Transaction.commit();
+			
+			result = dataHolder.custom.RunningDocument ? true : false;
+			tryAgain = false;
+		}
+		catch(ex){}
+	}
+	
+	return result;
+}
+
+module.exports = Utils;

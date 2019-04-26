@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="TMAskForQuoteSiteGenesis" priority="0">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="SiteGenesis"/>
+            <step step-id="QuoteSiteGenesis" type="ExecutePipeline" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecutePipeline.Pipeline">TMAskForQuote-AskForQuote</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-01-13Z</date>
+                <time>16:38:10.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+    
+    <job job-id="ImportDataFromTextMasterSiteGenesis" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="SiteGenesis"/>
+            <step step-id="TMImportDataSiteGenesis" type="ExecutePipeline" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecutePipeline.Pipeline">TMImportItem-Start</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+	
+	<job job-id="AutoLaunchTextMasterSiteGenesis" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="SiteGenesis"/>
+            <step step-id="TMAutoLaunchSiteGenesis" type="ExecutePipeline" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecutePipeline.Pipeline">TMAutoLaunchItem-Start</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+</jobs>
