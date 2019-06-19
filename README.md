@@ -11,7 +11,9 @@ TextMaster is the world’s first global translation solution that is available 
 The Textmaster extension with Salesforce Commerce Cloud allows you to easily translate your content within SFCC to a large quantity of languages with a simple mass edit process:
 - Products
 - Categories
-- Content assets
+- Content assets*
+
+_*Note: Content assets cannot be extracted and sent for translation if they don't belong to a library folder._
 
 # Features
 ***
