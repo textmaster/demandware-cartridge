@@ -53,18 +53,24 @@ function execute( pdict : PipelineDictionary ) : Number
 	  projectResult = Utils.TextMasterClient("PUT", projectEndPoint, JSON.stringify(updateRequest));
 
 	  mail = {};
-  	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
-  	  mail.to = userResult.email;
-  	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
-  	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
-  	      + costs.toFixed(2) + currency
-  	      + ". Please go to link " + Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects","textmaster",null) + "/"
-  	      + projectResult.id + "/edit to check your project and launch it.";
-  	  mContent.firstName = userResult.contact_information.first_name;
-  	  mContent.wordCount = wordCount; /* total_word_count before updating the project */
-  	  mContent.weightedWordCount = projectResult.total_word_count;
-  	  
-  	  mail.content = mContent;
+	  
+	  if(projectResult){
+	  	  mail.from = Site.getCurrent().getCustomPreferenceValue('TMEmail') || "";
+	  	  mail.to = userResult.email;
+	  	  mail.subject = "TextMaster: Quotation for " + projectResult.name;
+	  	  mContent.text = "Project " + projectResult.name + " (" + projectID + ") will cost you "
+	  	      + costs.toFixed(2) + currency
+	  	      + ". Please go to link " + Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects","textmaster",null) + "/"
+	  	      + projectResult.id + "/edit to check your project and launch it.";
+	  	  mContent.firstName = userResult.contact_information.first_name;
+	  	  mContent.wordCount = wordCount; /* total_word_count before updating the project */
+	  	  mContent.weightedWordCount = projectResult.total_word_count;
+	  	  
+	  	  mail.content = mContent;
+	  }
+	  else{
+		  log.error("PUT " + projectEndPoint + " throws error on request: " + JSON.stringify(updateRequest));
+	  }
     }
   	
     pdict.MailInfos = mail;
