@@ -30,6 +30,8 @@ function data(){
 	importData = require('~/cartridge/scripts/translation/ImportData');
 	output = importData.output(input);
 	
+	log.debug("Import callback received for Project: "+ projectid +" Document: " + documentid);
+	
 	response.getWriter().println(JSON.stringify(output));
 }
 

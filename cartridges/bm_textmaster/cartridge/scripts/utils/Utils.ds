@@ -147,7 +147,7 @@ Utils.getDWLanguages = function(){
 			
 		if(locales && locales.hits){
 			for each(lang in locales.hits){
-				if(Utils.isLocaleEnabled(lang.id) && lang.id != "default"){
+				if(lang.id != "default"){
 					languages.push({
 						id: lang.id.toLowerCase(),
 						name: lang.name
@@ -261,35 +261,19 @@ Utils.getLanguageFromList = function(){
 	var defaultLocale = Site.current.defaultLocale;
 	var result = [],
 		languages, languageToList;
-	
-	if(defaultLocale == "default"){
-		var language;
+	var language;
 		
 		languages = Utils.getTranslationLanguages();
 		
 		for each(language in languages){
-			languageToList = Utils.getLanguageTo(language.id);
-			if(languageToList.length > 0){
-				result.push(language);
+			if(Utils.isLocaleEnabled(language.id)){
+				languageToList = Utils.getLanguageTo(language.id);
+				
+				if(languageToList.length > 0){
+					result.push(language);
+				}
 			}
 		}
-	}
-	else{
-		defaultLocale = Utils.toTextMasterLocaleID(defaultLocale);
-		languageToList = Utils.getLanguageTo(defaultLocale);
-		
-		var defaultLocaleName = Utils.getLocaleName(defaultLocale);
-		
-		if(languageToList.length && defaultLocaleName){
-			result.push({
-				id: defaultLocale,
-				name: defaultLocaleName
-			});
-		}
-		else{
-			Utils.log.error("Default locale ("+ defaultLocale +") is not matching with any of TextMaster languages");
-		}
-	}
 	
 	if(dataHolder){
 		Transaction.begin();

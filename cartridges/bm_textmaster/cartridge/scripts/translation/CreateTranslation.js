@@ -86,8 +86,9 @@ function getOutput(input){
 			
 			projectPostData.project = project;
 			projectEndPoint = Resource.msg("api.get.project","textmaster",null);
-			
+			log.debug("Request: POST " + projectEndPoint + " " + JSON.stringify(projectPostData));
 			projectResult = Utils.TextMasterClient("POST",projectEndPoint, JSON.stringify(projectPostData));
+			log.debug("response: " + JSON.stringify(projectResult));
 			
 			if(projectResult && projectResult.id != undefined){
 				projectID = projectResult.id;
@@ -96,6 +97,8 @@ function getOutput(input){
 		
 		if(projectID){
 			documents = [];
+			var dwLocaleID = Utils.formatLocaleDemandware(localeFrom);
+			request.setLocale(dwLocaleID);
 			
 			for each(i in items){
 				customData = [];
@@ -209,7 +212,9 @@ function postBulkDocuments(documents, projectID, autoLaunch){
 	
 	documentPostData.documents = documents;
 	documentEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID + "/" + Resource.msg("api.post.documents","textmaster",null);
+	log.debug("Request: POST " + documentEndPoint + " " + JSON.stringify(documentPostData));
 	documentResult = Utils.TextMasterClient("POST",documentEndPoint, JSON.stringify(documentPostData));
+	log.debug("Response: " + JSON.stringify(documentResult));
 	
 	if(documentResult){
 		for each(document in documentResult){
@@ -242,8 +247,9 @@ function postBulkDocuments(documents, projectID, autoLaunch){
 			if(autoLaunchCallBackURL){
 				documentPostData.document.callback.word_count_finished = {url: autoLaunchCallBackURL};
 			}
-			
+			log.debug("Request: PUT " + documentEndPoint + " " + JSON.stringify(documentPostData));
 			documentResult = Utils.TextMasterClient("PUT",documentEndPoint, JSON.stringify(documentPostData));
+			log.debug("Response: " + JSON.stringify(documentResult));
 		}
 	}
 }
