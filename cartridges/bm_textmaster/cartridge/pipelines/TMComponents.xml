@@ -394,6 +394,10 @@
           <key-binding alias="CurrentHttpParameterMap.get('tmPageSize').intValue" key="TMPageSize"/>
           <key-binding alias="CurrentHttpParameterMap.get('tmSFpassword').stringValue" key="TMSFpassword"/>
           <key-binding alias="CurrentHttpParameterMap.get('apiCache').stringValue" key="APICache"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmApiBaseUrlDemo').stringValue" key="tmApiBaseUrlDemo"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmApiBaseUrlLive').stringValue" key="tmApiBaseUrlLive"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmBackofficeBaseUrlDemo').stringValue" key="tmBackofficeBaseUrlDemo"/>
+          <key-binding alias="CurrentHttpParameterMap.get('tmBackofficeBaseUrlLive').stringValue" key="tmBackofficeBaseUrlLive"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

@@ -12,6 +12,12 @@
 *	@output APICache: String
 *	@output TMPageSize: Number
 *	@output TMSFpassword: String
+*	@output tmApiBaseUrlDemo: String
+*   @output tmApiBaseUrlLive: String
+*	@output tmBackofficeBaseUrlLive: String
+*	@output tmBackofficeBaseUrlDemo: String
+*   @output tmApiVersionUrlDemo: String
+*   @output tmApiVersionUrlLive: String
 *
 */
 importPackage(dw.system);
@@ -36,7 +42,12 @@ function execute( pdict : PipelineDictionary ) : Number
 	pdict.APICache = output.APICache;
 	pdict.TMPageSize = output.TMPageSize;
 	pdict.TMSFpassword = output.TMSFpassword;
-	
+	pdict.tmApiBaseUrlDemo = output.tmApiBaseUrlDemo;
+	pdict.tmApiBaseUrlLive = output.tmApiBaseUrlLive;
+	pdict.tmBackofficeBaseUrlLive = output.tmBackofficeBaseUrlLive;
+	pdict.tmBackofficeBaseUrlDemo = output.tmBackofficeBaseUrlDemo;
+	pdict.tmApiVersionUrlDemo = output.tmApiVersionUrlDemo;
+	pdict.tmApiVersionUrlLive = output.tmApiVersionUrlLive;
 	return PIPELET_NEXT;
 }
 
@@ -61,7 +72,14 @@ function getOutput(){
 		APICatalogID: site.getCustomPreferenceValue("TMMasterCatalogID") || "",
 		APICategories: categories,
 		TMPageSize: site.getCustomPreferenceValue("TMDashboardPageSize") || 100,
-		TMSFpassword: site.getCustomPreferenceValue("TMSFpassword") || ""
+		TMSFpassword: site.getCustomPreferenceValue("TMSFpassword") || "",
+		tmApiBaseUrlDemo: site.getCustomPreferenceValue("tmApiBaseUrlDemo") || "",
+		tmApiBaseUrlLive: site.getCustomPreferenceValue("tmApiBaseUrlLive") || "",
+		tmBackofficeBaseUrlLive: site.getCustomPreferenceValue("tmBackofficeBaseUrlLive") || "",
+		tmBackofficeBaseUrlDemo: site.getCustomPreferenceValue("tmBackofficeBaseUrlDemo") || "",
+		tmApiVersionUrlDemo: site.getCustomPreferenceValue("tmApiVersionUrlDemo") || "",
+		tmApiVersionUrlLive: site.getCustomPreferenceValue("tmApiVersionUrlLive") || "",
+		tmLanguageMapping: site.getCustomPreferenceValue("tmLanguageMapping")
 	}
 }
 

@@ -5,21 +5,25 @@
 				if($('.new-translation').length){
 					this.newTranslation();
 				}
-				
+
 				if($('.place-order').length){
 					this.placeOrder();
 				}
-				
+
 				if($('.default-attributes').length){
 					this.setDefaultAttributes();
 				}
-				
+
 				if($('.registration').length){
 					this.registration.init();
 				}
-				
+
 				if($('.followup').length){
 					this.followup.init();
+				}
+
+				if($('.language-mapping').length){
+					this.languageMapping.init();
 				}
 			},
 			urls:{
@@ -34,7 +38,10 @@
 				saveDefaultAttributes: "TMComponents-SaveDefaultAttributes",
 				translationItemList: "TMComponents-ItemList",
 				dashboardData: "TMComponents-DashboardData",
-				dashboardFirstRow: "TMComponents-DashboardFirstRow"
+				dashboardFirstRow: "TMComponents-DashboardFirstRow",
+				newMappingRow:"TMLanguageMapping-NewMappingRow",
+				saveLanguageMapping:"TMLanguageMapping-SaveLanguageMapping",
+				deleteRowMapping: "TMLanguageMapping-DeleteLanguageMappingRow"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData, items = [], itemID, errorTimeID,
@@ -45,7 +52,7 @@
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
 					$('ul.select-locale-to').html('');
-					
+
 					$.post(app.urls.getLanguageToList, {languageFrom:localeFrom}, function(data){
 						$('.input-holder.locale-to').html(data);
 					});
@@ -56,7 +63,7 @@
 					if($(this).val() == "product" || $(this).val() == "category"){
 						$('.field-holder.catalog-list').addClass("show");
 						$('.category').addClass('show');
-						
+
 						if($('select[name="catalog"]').val() != ""){
 							$('select[name="catalog"]').trigger('change');
 						}
@@ -522,8 +529,9 @@
 				init: function(){
 					var reg = this;
 					
-					$('#api-config-save').on("click",function(){
-						reg.saveButton = $('input#api-config-save');
+					$('.api-config-save').on("click",function(){
+						$('.error').html('');
+						reg.saveButton = $('input.api-config-save');
 						reg.saveButton.prop('disabled', true);
 						reg.saveButtonLabel = reg.saveButton.val();
 						reg.saveButton.val('Please wait...');
@@ -531,7 +539,6 @@
 						reg.setData();
 						
 						if(reg.validate()){
-							$('.error').text("");
 							reg.saveData();
 						}
 						else{
@@ -540,8 +547,18 @@
 						}
 					});
 					
-					$('select[name=api-env]').on('change',function(){
-						reg.setRegLink();
+					$('a#reg-link').on('click',function(){
+						$('.error').html('');
+						var apiEnv = $('select[name=api-env]').val();
+						var backOfficeLink = $('input[name=backoffice-base' + apiEnv + 'url]').val();
+
+						if ($.trim(backOfficeLink) === '') {
+							$('.error').html('Backoffice Base URL (' + app.utils.firstLetterCapital(apiEnv) + ') is required');
+							return false;
+						}	
+						
+						var signinLink = $(this).data('signin-link');
+						$(this).attr('href', backOfficeLink + signinLink);
 					});
 				},
 				setData: function(){
@@ -554,26 +571,68 @@
 					data.apiCache = $('select[name=api-cache]').val();
 					data.tmPageSize = $('input[name=api-page-size]').val().trim();
 					data.tmSFpassword = $('input[name=sf-password]').val();
+					data.tmApiBaseUrlDemo = $('input[name=api-basedemourl]').val();
+					data.tmApiBaseUrlLive = $('input[name=api-baseliveurl]').val();
+					data.tmBackofficeBaseUrlLive = $('input[name=backoffice-baseliveurl]').val();
+					data.tmBackofficeBaseUrlDemo = $('input[name=backoffice-basedemourl]').val();
+					data.tmApiVersionUrlDemo = $('input[name=api-versiondemourl]').val();
+					data.tmApiVersionUrlLive = $('input[name=api-versionliveurl]').val();
 				},
 				validate: function(){
-					var valid = true,
+					var errorMessages = [],
 						data = this.data;
 					
-					if(data.apiKey == "" || data.apiSecret == "" || data.catalogID == "" || data.tmPageSize == "" || (data.apiCategory == "" && $('select[name=api-category] option').length > 1)){
-						$('.error').text("All fields are required");
-						valid = false;
+					if(data.apiKey == ""){
+						errorMessages.push("API Key is required");
 					}
 					
-					if(valid && isNaN(data.tmPageSize)){
-						$('.error').text("Dashboard Page Size must a number");
-						valid = false;
-					}
-					else if(valid && parseInt(data.tmPageSize, 10) < 10){
-						$('.error').text("Dashboard Page Size minimum value is 10");
-						valid = false;
+					if(data.apiSecret == ""){
+						errorMessages.push("API Secret is required");
 					}
 					
-					if(valid){
+					if(data.apiCategory == "" && $('select[name=api-category] option').length > 1){
+						errorMessages.push("Store Category is required");
+					}
+					
+					if(data.catalogID == ""){
+						errorMessages.push("Master Catalog ID is required");
+					}
+					
+					if(data.tmPageSize == ""){
+						errorMessages.push("Dashboard Data Size is required");
+					}
+					else if(isNaN(data.tmPageSize)){
+						errorMessages.push("Dashboard Page Size must be a number");
+					}
+					else if(parseInt(data.tmPageSize, 10) < 10){
+						errorMessages.push("Dashboard Page Size minimum value is 10");
+					}
+					
+					if(data.tmApiBaseUrlDemo == ""){
+						errorMessages.push("API Base URL (Demo) is required");
+					}
+					
+					if(data.tmApiVersionUrlDemo == ""){
+						errorMessages.push("API Version (Demo) is required");
+					}
+
+					if(data.tmBackofficeBaseUrlDemo == ""){
+						errorMessages.push("Backoffice Base URL (Demo) is required");
+					}
+					
+					if(data.tmApiBaseUrlLive == ""){
+						errorMessages.push("API Base URL (Live) is required");
+					}
+
+					if(data.tmApiVersionUrlLive == ""){
+						errorMessages.push("API Version (Live) is required");
+					}
+					
+					if(data.tmBackofficeBaseUrlLive == ""){
+						errorMessages.push("Backoffice Base URL (Live) is required");
+					}
+					
+					if(errorMessages.length == 0){
 						//Check if API Key and Secret are valid in the API environment
 						$.ajax({
 							type: 'POST',
@@ -582,14 +641,24 @@
 							async: false,
 							success: function(output){
 								if(output.toLowerCase() != "success"){
-									$('.error').text("API Key or API Secret is invalid");
-									valid = false;
+									errorMessages.push('API Key OR Secret OR Base URL (' + app.utils.firstLetterCapital(data.apiEnv) + ') is invalid');
 								}
 							}
 						});
 					}
 					
-					return valid;
+					app.registration.showErrorMessages(errorMessages);
+					
+					return errorMessages.length === 0; //true | false
+				},
+				showErrorMessages: function(errorMessages) {
+					if(errorMessages.length > 0){
+						var htmlMessage = "";
+						errorMessages.forEach(function(message){
+							htmlMessage += message + '<br>';
+						});
+						$('.error').html(htmlMessage);
+					}
 				},
 				saveData: function(){
 					var reg = this;
@@ -601,17 +670,11 @@
 						$('.success-message').addClass('show');
 						reg.saveButton.val(reg.saveButtonLabel);
 						reg.saveButton.prop('disabled', false);
-						
+
 						setTimeout(function(){
 							$('.success-message').removeClass('show');
 						}, 3000);
 					});
-				},
-				setRegLink: function(){
-					var apiEnv = $('select[name=api-env]').val(),
-						regLink = $('input[name=reg-link-'+ apiEnv +']').val();
-					
-					$('a#reg-link').attr('href', regLink);
 				}
 			},
 			followup:{
@@ -701,6 +764,7 @@
 						}
 					});
 				},
+				
 				populateMoreData: function(documents){
 					var docTitle, createdAt, datePart, timePart, hour, minute, docDate, itemID, itemName, itemType, docLocale, docStatus, actions,
 						follow = this;
@@ -782,6 +846,119 @@
 					else{
 						$('.followup .load-more').removeClass('show');
 					}
+				}
+			},
+			languageMapping: {
+				rowData : '',
+				init: function() {
+					/* Add new mapping */
+					$('.add-mapping').on ("click",function() {
+						app.languageMapping.rowData = '';
+						var buttonLabel = $(this).val();
+						$(this).attr("disabled", true);
+						$(this).val('Please wait...');
+						$('.no-data-message').addClass('hidden');
+						$('#mappingList').removeClass('hidden');
+						$('#mappingList tbody').append('<tr><td colspan="3" class="center s">Please wait...</td></tr>');
+						$('#mappingList').addClass('form-mode');
+						var langMapping = {
+							currDwLangCode: '',
+							currTmLangCode: ''
+						};
+						
+						$.post(app.urls.newMappingRow, langMapping, function(data) {
+							$('#mappingList tbody tr:last-child').html(data);
+							$('.add-mapping').val(buttonLabel);
+						});
+					});
+
+					/* Save button */
+					$('.language-mapping').on ('click', '#saveMapping', function() {
+						var saveButton = $(this);
+						var dwLangCode = $( "#dwlanguageSelect option:selected" ).val();
+						var tmLangCode = $( "#tmlanguageSelect option:selected" ).val();
+
+						if (dwLangCode && tmLangCode) {
+							saveButton.prop('disabled', true);
+							$('#cancelMapping').prop('disabled', true);
+							saveButton.val('Please wait...');
+
+							var dwLangName = $( "#dwlanguageSelect option:selected" ).text();
+							var tmLangName = $( "#tmlanguageSelect option:selected" ).text();
+							var langCodesStr = saveButton.closest('td').attr('data-langs');
+							var langCodes = langCodesStr.split('|');
+
+							var newLanguageMappingData = {
+								dwLangName: dwLangName,
+								tmLangName: tmLangName,
+								dwLangCode: dwLangCode,
+								tmLangCode: tmLangCode,
+								currDwLangCode: langCodes[0],
+								currTmLangCode: langCodes[1]
+							};
+
+							$.post(app.urls.saveLanguageMapping, newLanguageMappingData, function(responseHTML) {
+								saveButton.closest('tr').html(responseHTML);
+								$('.add-mapping').attr("disabled",false);
+								$('#mappingList').removeClass('form-mode');
+							});
+						}
+					});
+
+					/* Cancel button */
+					$('.language-mapping').on ('click', '#cancelMapping', function() {
+						if (app.languageMapping.rowData === '') { // Cancelling add new mapping
+							$(this).closest('tr').remove();
+						} else { // Cancelling edit
+							$(this).closest('tr').html(app.languageMapping.rowData);
+						}
+
+						if ($('#mappingList tr').length === 1) {
+							$('#mappingList').addClass('hidden');
+							$('.no-data-message').removeClass('hidden');
+						}
+
+						$('.add-mapping').attr("disabled",false);
+						$('#mappingList').removeClass('form-mode');
+					});
+
+					/* Delete button */
+					$('.language-mapping').on('click', '.actions .delete', function() {
+						if (!$('#mappingList').hasClass('form-mode') && confirm('Are you sure you want to delete this mapping?')) {
+							$(this).closest('tr').remove();
+							var langCodesStr = $(this).closest('td').attr('data-langs');
+							var langCodes = langCodesStr.split('|');
+							var langMapping = {dwLangCode: langCodes[0], tmLangCode: langCodes[1]};
+
+							if ($('#mappingList tr').length === 1) {
+								$('#mappingList').addClass('hidden');
+								$('.no-data-message').removeClass('hidden');
+							}
+
+							$.post(app.urls.deleteRowMapping, langMapping, function(){});
+						}
+					});
+
+					/* Edit button */
+					$('.language-mapping').on ('click', '.actions .edit', function() {
+						if (!$('#mappingList').hasClass('form-mode')) {
+							var parentTR = $(this).closest('tr');
+							app.languageMapping.rowData = parentTR.html();
+							var langCodesStr = $(this).parent('td').attr('data-langs');
+							var langCodes = langCodesStr.split('|');
+							var langMapping = {
+								currDwLangCode: langCodes[0],
+								currTmLangCode: langCodes[1]
+							};
+							parentTR.html('<td colspan="3" class="center s">Please wait...</td>');
+							$('.add-mapping').attr("disabled", true);
+							$('#mappingList').addClass('form-mode');
+
+							$.post(app.urls.newMappingRow, langMapping, function(data) {
+								parentTR.html(data);
+							});
+						}
+					});
 				}
 			},
 			utils: {

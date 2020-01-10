@@ -15,6 +15,9 @@
 .translation-module ul li {
 	list-style-type: none;
 }
+.translation-module .center {
+	text-align: center;
+}
 .translation-module input[type=button],
 .translation-module a.button {
 	background-color: #d9d9d9;
@@ -210,6 +213,9 @@
 .new-translation #items-holder .table_detail {
 	padding:0;
 }
+.allowed-language{
+	font-weight: bold;
+}
 .new-translation #items-holder tr:hover td {
     background-color: #f9f9f9;
 }
@@ -329,7 +335,7 @@
 	display: block;
 }
 .followup .status-diagram table td span.percent {
-	font-size: 18px;
+	font-size: 18px; 
     font-weight: bold;
 }
 .followup .status-diagram table td span.count {
@@ -420,8 +426,12 @@
     display:none;
 }
 .registration .success-message.show,
-.default-attributes .success-message.show {
+.default-attributes .success-message.show,
+.registration .error {
 	display:block;
+}
+.registration .error:empty {
+    display: inline;
 }
 
 /* Quote */
@@ -433,6 +443,56 @@
 	margin:10px auto;
 	padding:10px 50px;
 }
+
+/* Language Mapping */
+.language-mapping #mappingList th {
+	padding: 10px 0;
+	color: #8e9092;
+}
+.language-mapping #mappingList td {
+    padding: 10px 2px;
+}
+.language-mapping select {
+    height: 30px;
+}
+.language-mapping input.save-mapping,
+.language-mapping input.cancel-mapping {
+    padding: 8px 20px;
+    background-color: #7b7d7f;
+    color: #fff;
+}
+.language-mapping input.save-mapping[disabled],
+.language-mapping input.cancel-mapping[disabled] {
+    background-color: #e1e4e6;
+}
+.language-mapping .button.main-action.add-mapping {
+    background-color: #e1e4e6;
+    color: #282828;
+    margin-top: 10px;
+    padding: 10px 20px;
+}
+.language-mapping .button.main-action.add-mapping[disabled] {
+	color: #fff;
+}
+.language-mapping .actions {
+	text-align: center;
+}
+.language-mapping .actions img {
+	margin: 0 5px;
+}
+.language-mapping .actions img:hover {
+	margin: 0 5px;
+    box-shadow: 0px 1px 10px 1px #aaa;
+    cursor: pointer;
+}
+.language-mapping .form-mode .actions img {
+	opacity: 0.2;
+}
+.language-mapping .form-mode .actions img:hover {
+	box-shadow: none;
+    cursor: default;
+}
+
 /* Responsive */
 @media screen and (max-width:2732px){
 	.new-translation #items-holder .item-label {
@@ -447,4 +507,8 @@
 	.new-translation #items-holder .item-label {
 	    max-width: 235px;
 	}
+}
+.no-data-message {
+    text-align: center;
+    padding: 10px;
 }

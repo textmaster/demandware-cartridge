@@ -103,11 +103,16 @@ function loginCheck(){
 	return true;
 }
 
+/**
+ * Language mapping main page
+ * */
+function languageMapping() {
+	var languageMapping = require('~/cartridge/scripts/translation/getLanguageMapping');
+    ISML.renderTemplate('translation/languagemapping', {languageMapping: languageMapping.data});
+}
+
 /*
 * Web exposed methods
-*/
-/**
-* Calls translation pages
 */
 newTranslation.public = true;
 followUp.public = true;
@@ -115,6 +120,7 @@ register.public = true;
 placeOrder.public = true;
 notification.public = true;
 defaultAttributes.public = true;
+languageMapping.public = true;
 
 exports.New = newTranslation;
 exports.FollowUp = followUp;
@@ -122,3 +128,4 @@ exports.Register = register;
 exports.PlaceOrder = placeOrder;
 exports.Notification = notification;
 exports.DefaultAttributes = defaultAttributes;
+exports.LanguageMapping = languageMapping;

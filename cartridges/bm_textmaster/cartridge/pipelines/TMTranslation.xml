@@ -106,6 +106,10 @@
           <key-binding alias="TMPageSize" key="TMPageSize"/>
           <key-binding alias="APICache" key="APICache"/>
           <key-binding alias="TMSFpassword" key="TMSFpassword"/>
+          <key-binding alias="tmApiBaseUrlDemo" key="tmApiBaseUrlDemo"/>
+          <key-binding alias="tmApiBaseUrlLive" key="tmApiBaseUrlLive"/>
+          <key-binding alias="tmBackofficeBaseUrlLive" key="tmBackofficeBaseUrlDemo"/>
+          <key-binding alias="tmBackofficeBaseUrlDemo" key="tmBackofficeBaseUrlLive"/>
         </pipelet-node>
         <node-display x="0" y="1"/>
         <branch basename="b2" source-connector="error">

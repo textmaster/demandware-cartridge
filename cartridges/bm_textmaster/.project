@@ -4,6 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>DemandwareServer</project>
+		<project>DigitalServer</project>
+		<project>int_textmaster_sfra</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
