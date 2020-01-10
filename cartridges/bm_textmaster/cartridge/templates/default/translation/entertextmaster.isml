@@ -22,15 +22,24 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td class="table_detail e s w right input-holder">
-					<a class="button" href="${Resource.msg('link.base.' + pdict.APIEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
-					<input type="hidden" name="reg-link-demo" value="${Resource.msg('link.base.demo','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" />
-					<input type="hidden" name="reg-link-live" value="${Resource.msg('link.base.live','textmaster',null) + Resource.msg('link.enter.textmaster', 'textmaster',null)}" />
+				<td class="table_detail e s w right input-holder">				
+				  <isset name="currentBaseURL" value="${pdict.APIEnv == 'live' ? pdict.tmBackofficeBaseUrlLive : pdict.tmBackofficeBaseUrlDemo}" scope="page" />
+					<a class="button" href="" data-signin-link="${Resource.msg('link.enter.textmaster', 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	<div class="success-message">${Resource.msg('attributes.success.message','textmaster',null)}</div>
+	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tbody>
+			<tr>
+				<td colspan="2" class="table_detail n e s w right input-holder">
+					<span class="error"></span>
+					<input type="button" class="api-config-save" value="${Resource.msg('general.save', 'textmaster',null)}"/>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
@@ -95,18 +104,6 @@
 					<span>${Resource.msg('api.page.size.desc', 'textmaster',null)}</span>
 				</td>
 			</tr>
-			<tr>
-				<td class="table_detail e s w right">
-					${Resource.msg('api.cache.label', 'textmaster',null)}
-				</td>
-				<td class="table_detail e s">
-					<select name="api-cache">
-						<option value="enabled" ${pdict.APICache == 'enabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.enabled', 'textmaster',null)}</option>
-						<option value="disabled" ${pdict.APICache == 'disabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.disabled', 'textmaster',null)}</option>
-					</select>
-					<span>${Resource.msg('api.cache.desc', 'textmaster',null)}</span>
-				</td>
-			</tr>
 			<isif condition="${dw.system.Site.current.status === dw.system.Site.SITE_STATUS_PROTECTED}">
 				<tr>
 					<td class="table_detail e s w right">
@@ -117,10 +114,78 @@
 					</td>
 				</tr>
 			</isif>
+			
+		<thead>
 			<tr>
-				<td colspan="2" class="table_detail e s w right input-holder">
-					<span class="error"></span>
-					<input id="api-config-save" type="button" value="${Resource.msg('general.save', 'textmaster',null)}"/>
+				<th colspan="2" class="table_header n w e s left">${Resource.msg('register.go.preference.title.demo', 'textmaster',null)}</th>
+			</tr>
+		</thead>
+		<tbody>
+	      <tr>
+			<td class="table_detail e s w right">${Resource.msg('api.basedemourl.label', 'textmaster',null)}</td>
+			<td class="table_detail e s">
+				<input type="text" name="api-basedemourl" value="${pdict.tmApiBaseUrlDemo}"/>
+			</td>
+	     </tr>
+	     <tr>
+			<td class="table_detail e s w right">${Resource.msg('api.demoversionurl.label', 'textmaster',null)}</td>
+			<td class="table_detail e s">
+				<input type="text" name="api-versiondemourl" value="${pdict.tmApiVersionUrlDemo}"/>
+			</td>
+	     </tr>
+	     <tr>
+			<td class="table_detail e s w right">
+				${Resource.msg('api.backofficedemourl.label', 'textmaster',null)}
+			</td>
+			<td class="table_detail e s">
+				<input type="text" name="backoffice-basedemourl" value="${pdict.tmBackofficeBaseUrlDemo}"/>
+			</td>
+			</tr>
+		</tbody>
+		<thead>
+			<tr>
+				<th colspan="2" class="table_header n w e s left">${Resource.msg('register.go.preference.title.live', 'textmaster',null)}</th>
+			</tr>
+		</thead>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.baseurllive.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="text" name="api-baseliveurl" value="${pdict.tmApiBaseUrlLive}"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.liveversionurl.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="text" name="api-versionliveurl" value="${pdict.tmApiVersionUrlLive}"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.backofficeliveurl.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="text" name="backoffice-baseliveurl" value="${pdict.tmBackofficeBaseUrlLive}"/>
+				</td>
+			</tr>	
+			<thead>
+			<tr>
+				<th colspan="2" class="table_header n w e s left">${Resource.msg('api.language.list.cache.label', 'textmaster',null)}</th>
+			</tr>
+			</thead>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.cache.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<select name="api-cache">
+						<option value="enabled" ${pdict.APICache == 'enabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.enabled', 'textmaster',null)}</option>
+						<option value="disabled" ${pdict.APICache == 'disabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.disabled', 'textmaster',null)}</option>
+					</select>
+					<span>${Resource.msg('api.cache.desc', 'textmaster',null)}</span>
 				</td>
 			</tr>
 		</tbody>

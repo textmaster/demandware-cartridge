@@ -146,14 +146,14 @@ function getDocumentResult(doc, project){
 	doc.project_name = project.name;
 	doc.project_launch_date = project.launched_at ? (project.launched_at.year || "") +"-"+ (project.launched_at.month || "") +"-"+ (project.launched_at.day || "") : "";
 	doc.item_type = project.custom_data.itemType;
-	doc.locale = Utils.getLocaleName(project.language_to_code);
+	doc.locale = Utils.getLocaleName(project.custom_data && project.custom_data.sfccLanguageTo ? project.custom_data.sfccLanguageTo : project.language_to_code);
 	actions = [];
-			   				
+	var linkBase = Utils.config.apiEnv == "live" ? Utils.config.tmBackofficeBaseUrlLive : Utils.config.tmBackofficeBaseUrlDemo;
 	switch(doc.status.toLowerCase()){
 		case "in_creation":
 			actions.push({
 				text: Resource.msg("follow.action.view.project","textmaster",null),
-				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.project","textmaster",null,project.id)
+				link: linkBase + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.project","textmaster",null,project.id)
 			});
 			break;
 		case "in_progress":
@@ -161,7 +161,7 @@ function getDocumentResult(doc, project){
 		case "quality_control":
 			actions.push({
 				text: Resource.msg("follow.action.view.document","textmaster",null),
-				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+				link: linkBase+ Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 			});
 			break;
 		case "in_review":
@@ -192,7 +192,7 @@ function getDocumentResult(doc, project){
 				});
 				actions.push({
 					text: Resource.msg("follow.action.view.document","textmaster",null),
-					link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+					link: linkBase + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 				});
 			}
 			else{
@@ -202,7 +202,7 @@ function getDocumentResult(doc, project){
 		case "incomplete":
 			actions.push({
 				text: Resource.msg("follow.action.communicate.translator","textmaster",null),
-				link: Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
+				link: linkBase + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.document","textmaster",null,project.id,doc.id)
 			});
 			break;
 	}

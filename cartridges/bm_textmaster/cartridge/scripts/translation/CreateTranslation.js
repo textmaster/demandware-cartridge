@@ -62,7 +62,7 @@ function getOutput(input){
 		itemCount = 0,
 		projectPostData, projectEndPoint, project, projectResult,
 		documents, document, item, customData, itemData, markupFlag, contentValue, i, attr, itemAttrs, itemAttr,
-		attrData, updateRequest, avoidItems = [];
+		attrData, updateRequest, avoidItems = [], mappedLanguageFrom, mappedLanguageTo;
 	
 	bulkLimit = isNaN(bulkLimit) ? 25 : parseInt(bulkLimit, 10);
 	
@@ -73,15 +73,21 @@ function getOutput(input){
 			
 			project.name = Utils.firstLetterCapital(itemType) +" - "+ localeTo.template.name + " - " + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd') ;
 			project.ctype = Resource.msg("constant.translation","textmaster",null);
-			project.language_from = localeFrom;
-			project.language_to = localeTo.id;
+			
+			mappedLanguageFrom = Utils.getMappedLanguage(localeFrom);
+			mappedLanguageTo = Utils.getMappedLanguage(localeTo.id);
+			
+			project.language_from = mappedLanguageFrom ? mappedLanguageFrom : localeFrom;
+			project.language_to = mappedLanguageTo ? mappedLanguageTo : localeTo.id;
 			project.category = categoryCode;
-			project.project_briefing = Resource.msg("constant.briefing","textmaster",null);
+			project.project_briefing = "LANGUAGE - FROM "+ Utils.getLocaleName(localeFrom) +" ["+ localeFrom +"] TO "+ Utils.getLocaleName(localeTo.id) +" ["+ localeTo.id +"] - " + Resource.msg("constant.briefing","textmaster",null);
 			project.options = {language_level: Resource.msg("constant.enterprise","textmaster",null)};
 			project.api_template_id = localeTo.template.id;
 			project.custom_data = {
 				itemType: itemType,
-				catalogID: catalogID
+				catalogID: catalogID,
+				sfccLanguageFrom: localeFrom,
+				sfccLanguageTo: localeTo.id
 			};
 			
 			projectPostData.project = project;

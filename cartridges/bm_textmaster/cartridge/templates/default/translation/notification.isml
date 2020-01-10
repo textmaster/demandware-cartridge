@@ -2,10 +2,11 @@
 <isinclude template="custom/modules"/>
 <isscript>
 	var Utils = require('~/cartridge/scripts/utils/Utils');
-	var projectLink = pdict.projectID ?
-						Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msgf("link.view.project", "textmaster", null, pdict.projectID) :
-						Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg("link.list.projects", "textmaster",null);
 </isscript>
+<isset name="currentBaseURL" value="${Utils.config.apiEnv == 'live' ? Utils.config.tmBackofficeBaseUrlLive : Utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
+<isset name="projectLink" value="${pdict.projectID ?
+						currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msgf('link.view.project', 'textmaster', null, pdict.projectID) :
+						currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.projects', 'textmaster',null)}" scope="page" />
 <isdecorate template="application/MenuFrame">
     <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
     <h1>${Resource.msg("order.success", "textmaster",null)}</h1>

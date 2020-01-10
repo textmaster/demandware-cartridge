@@ -6,11 +6,13 @@
 <isscript>
 	var transParams = JSON.parse(pdict.TransParams);
 	var Utils = require('~/cartridge/scripts/utils/Utils');
+	var mappedLanguageFrom, mappedLanguageTo;
 </isscript>
 <div class="place-order">
 	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
 	<div class="right">
-		<a href="${Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
+	    <isset name="currentBaseURL" value="${Utils.config.apiEnv == 'live' ? Utils.config.tmBackofficeBaseUrlLive : Utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
+		<a href="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
 		<a id="reload-templates" class="button">${Resource.msg('order.reload.templates','textmaster',null)}</a>
 	</div>
 	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -39,7 +41,14 @@
 						</ul>
 					</td>
 					<td class="table_detail e s center">
-						<div class="template-list-holder" data-locale-from="${transParams.localeFrom.id}" data-locale-to="${localeTo.id}" id="template-list-holder-${transParams.localeFrom.id +'-'+ localeTo.id}"></div>
+						<isscript>
+							mappedLanguageFrom = Utils.getMappedLanguage(transParams.localeFrom.id);
+							mappedLanguageTo = Utils.getMappedLanguage(localeTo.id);
+							
+							mappedLanguageFrom = mappedLanguageFrom ? mappedLanguageFrom : transParams.localeFrom.id;
+							mappedLanguageTo = mappedLanguageTo ? mappedLanguageTo : localeTo.id;
+						</isscript>
+						<div class="template-list-holder" data-locale-from="${mappedLanguageFrom}" data-locale-to="${mappedLanguageTo}" id="template-list-holder-${mappedLanguageFrom +'-'+ mappedLanguageTo}"></div>
 					</td>
 				</tr>
 			</isloop>
@@ -50,7 +59,7 @@
 		<tbody>
 			<tr>
 				<td class="table_detail center">
-					<a href="${Resource.msg('link.base.' + Utils.config.apiEnv,'textmaster',null) + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.create.templates','textmaster',null)}" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
+					<a href="${currentBaseURL  + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.create.templates','textmaster',null)}" target="_blank">${Resource.msg('order.create.templates','textmaster',null)}</a>
 				</td>
 				<td class="table_detail right">
 					<input type="hidden" id="itemrequestlimit" value="${Resource.msg('api.bulk.doc.limit','textmaster',null)}">

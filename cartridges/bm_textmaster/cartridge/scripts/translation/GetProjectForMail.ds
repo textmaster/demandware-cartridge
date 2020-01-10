@@ -26,7 +26,7 @@ function execute( pdict : PipelineDictionary ) : Number
     var projectEndPoint = Resource.msg("api.get.project","textmaster",null) + "/" + projectID;
     var projectResult = Utils.TextMasterClient("GET", projectEndPoint);
     var mail = null, mContent = {}, projectOptions = {}, updateRequest, costs = 0, currency = "", wordCount = 0;
-    
+    var linkBase = Utils.config.apiEnv == "live" ? Utils.config.tmBackofficeBaseUrlLive : Utils.config.tmBackofficeBaseUrlDemo;   
     log = LogUtils.getLogger("AskForQuote");
     
     if (projectResult != null) {

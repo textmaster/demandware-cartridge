@@ -13,6 +13,7 @@ var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
 /* Global variables */
 var log = logUtils.getLogger("Translation Controller");
+var utils = require('~/cartridge/scripts/utils/Utils');
 
 /**
 * Form to show filter options for translation
@@ -138,7 +139,13 @@ function saveAPIConfigurations(){
 			APIEnv: request.httpParameterMap.get('apiEnv').stringValue,
 			APICache: request.httpParameterMap.get('apiCache').stringValue,
 			TMPageSize: request.httpParameterMap.get('tmPageSize').intValue,
-			TMSFpassword: request.httpParameterMap.get('tmSFpassword').stringValue
+			TMSFpassword: request.httpParameterMap.get('tmSFpassword').stringValue,
+			tmApiBaseUrlDemo: request.httpParameterMap.get('tmApiBaseUrlDemo').stringValue,
+			tmApiBaseUrlLive: request.httpParameterMap.get('tmApiBaseUrlLive').stringValue,
+			tmBackofficeBaseUrlLive: request.httpParameterMap.get('tmBackofficeBaseUrlLive').stringValue,
+			tmBackofficeBaseUrlDemo: request.httpParameterMap.get('tmBackofficeBaseUrlDemo').stringValue,
+			tmApiVersionUrlDemo: request.httpParameterMap.get('tmApiVersionUrlDemo').stringValue,
+			tmApiVersionUrlLive: request.httpParameterMap.get('tmApiVersionUrlLive').stringValue
 		};
 	apiConfig.output(input);
 }
@@ -186,16 +193,17 @@ function getDashboardData(){
  * Check if API Key and Secret are valid in the API environment
  * */
 function apiKeyTest(){
+	var apiBaseURL = request.httpParameterMap.get('apiEnv').stringValue === 'demo' ? request.httpParameterMap.get('tmApiBaseUrlDemo').stringValue : request.httpParameterMap.get('tmApiBaseUrlLive').stringValue;
 	var input = {
 			apiKey: request.httpParameterMap.get('apiKey').stringValue,
 			apiSecret: request.httpParameterMap.get('apiSecret').stringValue,
-			apiEnv: request.httpParameterMap.get('apiEnv').stringValue
+			apiBaseURL: apiBaseURL
 		},
 		apiTest = require('~/cartridge/scripts/translation/APIKeyTest'),
 		output = apiTest.output(input);
 	
 	response.getWriter().print(output);
-}
+} 
 
 /*
 * Web exposed methods
@@ -216,7 +224,6 @@ handleAutoLaunch.public = true;
 getDashboardData.public = true;
 dashboardFirstRow.public = true;
 
-
 exports.APIKeyTest = apiKeyTest;
 exports.AttributeList = attributeList;
 exports.CategoryDropdown =categoryDropdown;
@@ -228,4 +235,4 @@ exports.SaveDefaultAttributes = saveDefaultAttributes;
 exports.SaveAPIConfigurations = saveAPIConfigurations;
 exports.HandleAutoLaunch = handleAutoLaunch;
 exports.DashboardData = getDashboardData;
-exports.DashboardFirstRow =dashboardFirstRow;
+exports.DashboardFirstRow = dashboardFirstRow;

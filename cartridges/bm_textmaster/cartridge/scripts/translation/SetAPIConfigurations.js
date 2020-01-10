@@ -9,6 +9,12 @@
 *	@input APICache: String
 *	@input TMPageSize: Number
 *	@input TMSFpassword: String
+*	@input tmApiBaseUrlDemo: String
+*   @input tmApiBaseUrlLive: String
+*	@input tmBackofficeBaseUrlLive: String
+*	@input tmBackofficeBaseUrlDemo: String
+*   @input tmApiVersionUrlLive: String
+*   @input tmApiVersionUrlDemo: String
 *
 */
 importPackage( dw.system );
@@ -32,7 +38,13 @@ function execute( pdict : PipelineDictionary ) : Number
 		APIEnv: pdict.APIEnv,
 		APICache: pdict.APICache,
 		TMPageSize: pdict.TMPageSize,
-		TMSFpassword: pdict.TMSFpassword
+		TMSFpassword: pdict.TMSFpassword,
+		tmApiBaseUrlDemo: pdict.tmApiBaseUrlDemo,
+		tmApiBaseUrlLive: pdict.tmApiBaseUrlLive,
+		tmBackofficeBaseUrlLive: pdict.tmBackofficeBaseUrlLive,
+		tmBackofficeBaseUrlDemo: pdict.tmBackofficeBaseUrlDemo,
+		tmApiVersionUrlLive: pdict.tmApiVersionUrlLive,
+		tmApiVersionUrlDemo: pdict.tmApiVersionUrlDemo
 	};
 	output = getOutput(input);
 	
@@ -52,7 +64,12 @@ function getOutput(input){
 	site.setCustomPreferenceValue("TMAPIEnvironment",input.APIEnv);
 	site.setCustomPreferenceValue("TMAPICache",input.APICache);
 	site.setCustomPreferenceValue("TMDashboardPageSize",input.TMPageSize);
-	
+	site.setCustomPreferenceValue("tmApiBaseUrlDemo",input.tmApiBaseUrlDemo);
+	site.setCustomPreferenceValue("tmApiBaseUrlLive",input.tmApiBaseUrlLive);
+	site.setCustomPreferenceValue("tmBackofficeBaseUrlLive",input.tmBackofficeBaseUrlLive);
+	site.setCustomPreferenceValue("tmBackofficeBaseUrlDemo",input.tmBackofficeBaseUrlDemo);
+	site.setCustomPreferenceValue("tmApiVersionUrlLive",input.tmApiVersionUrlLive);
+	site.setCustomPreferenceValue("tmApiVersionUrlDemo",input.tmApiVersionUrlDemo);
 	if(Site.current.status === Site.SITE_STATUS_PROTECTED){
 		site.setCustomPreferenceValue("TMSFpassword",input.TMSFpassword);
 	}

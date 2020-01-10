@@ -24,7 +24,7 @@ function execute( pdict : PipelineDictionary ) : Number
 		projectEndPoint = Resource.msg("api.get.project","textmaster",null) +"/"+ projectID,
 		docEndPoint = projectEndPoint +"/"+ Resource.msg("api.get.document","textmaster",null) +"/"+ documentID,
 		canImport = false,
-		project, doc, content, baseFolder, relativeFolder, fileName,
+		project, doc, content, baseFolder, relativeFolder, fileName, sfccLanguageTo,
 		swriter, writer, itemType, catalogID, startElement, attr, language, pageAttr, importStartNode, attrList, itemID, sysAttrList, sysAttr,
 		pageAttrs = {
 			pageTitle: {},
@@ -38,7 +38,8 @@ function execute( pdict : PipelineDictionary ) : Number
 	if(project && project.custom_data.itemType){
 		itemType = project.custom_data.itemType;
 		catalogID = project.custom_data.catalogID;
-		language = utils.toDemandwareLocaleID(project.language_to_code);
+		sfccLanguageTo = project.custom_data.sfccLanguageTo;
+		language = utils.toDemandwareLocaleID(sfccLanguageTo);
 		sysAttrList = utils.attributes[itemType];
 		
 		if(itemType == "product" && !catalogID){
