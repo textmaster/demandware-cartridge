@@ -34,6 +34,11 @@
     border: 1px solid #ccc;
     white-space: nowrap;
 }
+.translation-module input[type=button][disabled] {
+    color: #fff;
+    background-color: #efefef;
+    cursor: default;
+}
 .translation-module a:active {
 	color: #3AB5CF;
 }
@@ -81,7 +86,7 @@
 }
 .translation-module .checkbox-label {
 	position: relative;
-    top: -2px;
+    top: 1px;
     padding-right: 10px;
 }
 .translation-module .field-holder.title-holder {
@@ -433,6 +438,12 @@
 .registration .error:empty {
     display: inline;
 }
+.translation-module input[type=button].clear-cache {
+    margin-left: 20px;
+}
+span.cache-message {
+    color: green;
+}
 
 /* Quote */
 .quote .notification {
@@ -491,6 +502,9 @@
 .language-mapping .form-mode .actions img:hover {
 	box-shadow: none;
     cursor: default;
+}
+.language-mapping td.store-enabled {
+    font-weight: bold;
 }
 
 /* Responsive */

@@ -42,9 +42,11 @@ function execute( pdict : PipelineDictionary ) : Number {
 
 function getOutput(input){
 	var localeFrom = input.LocaleFrom,
+		mappedLocaleFrom = input.MappedLocaleFrom,
 		itemType = input.ItemType,
 		catalogID = input.CatalogID,
 		localeTo = input.LocaleTo,
+		mappedLocaleTo = input.MappedLocaleTo,
 		attributes = input.Attributes,
 		items = input.Items,
 		localeFromName, localeTo, locale, localeName, attribute, attr, count = 0, output;
@@ -83,6 +85,8 @@ function getOutput(input){
 				name: localeFromName
 			},
 		localeTo: localeTo,
+		mappedLocaleFrom: Utils.toTextMasterLocaleID(mappedLocaleFrom),
+		mappedLocaleTo: mappedLocaleTo,
 		itemType: itemType,
 		catalogID: catalogID,
 		attributes: attributes,

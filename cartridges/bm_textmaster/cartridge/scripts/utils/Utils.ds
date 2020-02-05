@@ -12,6 +12,8 @@ importPackage( dw.crypto );
 importClass( dw.web.Resource );
 importClass( dw.object.CustomObjectMgr );
 
+var customCache = require('./customCacheWebdav');
+
 // API Includes
 var StringUtils = require('dw/util/StringUtils');
 
@@ -56,8 +58,19 @@ Utils.config = {
 	tmApiBaseUrlLive: Site.current.getCustomPreferenceValue("tmApiBaseUrlLive") || "",
 	tmApiVersionUrlLive: Site.current.getCustomPreferenceValue("tmApiVersionUrlLive") || "",
 	tmApiVersionUrlDemo: Site.current.getCustomPreferenceValue("tmApiVersionUrlDemo") || "",
+	tmApiCache: Site.current.getCustomPreferenceValue('TMAPICache') || 'disabled',
 	languageMapping: Site.current.getCustomPreferenceValue("tmLanguageMapping") ? JSON.parse(Site.current.getCustomPreferenceValue("tmLanguageMapping")) : [],
-	demandwareLanguages: []
+	demandwareLanguages: [],
+	fromLanguages: { source: 'mapping' },
+	cache: {
+		url: {
+			languages: {
+				fromList: '/languages/fromList',
+				translation: '/languages/translation',
+				abilityList: '/languages/abilityList'
+			}
+		}
+	}
 };
 
 /*
@@ -213,11 +226,11 @@ Utils.formatLocaleStandard = function(locale){
 *	Gets Translation Languages - common languages in Demandware and TextMaster
 */
 Utils.getTranslationLanguages = function(){
-	var dataHolder = Utils.getLanguageDataHolder(),
-		mappedLanguage;
+	var translationLanguageCache = customCache.getCache(Utils.config.cache.url.languages.translation);
+	var mappedLanguage;
 	
-	if(dataHolder && dataHolder.custom.TMTranslationLanguages){
-		return JSON.parse(dataHolder.custom.TMTranslationLanguages);
+	if (translationLanguageCache){
+		return translationLanguageCache;
 	}
 	
 	var dwLanguages = Utils.getDWLanguages(),
@@ -238,12 +251,9 @@ Utils.getTranslationLanguages = function(){
 	languages.sort(function(a, b) {
 		return a.name < b.name ? -1 : 1;
 	});
-	
-	if(dataHolder){
-		Transaction.begin();
-		dataHolder.custom.TMTranslationLanguages = JSON.stringify(languages);
-		Transaction.commit();
-	}
+
+	translationLanguageCache = languages;
+	customCache.setCache(Utils.config.cache.url.languages.translation, translationLanguageCache);
 	
 	return languages;
 }
@@ -256,6 +266,13 @@ Utils.getTextMasterLanguages = function(){
 		tmLanguages = Utils.TextMasterPublic("GET",tmLanguageEndPoint,null);
 	
 	tmLanguages = tmLanguages ? tmLanguages.languages : [];
+	tmLanguages = tmLanguages.filter (function (item) {
+		if (item.code.length === 2) {
+			return false;
+		}
+		return true;
+	});
+
 	tmLanguages.sort(function (a, b) {
 		if (a.value  > b.value) {
 			return 1;
@@ -304,48 +321,59 @@ Utils.getSfccMappingLanguage = function(tmLang){
 }
 
 /*
-*	Get 'language from' list
-*/
-Utils.getLanguageFromList = function(){
-	var apiCache = Site.current.getCustomPreferenceValue("TMAPICache") || "enabled";
-	
-	if(apiCache.toLowerCase() == "disabled"){
-		// Cache settings checking is only here.
-		//In all other functions, data will be fetched from cache if data found in cache
-		Utils.resetLanguageCache();
-	}
-	
-	var dataHolder = Utils.getLanguageDataHolder();
-	
-	if(dataHolder && dataHolder.custom.TMLanguageFromList){
-		return JSON.parse(dataHolder.custom.TMLanguageFromList);
-	}
-	
-	var defaultLocale = Site.current.defaultLocale;
-	var result = [],
-		languages, languageToList;
-	var language;
-		
+ * Get 'language from' list
+ */
+Utils.getLanguageFromList = function () {
+	var result = [];
+
+	if (Utils.config.fromLanguages.source === 'mapping') {
+		var languageMapping = require('~/cartridge/scripts/translation/getLanguageMapping');
+
+		for (var i = 0; i< languageMapping.data.length; i++) {
+			if (Utils.isLocaleEnabled(languageMapping.data[i].dw)) {
+				result.push({
+					id: languageMapping.data[i].dw,
+					name: languageMapping.data[i].dwName
+				});
+			}
+		}
+	} else {
+		var apiCache = Utils.config.tmApiCache;
+
+		if (apiCache.toLowerCase() === 'disabled') {
+			// Cache settings checking is only here.
+			//In all other functions, data will be fetched from cache if data found in cache
+			Utils.resetLanguageCache();
+		}
+
+		var languageFromListCache = customCache.getCache(Utils.config.cache.url.languages.fromList);
+
+		if (languageFromListCache) {
+			return languageFromListCache;
+		}
+
+		var defaultLocale = Site.current.defaultLocale;
+		var languages, languageToList;
+		var language;
+
 		languages = Utils.getTranslationLanguages();
-		
+
 		for each(language in languages){
 			if(Utils.isLocaleEnabled(language.id)){
 				languageToList = Utils.getLanguageTo(language.id);
-				
+
 				if(languageToList.length > 0){
 					result.push(language);
 				}
 			}
 		}
-	
-	result = Utils.makeArrayUnique(result, "id");
-	
-	if(dataHolder){
-		Transaction.begin();
-		dataHolder.custom.TMLanguageFromList = JSON.stringify(result);
-		Transaction.commit();
+
+		result = Utils.makeArrayUnique(result, 'id');
+
+		languageFromListCache = result;
+		customCache.setCache(Utils.config.cache.url.languages.fromList, languageFromListCache);
 	}
-	
+
 	return result;
 }
 
@@ -353,15 +381,7 @@ Utils.getLanguageFromList = function(){
 *	Reset cache values
 */
 Utils.resetLanguageCache = function(){
-	var dataHolder = Utils.getLanguageDataHolder();
-	
-	if(dataHolder){
-		Transaction.begin();
-		dataHolder.custom.TMLanguageFromList = "";
-		dataHolder.custom.TMTranslationLanguages = "";
-		dataHolder.custom.TMAbilityList = "";
-		Transaction.commit();
-	}
+	customCache.clearCache('/languages');
 }
 
 /*
@@ -384,10 +404,10 @@ Utils.isTranslationLanguage = function(languageCheck){
 *	Get all language ability list
 */
 Utils.getLanguageAbilityList = function(){
-	var dataHolder = Utils.getLanguageDataHolder();
+	var abilityListCache = customCache.getCache(Utils.config.cache.url.languages.abilityList);
 	
-	if(dataHolder && dataHolder.custom.TMAbilityList){
-		return JSON.parse(dataHolder.custom.TMAbilityList);
+	if (abilityListCache){
+		return abilityListCache;
 	}
 	
 	var abilityEndPoint = Resource.msg('api.get.abilities','textmaster',null),
@@ -415,12 +435,9 @@ Utils.getLanguageAbilityList = function(){
 		
 		page++;
 	}
-	
-	if(dataHolder){
-		Transaction.begin();
-		dataHolder.custom.TMAbilityList = JSON.stringify(result);
-		Transaction.commit();
-	}
+
+	abilityListCache = result;
+	customCache.setCache(Utils.config.cache.url.languages.abilityList, abilityListCache);
 	
 	return result;
 }
@@ -441,10 +458,19 @@ Utils.getLanguageTo = function(languageFrom){
 			sfccMappingLanguage = Utils.getSfccMappingLanguage(language.to);
 			languageToCode = sfccMappingLanguage ? sfccMappingLanguage : language.to;
 			
-			languageTo.push({
-				id: languageToCode,
-				name: Utils.getLocaleName(languageToCode)
-			});
+			if (Utils.config.fromLanguages.source === 'mapping') {
+				if (Utils.isDWLanguageInMapping(languageToCode)) {
+					languageTo.push({
+						id: languageToCode,
+						name: Utils.getLocaleName(languageToCode)
+					});
+				}
+			} else {
+				languageTo.push({
+					id: languageToCode,
+					name: Utils.getLocaleName(languageToCode)
+				});
+			}
 		}
 	}
 	
@@ -456,6 +482,25 @@ Utils.getLanguageTo = function(languageFrom){
 	
 	return languageTo;
 }
+
+/**
+* Checks if the SFCC Language added in Language Mapping
+* @param {string} code - language code
+* @returns {Boolean}
+*/
+Utils.isDWLanguageInMapping = function (code) {
+	var languageMapping = Utils.config.languageMapping;
+	var found = false;
+	
+	for (var i = 0; i < languageMapping.length; i++) {
+		if (languageMapping[i].dw === code) {
+			found = true;
+			break;
+		}
+	}
+	
+	return found;
+};
 
 /*
 *	Remove duplicate values from array
@@ -493,7 +538,7 @@ Utils.getAllSubCategoriesHierarchy = function(root, itemType){
 	
 	subCategories = root.getSubCategories();
 	for each(category in subCategories){
-		if(itemType == 'product' || (itemType == 'category' && category.subCategories && category.subCategories.length)){
+		if(itemType == 'product' || itemType == 'category'){
 			catObject = {
 				cat: category,
 				sub: Utils.getAllSubCategoriesHierarchy(category, itemType)
@@ -578,6 +623,25 @@ Utils.isCategoryExistInList = function(categoryList, category){
 	
 	for each(cat in categoryList){
 		if(cat.ID == category.ID){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/*
+*	Check category name already exists in category list - This is useful for preparing filter option on item list
+*/
+Utils.isCategoryNameExistInList = function(categoryList, category){
+	var cat;
+	
+	if(category == null){
+		return true;
+	}
+	
+	for each(cat in categoryList){
+		if(cat.displayName == category.displayName){
 			return true;
 		}
 	}
@@ -983,27 +1047,6 @@ Utils.getWordCount = function(str){
  Utils.getJobDataHolder = function(){
 	var customObjectName = Resource.msg("import.customobject.name","textmaster",null),
 		customObjectInstanceID = Resource.msg("import.customobject.instanceid","textmaster",null);
-	try{
-		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
-		if(dataHolder == null){
-			Transaction.begin();
-			dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
-			Transaction.commit();
-		}
-		return dataHolder;
-	}
-	catch(ex){
-		Utils.log.error(ex.message + " - No custom object found.");
-		return null;
-	}
-}
-
-/**
-* Get custom object to keep Language list
-*/
- Utils.getLanguageDataHolder = function(){
-	var customObjectName = Resource.msg("language.customobject.name","textmaster",null),
-		customObjectInstanceID = Resource.msg("language.customobject.instanceid","textmaster",null);
 	try{
 		var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
 		if(dataHolder == null){

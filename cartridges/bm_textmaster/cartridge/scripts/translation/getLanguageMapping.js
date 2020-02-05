@@ -26,7 +26,9 @@ function getData() {
 	for (var i = 0; i < languageMapping.length; i++) {
 		languageMapping[i].dwName = utils.getLocaleName(languageMapping[i].dw);
 		languageMapping[i].tmName = utils.getTMLocaleName(languageMapping[i].tm);
+		languageMapping[i].enabled = utils.isLocaleEnabled(languageMapping[i].dw);
 	}
+
 	return languageMapping;
 }
 module.exports = {

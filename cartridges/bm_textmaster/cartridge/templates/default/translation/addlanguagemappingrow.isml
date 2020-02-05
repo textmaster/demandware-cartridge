@@ -1,4 +1,4 @@
-<td class="table_detail s">
+<td class="table_detail s ${pdict.input.enabled ? 'store-enabled' : ''}">
     <isprint value="${pdict.input.dwLangName}"/>
 </td>
 <td class="table_detail s">

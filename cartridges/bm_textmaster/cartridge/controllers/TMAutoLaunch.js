@@ -11,14 +11,12 @@ var ISML = require('dw/template/ISML');
 /* Script Modules */
 var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
-/* Global variables */
-var log = logUtils.getLogger("AutoLaunchController");
-
 /**
 * Calls start method
 */
 function document(){
 	var input, output, projectid, documentid, autoLaunchDocument;
+	var log = logUtils.getLogger("AutoLaunchController");
 	
 	projectid = request.httpParameterMap.get("projectid").value;
 	documentid = request.httpParameterMap.get("documentid").value;
@@ -26,10 +24,12 @@ function document(){
 		ProjectID: projectid,
 		DocumentID: documentid
 	};
+
+	log.debug('Finalization callback received for ' + JSON.stringify(input));
 	
 	autoLaunchDocument = require('~/cartridge/scripts/translation/AutoLaunchDocument');
 	output = autoLaunchDocument.output(input);
-	
+
 	response.getWriter().println(JSON.stringify(output));
 }
 

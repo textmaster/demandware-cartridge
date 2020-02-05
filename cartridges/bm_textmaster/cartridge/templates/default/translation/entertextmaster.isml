@@ -186,6 +186,8 @@
 						<option value="disabled" ${pdict.APICache == 'disabled' ? 'selected="selected"' : ''}>${Resource.msg('api.cache.disabled', 'textmaster',null)}</option>
 					</select>
 					<span>${Resource.msg('api.cache.desc', 'textmaster',null)}</span>
+					<input type="button" class="clear-cache ${pdict.APICache === 'enabled' ? '' : 'hidden'}" value="${Resource.msg('clear.cache.label', 'textmaster', null)}" ${pdict.ClearCache ? '' : 'disabled="disabled"'}/>
+					<span class="cache-message hidden">${Resource.msg('api.cache.message', 'textmaster',null)}</span>
 				</td>
 			</tr>
 		</tbody>

@@ -203,7 +203,14 @@ function apiKeyTest(){
 		output = apiTest.output(input);
 	
 	response.getWriter().print(output);
-} 
+}
+
+/**
+ * Clears cache
+ * */
+function clearCache() {
+	utils.resetLanguageCache();
+}
 
 /*
 * Web exposed methods
@@ -223,6 +230,7 @@ saveAPIConfigurations.public = true;
 handleAutoLaunch.public = true;
 getDashboardData.public = true;
 dashboardFirstRow.public = true;
+clearCache.public = true;
 
 exports.APIKeyTest = apiKeyTest;
 exports.AttributeList = attributeList;
@@ -236,3 +244,4 @@ exports.SaveAPIConfigurations = saveAPIConfigurations;
 exports.HandleAutoLaunch = handleAutoLaunch;
 exports.DashboardData = getDashboardData;
 exports.DashboardFirstRow = dashboardFirstRow;
+exports.ClearCache = clearCache;
