@@ -82,6 +82,7 @@
 		<sub-pipelines>
 			<pipeline name="TMTranslation-Register" />
 			<pipeline name="TMComponents-SaveAPIConfigurations" />
+			<pipeline name="TMComponents-ClearCache" />
 		</sub-pipelines>
 		<icon>icons/tm_api_setup.png</icon>
 	</menuaction>

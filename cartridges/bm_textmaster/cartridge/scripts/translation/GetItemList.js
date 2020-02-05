@@ -87,7 +87,11 @@ function getOutput(input){
 					}
 				}
 				
-				if(subCategories.length){
+				if(!(Utils.isCategoryExistInList(items, rootCategory))){
+					items.push(rootCategory);
+				}
+				
+				if(subCategories.length && !(Utils.isCategoryNameExistInList(allCategories, rootCategory))){
 					allCategories.push(rootCategory);
 				}
 			}

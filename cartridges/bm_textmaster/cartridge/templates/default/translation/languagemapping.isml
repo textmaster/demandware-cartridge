@@ -10,7 +10,7 @@
 		<tbody>
 			<tr>
 				<td class="table_title_description s">
-					<p>${Resource.msg('mapping.description', 'textmaster',null)}</p>	
+					<p>${Resource.msg('mapping.description1', 'textmaster',null)}<b>${Resource.msg('mapping.description2', 'textmaster',null)}</b>${Resource.msg('mapping.description3', 'textmaster',null)}</p>
 				</td>
 			</tr>
 		</tbody>
@@ -24,7 +24,7 @@
 	   		</tr>
 	   		<isloop items="${pdict.languageMapping}" var="mapping" status="loopstate">
             	<tr>
-					<td class="table_detail s"><isprint value="${mapping.dwName + ' [' + mapping.dw + ']'}"/></td>
+					<td class="table_detail s ${mapping.enabled ? 'store-enabled' : ''}"><isprint value="${mapping.dwName + ' [' + mapping.dw + ']'}"/></td>
 		 			<td class="table_detail s"><isprint value="${mapping.tmName + ' [' + mapping.tm + ']'}"/></td>
 		 			<td class="table_detail s actions" data-langs="${mapping.dw + '|' + mapping.tm}">
 						<img class="edit" src="${URLUtils.staticURL('icons/tm_edit.png')}" title="${Resource.msg('general.edit', 'textmaster',null)}" />

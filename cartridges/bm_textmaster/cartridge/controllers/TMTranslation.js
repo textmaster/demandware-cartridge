@@ -10,6 +10,7 @@ var ISML = require('dw/template/ISML');
 var Site = require('dw/system/Site');
 
 /* Script Modules */
+var utils = require('~/cartridge/scripts/utils/Utils');
 var logUtils = require('~/cartridge/scripts/utils/LogUtils');
 
 /* Global variables */
@@ -41,8 +42,17 @@ function followUp(){
 * Registration link to TextMaster
 */
 function register(){
-	var apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations'),
-		config = apiConfig.output;
+	var apiConfig = require('~/cartridge/scripts/translation/GetAPIConfigurations');
+	var config = apiConfig.output;
+	var customCache = require('~/cartridge/scripts/utils/customCacheWebdav');
+	
+	if (utils.config.tmApiCache === 'disabled') {
+		utils.resetLanguageCache();
+	}
+	
+	var abilityListCache = customCache.getCache(utils.config.cache.url.languages.abilityList);
+	
+	config.ClearCache = abilityListCache !== null ? true : false;
 	
 	ISML.renderTemplate('translation/entertextmaster', config);
 }
@@ -51,19 +61,41 @@ function register(){
 * function 'newTranslation' posts data to this function
 */
 function placeOrder(){
-	var req = request.httpParameterMap;
-	var input = {
-			LocaleFrom: request.httpParameterMap.get("locale-from").stringValue,
-			ItemType: request.httpParameterMap.get("item-type").stringValue,
-			CatalogID: request.httpParameterMap.get("catalog").stringValue,
-			LocaleTo: request.httpParameterMap.get("locale-to[]").values.toArray(),
-			Attributes: request.httpParameterMap.get("attribute[]").values.toArray(),
-			Items: request.httpParameterMap.get("items").stringValue.split(",")
-		},
-		transParams = require('~/cartridge/scripts/translation/SetupTranslationParameters'),
-		output;
+    var localeFrom = request.httpParameterMap.get("locale-from").stringValue;
+    var mappedLanguageFrom = utils.getMappedLanguage(localeFrom);
+    mappedLanguageFrom = mappedLanguageFrom ? mappedLanguageFrom : localeFrom;
+    var localeToArray = request.httpParameterMap.get("locale-to[]").values.toArray();
+    var languageMapping = utils.config.languageMapping;
+    var localeTo;
+    var tempLocale = [];
+    
+    for (var locale = 0; locale < localeToArray.length; locale++){
+            for (var mapLang = 0; mapLang < languageMapping.length; mapLang++) {
+                    if (localeToArray[locale] === languageMapping[mapLang].dw){
+                            localeTo = languageMapping[mapLang].tm;
+                    }
+            }
+            if (localeTo != undefined ){
+                    tempLocale.push(localeTo);
+            } else {
+                    tempLocale.push(localeToArray[locale]);
+            }
+    }
+    
+    var mappedLanguageTo = tempLocale;
+    var input = {
+        LocaleFrom: request.httpParameterMap.get("locale-from").stringValue,
+        MappedLocaleFrom: mappedLanguageFrom,
+        ItemType: request.httpParameterMap.get("item-type").stringValue,
+        CatalogID: request.httpParameterMap.get("catalog").stringValue,
+        LocaleTo: request.httpParameterMap.get("locale-to[]").values.toArray(),
+        MappedLocaleTo: mappedLanguageTo,
+        Attributes: request.httpParameterMap.get("attribute[]").values.toArray(),
+        Items: request.httpParameterMap.get("items").stringValue.split(",")
+    };
+	var transParams = require('~/cartridge/scripts/translation/SetupTranslationParameters');
 	
-	output = transParams.output(input);
+	var output = transParams.output(input);
 	ISML.renderTemplate('translation/placeorder', output);
 }
 

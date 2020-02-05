@@ -30,6 +30,12 @@ function newMappingRow(){
 		return true;
 	});
 	
+	for (var i = 0; i < dwLanguages.length; i++ ) {
+		if (utils.isLocaleEnabled(dwLanguages[i].id)) {
+			dwLanguages[i].name = '* ' + dwLanguages[i].name;
+		}
+	}
+	
 	var tmLanguages = utils.getTextMasterLanguages();
 	
 	tmLanguages = tmLanguages.filter (function (item) {
@@ -68,7 +74,8 @@ function saveLanguageMapping(){
 		dwLangCode: request.httpParameterMap.get('dwLangCode').stringValue,
 		tmLangCode: request.httpParameterMap.get('tmLangCode').stringValue,
 		dwLangName: request.httpParameterMap.get('dwLangName').stringValue,
-		tmLangName: request.httpParameterMap.get('tmLangName').stringValue
+		tmLangName: request.httpParameterMap.get('tmLangName').stringValue,
+		enabled: utils.isLocaleEnabled(request.httpParameterMap.get('dwLangCode').stringValue)
 	};
 
 	apiConfig.outputData(saveInput);

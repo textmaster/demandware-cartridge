@@ -26,6 +26,8 @@ server.post('Document', function (req, res, next) {
 		DocumentID: documentid
 	};
 	
+	log.debug('Finalization callback received for ' + JSON.stringify(input));
+	
 	autoLaunchDocument = require('*/cartridge/scripts/translation/AutoLaunchDocument');
 	output = autoLaunchDocument.output(input);
 	

@@ -41,7 +41,8 @@
 				dashboardFirstRow: "TMComponents-DashboardFirstRow",
 				newMappingRow:"TMLanguageMapping-NewMappingRow",
 				saveLanguageMapping:"TMLanguageMapping-SaveLanguageMapping",
-				deleteRowMapping: "TMLanguageMapping-DeleteLanguageMappingRow"
+				deleteRowMapping: "TMLanguageMapping-DeleteLanguageMappingRow",
+				clearCache: "TMComponents-ClearCache"
 			},
 			newTranslation: function(){
 				var localeFrom, itemType, catalog, url, postData, items = [], itemID, errorTimeID,
@@ -51,7 +52,7 @@
 				
 				$('select[name=locale-from]').on('change',function(){
 					localeFrom = $(this).val();
-					$('ul.select-locale-to').html('');
+					$('ul.select-locale-to').html('<span>Loading...</span>');
 
 					$.post(app.urls.getLanguageToList, {languageFrom:localeFrom}, function(data){
 						$('.input-holder.locale-to').html(data);
@@ -284,7 +285,7 @@
 				}
 			},
 			placeOrder: function(){
-				var result, transParams, localeFrom, localeTo, templateSelect, templates, listHolder, select, count, autoLaunchCount, noAutoLaunchCount;
+				var result, transParams, localeFrom, localeTo, mappedLocaleTo, templateSelect, templates, listHolder, select, count, autoLaunchCount, noAutoLaunchCount;
 				
 				transParams = JSON.parse($('#hidden-values').text());
 				
@@ -348,9 +349,9 @@
 						autoLaunchCount = 0;
 						noAutoLaunchCount = 0;
 						
-						for(count = 0;count < transParams.localeTo.length; count++){
-							localeTo = transParams.localeTo[count];
-							templateSelect = $('#template-list-holder-'+ transParams.localeFrom.id +'-'+ localeTo.id).find("select");
+						for(count = 0;count < transParams.mappedLocaleTo.length; count++){
+							mappedLocaleTo = transParams.mappedLocaleTo[count];
+							templateSelect = $('#template-list-holder-'+ transParams.mappedLocaleFrom +'-'+ mappedLocaleTo).find("select");
 							transParams.localeTo[count].template = {
 								id: templateSelect.val(),
 								name: templateSelect.find("option:selected").text()
@@ -375,7 +376,7 @@
 						transParams.itemCount = 0;
 						transParams.autoLaunchCount = autoLaunchCount;
 						transParams.noAutoLaunchCount = noAutoLaunchCount
-						
+
 						app.triggerExportRequest(transParams);
 						$('#progress-holder').show();
 					}
@@ -383,7 +384,7 @@
 				
 				$('#reload-templates').trigger("click");
 			},
-			triggerExportRequest: function(transParams){
+			triggerExportRequest: function(transParams){ /* this function is being called from multiple locations */
 				var localeTo, items, postData;
 				
 				if(transParams.itemCount == transParams.items.length){
@@ -397,7 +398,7 @@
 						type: 'POST',
 						url: app.urls.handleAutoLaunch,
 						data: postData,
-						success: function(output){
+						success: function(){
 							//no actions
 						}
 					});
@@ -559,6 +560,21 @@
 						
 						var signinLink = $(this).data('signin-link');
 						$(this).attr('href', backOfficeLink + signinLink);
+					});
+
+					$('select[name=api-cache]').on('change', function () {
+						$('input.clear-cache').toggleClass('hidden');
+					});
+
+					$('input.clear-cache').on('click', function () {
+						$(this).attr('disabled', true);
+						$.ajax({
+							type: 'POST',
+							url: app.urls.clearCache,
+							success: function () {
+								$('.cache-message').removeClass('hidden');
+							}
+						});
 					});
 				},
 				setData: function(){
@@ -889,7 +905,7 @@
 							var langCodes = langCodesStr.split('|');
 
 							var newLanguageMappingData = {
-								dwLangName: dwLangName,
+								dwLangName: dwLangName.replace('* ', ''),
 								tmLangName: tmLangName,
 								dwLangCode: dwLangCode,
 								tmLangCode: tmLangCode,
