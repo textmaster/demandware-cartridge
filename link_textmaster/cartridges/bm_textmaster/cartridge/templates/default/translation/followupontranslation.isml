@@ -1,0 +1,78 @@
+<!--- TEMPLATENAME: followUp.isml --->
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" />
+<div class="followup">
+	<h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
+	<table class="table" id="filtertableProjects" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+		<tr>
+			<th class="table_header n w e s center">${Resource.msg("follow.project.title","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.date","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.id","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.name","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("general.item.type","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("general.locale","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.status","textmaster",null)}</th>
+			<th class="table_header n e s center">${Resource.msg("follow.item.action","textmaster",null)}</th>
+		</tr>
+		</thead>
+		<tbody>
+			<!-- This table will be populated through AJAX -->
+			<tr>
+				<th colspan="8" class="relative">
+					<div class="ajax-loader show"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}"></div>
+				</th>
+			</tr>
+		</tbody>
+	</table>
+	<div class="load-more"><input type="button" value="${Resource.msg('follow.loadmore.label','textmaster',null)}" title="${Resource.msg('follow.loadmore.label','textmaster',null)}" /></div>
+	<div class="status-diagram">
+		<iscomment>This diagram will be populated by client side JavaScript</iscomment>
+		<table cellpadding="0" cellspacing="1" width="100%" align="center">
+			<thead>
+				<tr>
+					<th>${Resource.msg("follow.status.in_creation","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_progress","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.in_review","textmaster",null)}</th>
+					<th>${Resource.msg("follow.status.completed","textmaster",null)}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="creation">
+						<span class="percent">0%</span>
+						<span class="count">0</span>
+					</td>
+					<td class="progress">
+						<span class="percent">0%</span>
+						<span class="count">0</span>
+					</td>
+					<td class="review">
+						<span class="percent">0%</span>
+						<span class="count">0</span>
+					</td>
+					<td class="completed">
+						<span class="percent">0%</span>
+						<span class="count">0</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+(function($){
+	window.tmjdt = $;
+	
+	$(document).ready(function(){
+		window.dataTablesLoaded = true;
+		//data table initializes in app.js
+	})
+})(jQuery);
+</script>
+</isdecorate>

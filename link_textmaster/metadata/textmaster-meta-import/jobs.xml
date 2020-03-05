@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="TextMasterAskForQuoteRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="QuoteRefArch" type="custom.AskForQuote" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-01-13Z</date>
+                <time>16:38:10.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterAutoLaunchRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TMAutoLaunchRefArch" type="custom.AutoLaunch" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterImportCatalogRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="Sites"/>
+            <step step-id="TMImportCatalog" type="ImportCatalog" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="WorkingFolder">textmaster/category</parameter>
+                    <parameter name="FileNamePattern">(.*).xml</parameter>
+                    <parameter name="NoFilesFoundHandling">WARN</parameter>
+                    <parameter name="ImportMode">Merge</parameter>
+                    <parameter name="ImportFailedHandling">WARN</parameter>
+                    <parameter name="AfterImportFileHandling">Archive</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/archives/category/imported</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2020-01-29Z</date>
+                <time>21:40:53.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterImportContentRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TMImportContent" type="ImportContent" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="WorkingFolder">textmaster/content</parameter>
+                    <parameter name="FileNamePattern">(.*).xml</parameter>
+                    <parameter name="NoFilesFoundHandling">WARN</parameter>
+                    <parameter name="ImportMode">Merge</parameter>
+                    <parameter name="ImportFailedHandling">WARN</parameter>
+                    <parameter name="AfterImportFileHandling">Archive</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/archives/content/imported</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2020-01-29Z</date>
+                <time>23:14:06.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterImportDataRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TMImportDataRefArch" type="custom.ImportData" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2017-02-27Z</date>
+                <time>11:52:48.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterImportProductRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="Sites"/>
+            <step step-id="TMImportProduct" type="ImportCatalog" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="WorkingFolder">textmaster/product</parameter>
+                    <parameter name="FileNamePattern">(.*).xml</parameter>
+                    <parameter name="NoFilesFoundHandling">WARN</parameter>
+                    <parameter name="ImportMode">Merge</parameter>
+                    <parameter name="ImportFailedHandling">WARN</parameter>
+                    <parameter name="AfterImportFileHandling">Archive</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/archives/product/imported</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2020-01-29Z</date>
+                <time>23:10:41.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+</jobs>

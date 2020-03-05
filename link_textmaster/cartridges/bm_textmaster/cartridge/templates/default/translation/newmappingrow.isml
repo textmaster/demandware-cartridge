@@ -1,0 +1,30 @@
+<td class="table_detail s">
+    <select name="dwlanguageSelect" id="dwlanguageSelect">
+        <isif condition="${!empty(pdict.currDwLangCode)}">
+            <option value="${pdict.currDwLangCode}">${pdict.currDwLangName + ' [' + pdict.currDwLangCode + ']'}</option>
+        <iselse>
+            <option value=""></option>
+        </isif>
+        <isloop items="${pdict.dwLanguages}" var="dwLanguage" status="loopstate">
+            <option value="${dwLanguage.id}"><isprint value="${dwLanguage.name + ' [' + dwLanguage.id + ']'}"/></option>
+        </isloop>
+    </select>
+</td>
+<td class="table_detail s">
+    <select name="tmlanguageSelect" id="tmlanguageSelect">
+        <isif condition="${!empty(pdict.currTmLangCode)}">
+            <option value="${pdict.currTmLangCode}">${pdict.currTmLangName + ' [' + pdict.currTmLangCode + ']'}</option>
+        <iselse>
+            <option value=""></option>
+        </isif>
+        <isloop items="${pdict.tmLanguages}" var="tmLanguage" status="loopstate">
+            <option value="${tmLanguage.code}"><isprint value="${tmLanguage.value + ' [' + tmLanguage.code + ']'}"/></option>
+        </isloop>
+    </select>
+</td>
+<td class="table_detail s actions" data-langs="${pdict.currDwLangCode + '|' + pdict.currTmLangCode}">
+    <div>
+        <input type="button" id="saveMapping" name="save-mapping" class="save-mapping" value="${Resource.msg('general.save', 'textmaster',null)}"/>
+        <input type="button" id="cancelMapping" class="cancel-mapping" value="${Resource.msg('mapping.cancel.button', 'textmaster',null)}"/>
+    </div>
+</td>

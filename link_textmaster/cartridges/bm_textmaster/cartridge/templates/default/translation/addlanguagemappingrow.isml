@@ -1,0 +1,10 @@
+<td class="table_detail s ${pdict.input.enabled ? 'store-enabled' : ''}">
+    <isprint value="${pdict.input.dwLangName}"/>
+</td>
+<td class="table_detail s">
+    <isprint value="${pdict.input.tmLangName}"/>
+</td>
+<td class="table_detail s actions" data-langs="${pdict.input.dwLangCode + '|' + pdict.input.tmLangCode}">
+    <img class="edit" src="${URLUtils.staticURL('icons/tm_edit.png')}" title="${Resource.msg('general.edit', 'textmaster',null)}" />
+    <img class="delete" src="${URLUtils.staticURL('icons/tm_delete.png')}" title="${Resource.msg('general.delete', 'textmaster',null)}" />
+</td>
