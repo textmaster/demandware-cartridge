@@ -1,4 +1,5 @@
-*~
-SiteGenesis_controllers
-SiteGenesis_core
-SiteGenesis_pipelines
+sg/
+storefront-reference-architecture/
+link_textmaster/node_modules/
+dw.json
+package-lock.json

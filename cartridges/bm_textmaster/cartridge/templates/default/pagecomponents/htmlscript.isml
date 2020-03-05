@@ -1,6 +1,0 @@
-<iscontent type="text/html" charset="UTF-8" compact="true">
-
-<link href="${URLUtils.staticURL('css/textmaster.style.css')}" type="text/css" rel="stylesheet" />
-
-<script src="${URLUtils.staticURL('lib/jquery/jquery-2.1.1.min.js')}"></script>
-<script src="${URLUtils.staticURL('js/textmaster.app.js')}"></script>

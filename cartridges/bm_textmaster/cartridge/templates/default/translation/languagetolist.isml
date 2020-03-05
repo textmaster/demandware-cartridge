@@ -1,8 +1,0 @@
-<!--- TEMPLATENAME: languagetolist.isml --->
-<ul class="multi-select select-locale-to">
-	<isloop items="${pdict.LanguageToList}" var="language" status="loopstate">
-		<li>
-			<input type="checkbox" name="locale-to[]" id="locale-to-${language.id}" value="${language.id}"><label class="checkbox-label" for="locale-to-${language.id}">${language.name}</label>
-		</li>
-	</isloop>
-</ul>

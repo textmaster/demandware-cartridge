@@ -1,0 +1,5 @@
+cartridges/bm_textmaster/cartridge/static/
+metadata/
+node_modules/
+coverage/
+test/
