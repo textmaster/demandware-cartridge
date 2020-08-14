@@ -1,7 +1,7 @@
 <!--- TEMPLATENAME: PlaceTranslationOrder.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 
 <isset name="transParams" value="${JSON.parse(pdict.TransParams.TransParams)}" scope="page"/>
@@ -9,7 +9,7 @@
 <div class="place-order">
 	<h1>${Resource.msg('order.main.title','textmaster',null)}</h1>
 	<div class="right">
-	    <isset name="currentBaseURL" value="${pdict.currentBaseURL}" scope="page" />
+	    <isset name="currentBaseURL" value="${utils.config.apiEnv === 'live' ? utils.config.tmBackofficeBaseUrlLive : utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
 		<a href="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
 		<a id="reload-templates" class="button">${Resource.msg('order.reload.templates','textmaster',null)}</a>
 	</div>

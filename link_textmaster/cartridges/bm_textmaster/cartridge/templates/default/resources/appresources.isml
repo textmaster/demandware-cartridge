@@ -1,0 +1,15 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isset name="ResourceHelper" value="${require('~/cartridge/scripts/util/resource.js')}" scope="page">
+
+<script>
+(function($){
+    window.tmjdt = $;
+
+    $(document).ready(function(){
+        window.dataTablesLoaded = true;
+        //data table initializes in app.js
+    })
+
+    window.Resources = <isprint value="${JSON.stringify(ResourceHelper.getResources())}" encoding="off"/>;
+})(jQuery);
+</script>

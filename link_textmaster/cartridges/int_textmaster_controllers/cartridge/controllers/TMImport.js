@@ -13,7 +13,7 @@ var r = require('*/cartridge/scripts/utils/response');
 var guard = require('*/cartridge/scripts/guard');
 
 /* Global variables */
-var log = logUtils.getLogger('ImportController');
+var log = logUtils.getLogger('ImportCallback');
 
 /**
  * Calls start method
@@ -29,7 +29,7 @@ function data() {
 
     var output = importData.output(input);
 
-    log.debug('Import callback received for Project: ' + projectid + ' Document: ' + documentid);
+    log.debug('Import callback received for Project: ' + projectid + ' | Document: ' + documentid);
 
     r.renderJSON(output);
 }

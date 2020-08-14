@@ -1,0 +1,109 @@
+<!--- TEMPLATENAME: followUp.isml --->
+<iscontent type="text/html" charset="UTF-8" />
+<isinclude template="custom/modules"/>
+<isdecorate template="application/MenuFrame">
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
+<script src="${URLUtils.staticURL('js/textmaster.dashboard.secondary.js')}"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
+<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" bctext2="${Resource.msg('follow.project','textmaster',null) + ' ' + pdict.refer}" />
+
+<isset name="utils" value="${pdict.utils}" scope="page"/>
+<div class="followup docs-followup">
+    <h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
+    <div class="project-title">
+        <div class="project-name-reference">
+            <isset name="singleQuote" value="'" scope="page">
+            <h2><isprint value="${Resource.msg('follow.project','textmaster',null) + ' ' + singleQuote + pdict.name + singleQuote + ' / ' + pdict.refer}"/></h2>
+        </div>
+        <div class="project-data">
+            <div class="left">
+                <div class="source">
+                    <span class="label"><isprint value="${Resource.msg('follow.source.language','textmaster',null)}"/>: </span>
+                    <span class="value"><isprint value="${pdict.sourceLang}"/></span>
+                </div>
+                <div class="target">
+                    <span class="label"><isprint value="${Resource.msg('follow.target.language','textmaster',null)}"/>: </span>
+                    <span class="value"><isprint value="${pdict.targetLang}"/></span>
+                </div>
+            </div>
+            <div class="right">
+                <div class="creationDate">
+                    <span class="label"><isprint value="${Resource.msg('follow.creation.date','textmaster',null)}"/></span>
+                    <span class="value"><isprint value="${pdict.creationDate}"/></span>
+                </div>
+                <div class="updationDate">
+                    <span class="label"><isprint value="${Resource.msg('follow.updation.date','textmaster',null)}"/></span>
+                    <span class="value"><isprint value="${pdict.lastUpdatedDate}"/></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="status-diagram">
+        <iscomment>This diagram will be populated by client side JavaScript</iscomment>
+        <table cellpadding="0" cellspacing="1" width="100%" align="center">
+            <thead>
+                <tr>
+                    <th>${Resource.msg("follow.status.in_creation","textmaster",null)}</th>
+                    <th>${Resource.msg("follow.status.counting_words","textmaster",null)}</th>
+                    <th>${Resource.msg("follow.status.in_progress","textmaster",null)}</th>
+                    <th>${Resource.msg("follow.status.in_review","textmaster",null)}</th>
+                    <th>${Resource.msg("follow.status.completed","textmaster",null)}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="creation">
+                        <span class="percent">0%</span>
+                        <span class="count">0</span>
+                    </td>
+                    <td class="counting_words">
+                        <span class="percent">0%</span>
+                        <span class="count">0</span>
+                    </td>
+                    <td class="progress">
+                        <span class="percent">0%</span>
+                        <span class="count">0</span>
+                    </td>
+                    <td class="review">
+                        <span class="percent">0%</span>
+                        <span class="count">0</span>
+                    </td>
+                    <td class="completed">
+                        <span class="percent">0%</span>
+                        <span class="count">0</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="textmaster-view">
+        <isset name="currentBaseURL" value="${utils.config.apiEnv === 'live' ? utils.config.tmBackofficeBaseUrlLive : utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
+        <a href="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msgf('link.view.project','textmaster',null,pdict.id)}" target="_blank">${Resource.msg('follow.action.view.project','textmaster',null)}</a>
+    </div>
+    <div class="success-message"></div>
+    <table class="table" id="filterTableDocuments" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <thead>
+            <tr>
+                <th class="table_header n w e s center">${Resource.msg("follow.item.id","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.item.name","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.words","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.item.date","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.item.status","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.item.action","textmaster",null)}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- This table will be populated through AJAX -->
+            <tr>
+                <th colspan="8" class="relative">
+                    <div class="ajax-loader show"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}"></div>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <div class="load-more"><input type="button" value="${Resource.msg('follow.loadmore.label','textmaster',null)}" title="${Resource.msg('follow.loadmore.label','textmaster',null)}" /></div>
+</div>
+
+<isinclude template="resources/appresources"/>
+
+</isdecorate>

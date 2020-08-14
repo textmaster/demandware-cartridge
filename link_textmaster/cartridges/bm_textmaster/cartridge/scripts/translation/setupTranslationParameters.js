@@ -15,17 +15,19 @@ function getOutput(input) {
     var localeFrom = input.LocaleFrom;
     var mappedLocaleFrom = input.MappedLocaleFrom;
     var itemType = input.ItemType;
-    var catalogID = input.CatalogID;
     var localeTo = input.LocaleTo;
     var mappedLocaleTo = input.MappedLocaleTo;
     var attributes = input.Attributes;
     var items = input.Items;
     var localeFromName = utils.getLocaleName(localeFrom);
     var count = 0;
+    var catalogID;
 
     // Get Master Catalog ID from site preference
     if (itemType === 'product') {
         catalogID = Site.current.getCustomPreferenceValue('TMMasterCatalogID') || '';
+    } else if (itemType === 'category') {
+        catalogID = require('dw/catalog/CatalogMgr').siteCatalog.ID;
     }
 
     for (var loc = 0; loc < localeTo.length; loc++) {
