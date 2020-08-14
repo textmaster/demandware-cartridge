@@ -74,6 +74,37 @@ function followUp() {
 }
 
 /**
+ * Documents Dashboard page
+ */
+function documentsFollowUp() {
+    var registered = loginCheck();
+
+    var id = request.httpParameterMap.get('projectID').stringValue;
+    var name = request.httpParameterMap.get('projName').stringValue;
+    var refer = request.httpParameterMap.get('projRef').stringValue;
+    var sourceLangID = request.httpParameterMap.get('sourceLang').stringValue;
+    var targetLangID = request.httpParameterMap.get('targetLang').stringValue;
+    var creationDate = request.httpParameterMap.get('creationDate').stringValue;
+    var lastUpdatedDate = request.httpParameterMap.get('lastUpdatedDate').stringValue;
+
+    var sourceLang = utils.getLocaleName(sourceLangID);
+    var targetLang = utils.getLocaleName(targetLangID);
+
+    if (registered) {
+        ISML.renderTemplate('translation/secondarydashboard', {
+            id: id,
+            name: name,
+            refer: refer,
+            sourceLang: sourceLang,
+            targetLang: targetLang,
+            creationDate: creationDate,
+            lastUpdatedDate: lastUpdatedDate,
+            utils: utils
+        });
+    }
+}
+
+/**
  * function 'newTranslation' posts data to this function
  */
 function placeOrder() {
@@ -103,7 +134,6 @@ function placeOrder() {
         LocaleFrom: request.httpParameterMap.get('locale-from').stringValue,
         MappedLocaleFrom: mappedLanguageFrom,
         ItemType: request.httpParameterMap.get('item-type').stringValue,
-        CatalogID: request.httpParameterMap.get('catalog').stringValue,
         LocaleTo: request.httpParameterMap.get('locale-to[]').values.toArray(),
         MappedLocaleTo: mappedLanguageTo,
         Attributes: request.httpParameterMap.get('attribute[]').values.toArray(),
@@ -161,6 +191,7 @@ placeOrder.public = true;
 notification.public = true;
 defaultAttributes.public = true;
 languageMapping.public = true;
+documentsFollowUp.public = true;
 
 exports.New = newTranslation;
 exports.FollowUp = followUp;
@@ -169,3 +200,4 @@ exports.PlaceOrder = placeOrder;
 exports.Notification = notification;
 exports.DefaultAttributes = defaultAttributes;
 exports.LanguageMapping = languageMapping;
+exports.DocumentsFollowUp = documentsFollowUp;

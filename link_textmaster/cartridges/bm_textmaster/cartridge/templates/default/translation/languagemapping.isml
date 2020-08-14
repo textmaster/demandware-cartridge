@@ -1,7 +1,7 @@
 <!--- TEMPLATENAME: Register.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-LanguageMapping')}" bctext1="${Resource.msg('mapping.title', 'textmaster',null)}" />
 <div class="language-mapping">
 	<h1>${Resource.msg('mapping.title', 'textmaster',null)}</h1>

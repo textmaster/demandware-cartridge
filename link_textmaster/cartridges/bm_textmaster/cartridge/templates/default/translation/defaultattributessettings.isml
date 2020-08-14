@@ -1,7 +1,7 @@
 <!--- TEMPLATENAME: defaultattributessettings.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
 	<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-DefaultAttributes')}" bctext1="${Resource.msg('attributes.main.title','textmaster',null)}" />
 	
 	<div class="default-attributes">

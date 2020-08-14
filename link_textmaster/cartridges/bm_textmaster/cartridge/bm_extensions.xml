@@ -10,7 +10,7 @@
 		</description>
 		<icon>icons/textmaster-small.png</icon>
 	</menuitem>
-	
+
 	<menuaction id="textmastermenumenuaction1" menupath="textmastermenuitem1" position="999" site="true">
 		<name xml:lang="x-default">Send content for translation to TextMaster</name>
 		<short_description xml:lang="x-default">
@@ -34,7 +34,7 @@
 		</sub-pipelines>
 		<icon>icons/tm_new_project.png</icon>
 	</menuaction>
-	
+
 	<menuaction id="textmastermenumenuaction2" menupath="textmastermenuitem1" position="1000" site="true">
 		<name xml:lang="x-default">Translation Dashboard</name>
 		<short_description xml:lang="x-default">
@@ -46,12 +46,17 @@
 		<exec pipeline="TMTranslation" node="FollowUp"/>
 		<sub-pipelines>
 			<pipeline name="TMTranslation-FollowUp" />
+			<pipeline name="TMTranslation-DocumentsFollowUp" />
 			<pipeline name="TMComponents-DashboardData" />
+			<pipeline name="TMComponents-DocDashboardData" />
 			<pipeline name="TMComponents-DashboardFirstRow" />
+			<pipeline name="TMComponents-DocDashboardFirstRow" />
+			<pipeline name="TMComponents-LaunchProject" />
+			<pipeline name="TMComponents-DocumentComplete" />
 		</sub-pipelines>
 		<icon>icons/tm_dashboard.png</icon>
 	</menuaction>
-	
+
 	<menuaction id="textmastermenumenuaction3" menupath="textmastermenuitem1" position="1001" site="true">
 		<name xml:lang="x-default">Attribute Setup</name>
 		<short_description xml:lang="x-default">
@@ -69,7 +74,7 @@
 		</sub-pipelines>
 		<icon>icons/tm_attribute_setup.png</icon>
 	</menuaction>
-	
+
 	<menuaction id="textmastermenumenuaction4" menupath="textmastermenuitem1" position="1002" site="true">
 		<name xml:lang="x-default">API Setup</name>
 		<short_description xml:lang="x-default">
@@ -86,6 +91,7 @@
 		</sub-pipelines>
 		<icon>icons/tm_api_setup.png</icon>
 	</menuaction>
+
 	<menuaction id="textmastermenumenuaction5" menupath="textmastermenuitem1" position="1003" site="true">
 		<name xml:lang="x-default">Language Mapping</name>
 		<short_description xml:lang="x-default">

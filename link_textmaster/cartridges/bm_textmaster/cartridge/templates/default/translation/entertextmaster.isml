@@ -1,7 +1,7 @@
 <!--- TEMPLATENAME: Register.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-Register')}" bctext1="${Resource.msg('register.title', 'textmaster',null)}" />
 <div class="registration">
 	<h1>${Resource.msg('register.title', 'textmaster',null)}</h1>

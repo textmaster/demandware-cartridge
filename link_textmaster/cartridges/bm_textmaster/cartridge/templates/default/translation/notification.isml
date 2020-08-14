@@ -4,7 +4,7 @@
 <isset name="projectLink" value="${pdict.projectID ?
 						currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msgf('link.view.project', 'textmaster', null, pdict.projectID) :
 						currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.projects', 'textmaster',null)}" scope="page" />
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
     <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
     <h1>${Resource.msg("order.success", "textmaster",null)}</h1>
     <div class="notification">

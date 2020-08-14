@@ -13,7 +13,7 @@ var ISML = require('dw/template/ISML');
 /* Script Includes */
 var utils = require('*/cartridge/scripts/utils/tmUtils');
 var r = require('*/cartridge/scripts/utils/response');
-
+var followUpList = require('~/cartridge/scripts/translation/getFollowUpList');
 /**
  * Form to show filter options for translation
  */
@@ -34,9 +34,9 @@ function attributeList() {
 function categoryDropdown() {
     var categories = require('~/cartridge/scripts/translation/getCategoryList');
     var input = {
-        CatalogID: request.httpParameterMap.get('catalog').stringValue,
         ItemType: request.httpParameterMap.get('itemType').stringValue
     };
+    input.CatalogID = getSiteCatalog();
 
     var output = categories.output(input);
 
@@ -64,10 +64,10 @@ function itemList() {
     var items = require('~/cartridge/scripts/translation/getItemList');
 
     var input = {
-        Catalog: request.httpParameterMap.get('catalog').stringValue,
         Category: request.httpParameterMap.get('category').stringValue,
         ItemType: request.httpParameterMap.get('itemType').stringValue
     };
+    input.Catalog = getSiteCatalog();
     var output = items.output(input);
     var languages = utils.getTranslationLanguages();
     var productTypes = [];
@@ -180,9 +180,20 @@ function handleAutoLaunch() {
  * Loads first row of dashboard data table
  */
 function dashboardFirstRow() {
-    var document = request.httpParameterMap.get('document').stringValue;
+    var project = request.httpParameterMap.get('project').stringValue;
 
     ISML.renderTemplate('translation/followuptablerow', {
+        Project: JSON.parse(project)
+    });
+}
+
+/**
+ * Loads first row of document dashboard data table
+ */
+function docDashboardFirstRow() {
+    var document = request.httpParameterMap.get('document').stringValue;
+
+    ISML.renderTemplate('translation/docfollowuptablerow', {
         Document: JSON.parse(document)
     });
 }
@@ -191,18 +202,29 @@ function dashboardFirstRow() {
  * Gets Dashboard data for each 'Load more'
  */
 function getDashboardData() {
-    var followUpList = require('~/cartridge/scripts/translation/getFollowUpList');
     var input = {
-        projectPageNumber: request.httpParameterMap.get('projectPageNumber').intValue,
-        docPageNumber: request.httpParameterMap.get('docPageNumber').intValue,
-        projectCountInPage: request.httpParameterMap.get('projectCountInPage').intValue,
-        docCountInPage: request.httpParameterMap.get('docCountInPage').intValue
+        projectPageNumber: request.httpParameterMap.get('projectPageNumber').intValue
     };
 
     var output = followUpList.output(input);
 
     r.renderJSON(output);
 }
+
+/**
+ * Gets Documents Dashboard data for each 'Load more'
+ */
+function getDocDashboardData() {
+    var input = {
+        projectID: request.httpParameterMap.get('projectID').stringValue,
+        documentPageNumber: request.httpParameterMap.get('documentPageNumber').intValue
+    };
+
+    var output = followUpList.getDocsOutput(input);
+
+    r.renderJSON(output);
+}
+
 
 /**
  * Check if API Key and Secret are valid in the API environment
@@ -228,6 +250,43 @@ function clearCache() {
     utils.resetLanguageCache();
 }
 
+/**
+ * Launches the project if the translate button is clicked
+ */
+function launchProject() {
+    var launch = require('~/cartridge/scripts/translation/launchProject');
+    var input = {
+        projectID: request.httpParameterMap.get('projectID').stringValue
+    };
+
+    var output = launch.output(input);
+
+    r.renderJSON(output);
+}
+
+/**
+ * Completes a project if the validate button is clicked
+ */
+function documentComplete() {
+    var complete = require('~/cartridge/scripts/translation/documentComplete');
+    var input = {
+        projectID: request.httpParameterMap.get('projectID').stringValue,
+        documentID: request.httpParameterMap.get('documentID').stringValue
+    };
+
+    var output = complete.output(input);
+
+    r.renderJSON(output);
+}
+
+/**
+ * Gives the navigation catalog ID of the current site
+ */
+function getSiteCatalog() {
+    var siteCatalog = require('dw/catalog/CatalogMgr').siteCatalog;
+    return siteCatalog.ID;
+}
+
 /*
  * Web exposed methods
  */
@@ -246,7 +305,11 @@ saveAPIConfigurations.public = true;
 handleAutoLaunch.public = true;
 getDashboardData.public = true;
 dashboardFirstRow.public = true;
+docDashboardFirstRow.public = true;
 clearCache.public = true;
+launchProject.public = true;
+getDocDashboardData.public = true;
+documentComplete.public = true;
 
 exports.APIKeyTest = apiKeyTest;
 exports.AttributeList = attributeList;
@@ -260,4 +323,8 @@ exports.SaveAPIConfigurations = saveAPIConfigurations;
 exports.HandleAutoLaunch = handleAutoLaunch;
 exports.DashboardData = getDashboardData;
 exports.DashboardFirstRow = dashboardFirstRow;
+exports.DocDashboardFirstRow = docDashboardFirstRow;
 exports.ClearCache = clearCache;
+exports.LaunchProject = launchProject;
+exports.DocDashboardData = getDocDashboardData;
+exports.DocumentComplete = documentComplete;

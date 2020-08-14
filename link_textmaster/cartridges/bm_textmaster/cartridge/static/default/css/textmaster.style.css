@@ -125,6 +125,7 @@
     font-size: 1.1em;
     font-weight: normal;
     text-transform: none;
+    font-weight: bold;
 }
 
 .translation-module .form-holder {
@@ -374,15 +375,10 @@
 }
 
 /* Follow up page */
-.followup .status-diagram {
-    padding-bottom: 0.8em;
-    margin-bottom: 0.8em;
-    border-bottom: 0.08em solid #DADADA;
-}
-
 .followup .status-diagram table {
     background-color: #dedede;
     max-width: 50%;
+    table-layout: fixed;
 }
 
 .followup .status-diagram table th {
@@ -487,7 +483,8 @@
 }
 
 .registration .success-message,
-.default-attributes .success-message {
+.default-attributes .success-message,
+.followup .success-message {
     color: #009900;
     border: 0.08em solid #009900;
     padding: 0.4em;
@@ -495,12 +492,20 @@
     text-align: center;
     font-weight: bold;
     border-radius: 0.4em;
-    background-color: #efffef;
+    background-color: #e5efd3;
     display: none;
+}
+
+.success-message.sticky {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    z-index: 1;
 }
 
 .registration .success-message.show,
 .default-attributes .success-message.show,
+.followup .success-message.show,
 .registration .error {
     display: block;
 }
@@ -589,6 +594,83 @@ span.cache-message {
 .no-data-message {
     text-align: center;
     padding: 0.8em;
+}
+
+.actions-translate {
+    background-color: #cbe6df;
+}
+
+.translate-action-error {
+    color: #FF0000;
+}
+
+.translation-module .project-name-reference {
+    padding: 0 0 0.8em 0;
+    font-size: 1.5em;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 0.06em solid #DADADA;
+    margin: 0 4% 0.5em;
+}
+
+.project-data > div {
+    width: 50%;
+    display: inline-block;
+}
+
+.project-data .right {
+    float: right;
+}
+
+.project-data .left .value {
+    font-weight: bold;
+}
+
+.translation-module .project-data {
+    margin: 0 4% 2em;
+}
+
+#filterTableDocuments_wrapper {
+    border-top: 0.08em solid #DADADA;
+    padding-top: 0.7em;
+    margin: 0 4%;
+}
+
+.textmaster-view {
+    float: right;
+    padding: 0.4em;
+    font-weight: bold;
+    position: relative;
+    margin-right: 4%;
+}
+
+.textmaster-view a {
+    position: absolute;
+    white-space: nowrap;
+    color: #2461a7;
+    right: 0;
+    bottom: 0.97em;
+}
+
+.docs-followup .load-more input[type=button] {
+    margin-right: 3.5em
+}
+
+.dashboard-action-button {
+    border-radius: 0.7em;
+    border: 0.063em solid #60746f;
+    padding: 0.5em;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+}
+
+.actions-validate {
+    background-color: #c9daa9;
+}
+
+.followup table.dataTable tr td:last-of-type {
+    text-align: center;
 }
 
 /* Responsive */

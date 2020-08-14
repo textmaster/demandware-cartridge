@@ -175,7 +175,8 @@ function execute(projectID, documentID) {
             var ocapiJobUrl = utils.config.ocapi.jobs.post;
             ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
             var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);
-            var statusCode = jobResponse && (jobResponse.execution_status.toLowerCase() === 'running' || jobResponse.execution_status.toLowerCase() === 'pending' || jobResponse.execution_status.toLowerCase() === 'finished') ? 201 : 404;
+            var statusCode = jobResponse && (jobResponse.execution_status.toLowerCase() === 'running' || jobResponse.execution_status.toLowerCase() === 'pending' || jobResponse.execution_status.toLowerCase() === 'finished' || jobResponse.execution_status.toLowerCase() === 'jobalreadyrunningexception') ? 201 : 404;
+
             if (statusCode === 201) {
                 var updateTranslatedLanguageList = require('~/cartridge/scripts/translation/updateTranslatedLanguageList');
                 updateTranslatedLanguageList.execute(itemType, itemID, language);

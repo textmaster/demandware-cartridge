@@ -1,17 +1,17 @@
-<isset name="document" value="${pdict.Document}" scope="page">
+<isset name="project" value="${pdict.Project}" scope="page">
 <tr class="contentslistentry" align="center">
-	<td class="table_detail w e s left">${document.project_name + document.project_launch_date}</td>
-	<isset name="createdAt" value="${document.created_at.full}" scope="page">
-	<isset name="datePart" value="${createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : ''}" scope="page">
-	<isset name="timePart" value="${createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[1] : ''}" scope="page">
+	<td class="table_detail w e s left">${project.name + project.project_launch_date}</td>
+	<isset name="updatedAt" value="${project.updated_at ? project.updated_at.full : project.created_at.full}" scope="page">
+	<isset name="datePart" value="${updatedAt && updatedAt.indexOf(' ') > -1 ? updatedAt.split(' ')[0] : ''}" scope="page">
+	<isset name="timePart" value="${updatedAt && updatedAt.indexOf(' ') > -1 ? updatedAt.split(' ')[1] : ''}" scope="page">
 	<isset name="hour" value="${timePart ? timePart.split(':')[0] : '00'}" scope="page">
 	<isset name="minute" value="${timePart ? timePart.split(':')[1] : '00'}" scope="page">
 
+	<td class="table_detail e s left">${project.documentsCount ? project.documentsCount : 0}</td>
+	<td class="table_detail e s capitalize">${project.custom_data.itemType ? project.custom_data.itemType : ''}</td>
+	<td class="table_detail e s left">${project.locale ? project.locale : ''}</td>
+	<td class="table_detail e s left"></td>
 	<td class="table_detail e s left"><span class="spContentId">${datePart + " " + hour + ":" + minute}</span></td>
-	<td class="table_detail e s left"><span class="spContentId">${document.custom_data.item ? document.custom_data.item.id : ""}</span></td>
-	<td class="table_detail e s left"><span class="spContentName">${document.custom_data.item ? document.custom_data.item.name : ""}</span></td>
-	<td class="table_detail e s capitalize">${document.item_type}</td>
-	<td class="table_detail e s left">${document.locale}</td>
-	<td class="table_detail e s">${document.status}</td>
+	<td class="table_detail e s">${project.status}</td>
 	<td class="table_detail e s left action"></td>
 </tr>

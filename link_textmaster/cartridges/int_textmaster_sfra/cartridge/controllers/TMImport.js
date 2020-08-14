@@ -9,6 +9,9 @@
 /* Script Modules */
 var server = require('server');
 
+var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
+var log = logUtils.getLogger('ImportCallback');
+
 /**
  * Calls start method
  */
@@ -20,6 +23,7 @@ server.post('Data', function (req, res, next) {
         ProjectID: projectid,
         DocumentID: documentid
     };
+    log.debug('Import callback received for Project: ' + projectid + ' | Document: ' + documentid);
 
     var importData = require('*/cartridge/scripts/translation/importData');
     var output = importData.output(input);

@@ -1058,8 +1058,11 @@ Utils.ocapiClient = function (method, endPoint, request) {
     if (result.status === 'ERROR') {
         try {
             errorResponse = JSON.parse(result.errorMessage);
-            Utils.log.error('Invalid OCAPI settings. Also check OCAPI username and password in Site Preference');
-            Utils.log.error(result.errorMessage);
+
+            if (!(errorResponse && errorResponse.fault && errorResponse.fault.type && errorResponse.fault.type === 'JobAlreadyRunningException')) {
+	            Utils.log.error('Invalid OCAPI settings. Also check OCAPI username and password in Site Preference');
+	            Utils.log.error(result.errorMessage);
+            }
         } catch (ex) {
             Utils.log.error(result.errorMessage);
         }
@@ -1279,9 +1282,7 @@ Utils.setImportJobQuery = function (projectid, documentid) {
 
             result = dataHolder.custom.RunningDocument ? true : false;
             tryAgain = false;
-        } catch (ex) {
-            Utils.log.error('Error to set import job query : ' + ex.message);
-        }
+        } catch (ex) {}
     }
 
     return result;

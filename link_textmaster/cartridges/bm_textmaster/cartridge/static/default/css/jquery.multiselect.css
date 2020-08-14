@@ -8,11 +8,11 @@
     position: relative;
     width: 100%;
     text-align: left;
-    border: 1px solid #aaa;
+    border: 0.08em solid #aaa;
     background-color: #fff;
-    padding: 5px 20px 5px 5px;
-    margin-top: 1px;
-    font-size: 13px;
+    padding: 0.38em 1.54em 0.38em 0.38em;
+    margin-top: 0.08em;
+    font-size: 1em;
     color: #aaa;
     outline: none;
     white-space: nowrap;
@@ -23,30 +23,30 @@
     height: 0;
     position: absolute;
     top: 50%;
-    right: 5px;
+    right: 0.38em;
     width: 0;
-    border: 6px solid rgba(0, 0, 0, 0);
+    border: 0.46em solid rgba(0, 0, 0, 0);
     border-top-color: #999;
-    margin-top: -3px;
+    margin-top: -0.23em;
 }
 
 .ms-options-wrap > .ms-options {
     position: absolute;
     left: 0;
     width: 100%;
-    margin-top: 1px;
-    margin-bottom: 20px;
+    margin-top: 0.08em;
+    margin-bottom: 1.54em;
     background: white;
     z-index: 2000;
-    border: 1px solid #aaa;
-    max-height: 200px !important;
+    border: 0.08em solid #aaa;
+    max-height: 15.38em;
 }
 
 .ms-options-wrap > .ms-options > .ms-search input {
     width: 100%;
-    padding: 4px 5px;
+    padding: 0.3em 0.38em;
     border: none;
-    border-bottom: 1px groove;
+    border-bottom: 0.08em groove;
     outline: none;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .ms-options-wrap > .ms-options > .ms-selectall.global {
-    margin: 4px 5px;
+    margin: 0.3em 0.38em;
 }
 
 .ms-options-wrap > .ms-options > ul,
@@ -72,15 +72,15 @@
 }
 
 .ms-options-wrap > .ms-options > ul > li.optgroup {
-    padding: 5px;
+    padding: 0.38em;
 }
 .ms-options-wrap > .ms-options > ul > li.optgroup + li.optgroup {
-    border-top: 1px solid #aaa;
+    border-top: 0.08em solid #aaa;
 }
 
 .ms-options-wrap > .ms-options > ul > li.optgroup .label {
     display: block;
-    padding: 5px 0 0 0;
+    padding: 0.38em 0 0 0;
     font-weight: bold;
 }
 
@@ -88,9 +88,9 @@
     position: relative;
     display: inline-block;
     width: 100%;
-    padding: 4px;
-    margin: 1px 0;
-    border: 1px dotted transparent;
+    padding: 0.3em;
+    margin: 0.08em 0;
+    border: 0.08em dotted transparent;
 }
 
 .ms-options-wrap > .ms-options > ul label.focused,
@@ -105,17 +105,17 @@
 }
 
 .ms-options-wrap > .ms-options > ul input[type="checkbox"] {
-    margin: 0 5px 0 0;
+    margin: 0 0.38em 0 0;
     position: absolute;
-    left: 4px;
-    top: 7px;
+    left: 0.3em;
+    top: 0.54em;
 }
 
 .ms-options-wrap > .ms-options.hide-checkbox > ul input[type="checkbox"] {
-    position: absolute !important;
-    height: 1px;
-    width: 1px;
+    position: absolute;
+    height: 0.08em;
+    width: 0.08em;
     overflow: hidden;
-    clip: rect(1px 1px 1px 1px);
-    clip: rect(1px, 1px, 1px, 1px);
+    clip: rect(0.08em 0.08em 0.08em 0.08em);
+    clip: rect(0.08em, 0.08em, 0.08em, 0.08em);
 }
