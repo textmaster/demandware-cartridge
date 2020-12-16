@@ -1,7 +1,7 @@
 <!--- TEMPLATENAME: followUp.isml --->
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
-<isdecorate template="application/MenuFrame">
+<isdecorate template="application/menuframe">
 <script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
 <script src="${URLUtils.staticURL('js/textmaster.dashboard.secondary.js')}"></script>
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />

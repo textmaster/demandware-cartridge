@@ -69,7 +69,36 @@
 
             $('select[name=item-type]').on('change', function () {
                 var itemType = this.value;
-                if ($(this).val() === 'product' || $(this).val() === 'category') {
+                if ($(this).val() === 'product') {
+                    $('.search-by').removeClass('hide');
+                    var searchType = app.utils.getCookie('searchType');
+                    if (searchType) {
+                        $('select[name=search-type] option[value=' + searchType + ']').attr('selected', 'selected')
+                    }
+                    $('select[name=search-type]').on('change', function() {
+                        if ($(this).val() === 'category') {
+                            $('.category').addClass('show');
+                            $('.product-id').addClass('hide');
+                            $('ul.select-category').html('<span>Please wait...</span>');
+                            $('.common-error.search').removeClass('show');
+
+                            var url = app.urls.categoryDropdown + '?itemType=' + itemType;
+                            $.get(url, function (data) {
+                                $('.input-holder.category').html(data);
+                            });
+                            $('select[name=item-type]').removeClass('error-field');
+                            app.utils.setCookie('searchType', 'category', 0);
+                        } else {
+                            $('.category').removeClass('show');
+                            $('.product-id').removeClass('hide');
+                            $('textarea[name=product-ids]').val('');
+                            app.utils.setCookie('searchType', 'productid', 0);
+                        }
+                    });
+                    $('select[name=search-type]').change();
+                } else if ($(this).val() === 'category') {
+                    $('.search-by').addClass('hide');
+                    $('.product-id').addClass('hide');
                     $('.category').addClass('show');
                     $('ul.select-category').html('<span>Please wait...</span>');
                     $('.common-error.search').removeClass('show');
@@ -80,6 +109,8 @@
                     });
                     $(this).removeClass('error-field');
                 } else {
+                    $('.search-by').addClass('hide');
+                    $('.product-id').addClass('hide');
                     $('.category').removeClass('show');
                 }
 
@@ -122,10 +153,23 @@
             });
 
             $('#filter-search').on('click', function () {
+                var date = new Date($('#date-input').val());
+
+                if (Object.prototype.toString.call(date) === "[object Date]") {
+                    if (isNaN(date)) {
+                        date = '';
+                    } else {
+                        date = date.toISOString().substr(0, 10);
+                    }
+                }
+
                 var searchText = $(this).val();
                 var itemType = $('select[name=item-type]').val();
+                var searchBy = $('select[name=search-type]').val();
                 var category = [];
+                var pids = $('textarea[name=product-ids]').val();
                 var error = false;
+                var errorText = '';
 
                 $('input[type="checkbox"][name="category[]"]:checked').each(function () {
                     category.push($(this).val());
@@ -133,18 +177,30 @@
 
                 postData = {
                     itemType: itemType,
-                    category: category.join(',')
+                    category: searchBy === 'category' ? category.join(',') : '',
+                    pids: searchBy === 'productid' ? pids : '',
+                    date: date
                 };
 
                 if (itemType === '') {
                     $('select[name=item-type]').addClass('error-field');
                     error = true;
-                } else if (itemType !== 'content' && category.length === 0) {
+                    errorText = 'Select Item type';
+                } else if (itemType === 'product') {
+                    if (searchBy === 'category' && category.length === 0) {
+                        error = true;
+                        errorText = 'Select Categories';
+                    } else if (searchBy === 'productid' && pids.length === 0) {
+                        error = true;
+                        errorText = 'Enter Product ID(s)';
+                    }
+                } else if (itemType === 'category' && category.length === 0) {
                     error = true;
+                    errorText = 'Select Categories';
                 }
 
                 if (error) {
-                    $('.common-error.search').text(itemType === '' ? 'Select Item type' : 'Select Categories');
+                    $('.common-error.search').text(errorText);
                     $('.common-error.search').addClass('show');
                     return false;
                 }
@@ -798,6 +854,27 @@
         utils: {
             firstLetterCapital: function (str) {
                 return str.charAt(0).toUpperCase() + str.slice(1);
+            },
+            setCookie: function (cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = 'expires=' + d.toUTCString();
+                document.cookie = cname + '=' + cvalue + ';' + (exdays ? expires + ';' : '') + 'Secure';
+            },
+            getCookie: function (cname) {
+                var name = cname + '=';
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i <ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return '';
             }
         }
     };

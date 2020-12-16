@@ -22,10 +22,25 @@
 						</select>
 					</div>
 				</div>
+				<div class="field-holder search-by hide">
+					<div class="label-holder">${Resource.msg('translation.search.products.by', 'textmaster', null)}: </div>
+					<div class="input-holder">
+						<select name="search-type">
+							<option value="category">${Resource.msg('translation.search.products.by.categories', 'textmaster', null)}</option>
+							<option value="productid">${Resource.msg('translation.search.products.by.pid', 'textmaster', null)}</option>
+						</select>
+					</div>
+				</div>
 				<div class="field-holder category">
 					<div class="label-holder">${Resource.msg('translation.category.assignment','textmaster',null)}: </div>
 					<div class="input-holder category">
 						<ul class="multi-select select-category"></ul>
+					</div>
+				</div>
+				<div class="field-holder product-id hide">
+					<div class="label-holder">${Resource.msg('translation.search.products.by.pid','textmaster',null)}: </div>
+					<div class="input-holder">
+						<textarea name="product-ids" rows="4" cols="50"></textarea>
 					</div>
 				</div>
 				<div class="field-holder">
@@ -58,6 +73,12 @@
 			<div class="form-holder filter-items">
 				<div class="field-holder title-holder">
 					<h2>${Resource.msg('general.search','textmaster',null)}</h2>
+				</div>
+				<div class="field-holder date-holder">
+					<div class="label-holder">${Resource.msg('translation.exclude.items.exported','textmaster',null)}: </div>
+					<div class="input-holder">
+						<input type="date" id="date-input">
+					</div>
 				</div>
 				<div class="field-holder button-holder left">
 					<input type="button" value="${Resource.msg('general.search','textmaster',null)}" id="filter-search">

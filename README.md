@@ -88,22 +88,27 @@ Once launched, you will be able to follow the status of your translation project
 # Installation
 ***
 ### Step 1
-First step is to upload the cartridge 'bm_textmaster', then for each site, go to **Demandware > Administration > Manage Sites > (site) > Settings > Cartridges** input field add cartridge name 'bm_textmaster'
+First step is to upload all the cartridges to active code version of the SFCC sandbox, then for each site, go to **Demandware > Administration > Manage Sites > (site) > Settings > Cartridges** input field add cartridge names as follows:
+- For SFRA based sites: int_textmaster_sfra:int_textmaster_core in front of base cartridge path
+- For Business Manager site: bm_textmaster:int_textmaster_core
+- For SiteGenesis based sites: int_textmaster_controllers:int_textmaster_core in front of default storefront cartridges
 
 ### Step 2
-Under **Administration > Operations > Import & Export**, go to 'Import and export files' and upload the file 'Jobs.xml'. In 'Job schedules', select the 'Import' button for 'Jobs.xml'. It will import all 3 jobs: AutoLaunchTextMaster, ImportDataFromTextMaster and TMAskForQuote.
-The jobs must be then named according to the **site ID** i.e. TMAskForQuoteSiteGenesis.
-This must be replicated for each site.
+In the cartridge bundle, inside metadata folder compress textmaster-meta-import folder to generate textmaster-meta-import.zip file and import it through Administration > Site Development > Site Import & Export
 
 ### Step 3
-Under **Administration > Site Development > Import & Export**, import 'SystemObjects.xml'. In 'Meta Data', select the 'Import' button for 'SystemObjects.xml'. Repeat this step for 'CustomObjects.xml'.
+The jobs need to be replicated for all the sites.
+For example, the job TextMasterAskForQuoteRefArch is replicated so that the new job will have an ID with the format TextMasterAskForQuote<siteID>. If the site ID is XyZ, the new job will be "TextMasterAskForQuoteXyZ".  Under the "Job Steps" for the job, the scope must be the site ID, say "XyZ" if site ID is XyZ and edit the Job Step id with siteId.
+Follow the same steps for other jobs to replicate for all sites.
+
+### Step 4
 For each site, set the values below manually in Site preferences > Custom preferences > TextMaster. All other values need to be configured through API Setup page in our TextMaster user interface.
 - Site Library Type: Library type of your Site - Private OR Shared
 - OCAPI Client ID: Client ID of your OCAPI account in account.demandware.com
 - OCAPI Client Password: Client Password of your OCAPI account in account.demandware.com
 - SiteGenesis Controller Cartridge: the cartridge name of SiteGenesis storefront controllers has to be entered in relevant Site Preference to get access to default controller files from bm_textmaster cartridge.
 
-### Step 4
+### Step 5
 In **Administration > Site Development > Open Commerce API Settings** select "Data" in 'Select Type' and 'Global (organization-wide)' in 'Select context'.
 In the JSON content, ensure that the value for key "client_id" corresponds to your client ID in account.demandware.com. In the settings JSON content, inside "resources" array, add the following value:
 ```sh
@@ -121,8 +126,5 @@ In the JSON content, ensure that the value for key "client_id" corresponds to yo
 }
 ```
 Keep Client ID and Password for OCAPI in Site Preference
-
-### Step 5
-In **Demandware > Administration > Operations > Import & Export**, under the section 'Import and export files', upload 'Service.xml' then select the 'import' button under the section 'Services'.
 
 Once done, enable the cartridge as follows: go to Administration > Organization > Roles > Administrator, go in the tab Business Manager Modules, find TextMaster and click on the checkbox to enable it.

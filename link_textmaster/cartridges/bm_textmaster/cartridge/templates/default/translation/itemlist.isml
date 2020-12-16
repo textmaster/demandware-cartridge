@@ -48,10 +48,28 @@
 	            </isif>
 	            <isif condition="${pdict.Type != 'content'}">
 	                <th>
-	                    <select multiple="multiple" id="categoryfield"> 
-	                        <isloop items="${pdict.CategoryList}" var="category" status="loopstate">
-		                        <option value="${category.displayName}">${category.displayName}</option>
-	                        </isloop> 
+	                    <select multiple="multiple" id="categoryfield">
+							<isif condition="${pdict.CategoryList.length !== 0}">
+								<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
+									<option value="${category.displayName}">${category.displayName}</option>
+								</isloop>
+							<iselse>
+								<isset name="itemCategoryList" value="${new dw.util.HashSet()}" scope="page"/>
+								<option value="${'unassigned'}">${'unassigned'}</option>
+								<isloop items="${pdict.ItemList}" var="item" status="loopstate">
+									<isif condition="${item.primaryCategory !== null}">
+										<isset name="isCategoryAdded" value="${itemCategoryList.add(item.primaryCategory.displayName)}" scope="page"/>
+										<isif condition="${isCategoryAdded}">
+											<option value="${item.primaryCategory.displayName}">${item.primaryCategory.displayName}</option>
+										</isif>
+									<iselseif condition="${item.allCategories.length > 0}">
+										<isset name="isCategoryAdded" value="${itemCategoryList.add(item.allCategories[0].displayName)}" scope="page"/>
+										<isif condition="${isCategoryAdded}">
+											<option value="${item.allCategories[0].displayName}">${item.allCategories[0].displayName}</option>
+										</isif>
+									</isif>
+								</isloop>
+							</isif>
 	                    </select>
 	                </th>
 	            </isif>
@@ -86,6 +104,13 @@
 					<isif condition="${pdict.Type == 'category'}">
 						<isset name="categoryName" value="${item.parent.displayName}" scope="page"/>
 					<iselse>
+						<isif condition="${item.primaryCategory !== null}">
+							<isset name="categoryName" value="${item.primaryCategory.displayName}" scope="page"/>
+						<iselseif condition="${item.allCategories.length > 0}">
+							<isset name="categoryName" value="${item.allCategories[0].displayName}" scope="page"/>
+						<iselse>
+							<isset name="categoryName" value="${'unassigned'}" scope="page"/>
+						</isif>
 						<isloop items="${item.allCategories}" var="category" status="loopstate">
 							<isif condition="${pdict.Utils.isCategoryExistInList(pdict.CategoryList, category)}">
 								<isset name="categoryName" value="${category.displayName}" scope="page"/>

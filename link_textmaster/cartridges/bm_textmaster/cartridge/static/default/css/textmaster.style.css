@@ -98,6 +98,7 @@
     border: 0.08em solid #A5AEB5;
 }
 
+.translation-module textarea.error-field,
 .translation-module input[type=text].error-field,
 .translation-module select.error-field {
     border-color: #f00;
@@ -671,6 +672,10 @@ span.cache-message {
 
 .followup table.dataTable tr td:last-of-type {
     text-align: center;
+}
+
+.hide {
+    display: none;
 }
 
 /* Responsive */
