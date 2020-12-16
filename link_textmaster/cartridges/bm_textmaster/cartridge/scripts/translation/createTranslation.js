@@ -195,6 +195,10 @@ function getOutput(input) {
                     break;
                 }
 
+                Transaction.begin();
+                item.custom.exportDate = Site.getCurrent().getCalendar().getTime();
+                Transaction.commit();
+
                 for (var attr = 0; attr < attributes.length; attr++) {
                     var attribute = attributes[attr];
                     attrData = {};

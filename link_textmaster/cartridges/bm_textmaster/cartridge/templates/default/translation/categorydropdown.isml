@@ -1,6 +1,6 @@
 <!--- TEMPLATENAME: categorylist.isml --->
 <!--- For ajax call on getting category list of a catalog --->
-<isinclude template="util/modules.isml"/>
+<isinclude template="util/textmastermodules.isml"/>
 
 <ul class="multi-select select-category">
 	<li title="${Resource.msg('translation.info.selectall','textmaster',null)}">

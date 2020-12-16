@@ -14,6 +14,16 @@ var ISML = require('dw/template/ISML');
 var utils = require('*/cartridge/scripts/utils/tmUtils');
 var r = require('*/cartridge/scripts/utils/response');
 var followUpList = require('~/cartridge/scripts/translation/getFollowUpList');
+
+/**
+ * Gives the navigation catalog ID of the current site
+ * @returns {string} Id of storefront catalog
+ */
+function getSiteCatalog() {
+    var siteCatalog = require('dw/catalog/CatalogMgr').siteCatalog;
+    return siteCatalog.ID;
+}
+
 /**
  * Form to show filter options for translation
  */
@@ -65,9 +75,10 @@ function itemList() {
 
     var input = {
         Category: request.httpParameterMap.get('category').stringValue,
-        ItemType: request.httpParameterMap.get('itemType').stringValue
+        ItemType: request.httpParameterMap.get('itemType').stringValue,
+        ProductIDs: request.httpParameterMap.get('pids').stringValue,
+        Date: request.httpParameterMap.get('date').stringValue
     };
-    input.Catalog = getSiteCatalog();
     var output = items.output(input);
     var languages = utils.getTranslationLanguages();
     var productTypes = [];
@@ -277,14 +288,6 @@ function documentComplete() {
     var output = complete.output(input);
 
     r.renderJSON(output);
-}
-
-/**
- * Gives the navigation catalog ID of the current site
- */
-function getSiteCatalog() {
-    var siteCatalog = require('dw/catalog/CatalogMgr').siteCatalog;
-    return siteCatalog.ID;
 }
 
 /*

@@ -1060,8 +1060,8 @@ Utils.ocapiClient = function (method, endPoint, request) {
             errorResponse = JSON.parse(result.errorMessage);
 
             if (!(errorResponse && errorResponse.fault && errorResponse.fault.type && errorResponse.fault.type === 'JobAlreadyRunningException')) {
-	            Utils.log.error('Invalid OCAPI settings. Also check OCAPI username and password in Site Preference');
-	            Utils.log.error(result.errorMessage);
+                Utils.log.error('Invalid OCAPI settings. Also check OCAPI username and password in Site Preference');
+                Utils.log.error(result.errorMessage);
             }
         } catch (ex) {
             Utils.log.error(result.errorMessage);
@@ -1282,7 +1282,7 @@ Utils.setImportJobQuery = function (projectid, documentid) {
 
             result = dataHolder.custom.RunningDocument ? true : false;
             tryAgain = false;
-        } catch (ex) {}
+        } catch (ex) {} // eslint-disable-line no-empty
     }
 
     return result;

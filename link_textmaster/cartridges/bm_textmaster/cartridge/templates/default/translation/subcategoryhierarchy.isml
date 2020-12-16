@@ -1,4 +1,4 @@
-<isinclude template="util/modules.isml"/>
+<isinclude template="util/textmastermodules.isml"/>
 
 <ul>
 	<isloop items="${pdict.categorylist}" var="categoryObj" status="loopstate">
