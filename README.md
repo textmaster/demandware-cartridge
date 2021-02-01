@@ -20,7 +20,6 @@ _*Note: Content assets cannot be extracted and sent for translation if they don'
 
   - Certified Commerce Cloud Intergration
   - All content types (product, categories, content assets) and attributes handled
-  - No licence or set up costs: we just charge content translated
   - Advanced filtering and selection of items
   - Quote with live translation memory analysis
   - Seamless and automatic translation workflow
