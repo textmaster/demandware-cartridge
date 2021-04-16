@@ -458,11 +458,22 @@ Utils.resetLanguageCache = function () {
  */
 Utils.isTranslationLanguage = function (languageCheck) {
     var languages = Utils.getTranslationLanguages();
+    var i;
 
-    for (var i = 0; i < languages.length; i++) {
+    for (i = 0; i < languages.length; i++) {
         if (languages[i].id === languageCheck) {
             return true;
         }
+    }
+    
+    var mappingLanguage = Utils.getSfccMappingLanguage(languageCheck);
+    
+    if (mappingLanguage) {
+	    for (i = 0; i < languages.length; i++) {
+	        if (languages[i].id === mappingLanguage) {
+	            return true;
+	        }
+	    }
     }
 
     return false;
