@@ -12,6 +12,7 @@ The Textmaster extension with Salesforce Commerce Cloud allows you to easily tra
 - Products
 - Categories
 - Content assets*
+- Library Folders
 
 _*Note: Content assets cannot be extracted and sent for translation if they don't belong to a library folder._
 
