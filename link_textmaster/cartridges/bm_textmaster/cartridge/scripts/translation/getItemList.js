@@ -63,6 +63,8 @@ function getOutput(input) {
     }
 
     /* Populate item list according to the itemType selected */
+    var Site = require('dw/system/Site');
+
     switch (itemType) { // eslint-disable-line default-case
     case 'product':
         if (categoryIDs && categoryIDs.length) {
@@ -70,10 +72,10 @@ function getOutput(input) {
                 var category = CatalogMgr.getCategory(categoryIDs[prodCatID]);
                 allCategories.push(category);
             }
-    
+
             for (var prodCat = 0; prodCat < allCategories.length; prodCat++) {
                 var products = allCategories[prodCat].getProducts();
-    
+
                 for (var prod = 0; prod < products.length; prod++) {
                     if (!(utils.isProductExistInList(items, products[prod])) && !isLastExported(products[prod], date)) {
                         items.push(products[prod]);
@@ -133,6 +135,23 @@ function getOutput(input) {
             items.push.apply(items, contents);
         }
 
+        break;
+    case 'folder':
+        var libraryType = Site.getCurrent().getCustomPreferenceValue('TMLibraryType').value;
+        var folderlibrary;
+        if (libraryType === 'shared') {
+            folderlibrary = ContentMgr.siteLibrary;
+        } else if (libraryType === 'private') {
+            folderlibrary = ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY);
+        }
+        var rootFolder = folderlibrary.root;
+        var listOfFolders = getSubContentFolders(rootFolder);
+
+        for (var j = 0; j < listOfFolders.length; j++) {
+            if (!isLastExported(listOfFolders[j], date)) {
+                items.push(listOfFolders[j]);
+            }
+        }
         break;
     }
 

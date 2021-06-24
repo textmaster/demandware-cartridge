@@ -11,7 +11,7 @@
     	<isif condition="${pdict.Type != 'category'}">
     		<th class="table_header left n e s" nowrap="nowrap" width="8%">${pdict.Type == 'product' ? Resource.msg('translation.product.type','textmaster',null) : Resource.msg('translation.search.status','textmaster',null)}</th>
     	</isif>
-    	<isif condition="${pdict.Type != 'content'}">
+    	<isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder')}">
     		<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.category','textmaster',null)}</th>
     	</isif>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.languages','textmaster',null)}</th>
@@ -20,8 +20,8 @@
     <tfoot>
             <tr>
                 <th>&nbsp;<input type="hidden" name="items" value=""></th>
-                <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" id="inputfield" /></th>
-                <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" id="inputfield" /></th>
+                <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" class="inputfield" /></th>
+                <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" class="inputfield" /></th>
                 <th>
                     <select> 
                         <option value=""></option>
@@ -46,7 +46,7 @@
 	                    </isif>
 	                </th>
 	            </isif>
-	            <isif condition="${pdict.Type != 'content'}">
+	            <isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder')}">
 	                <th>
 	                    <select multiple="multiple" id="categoryfield">
 							<isif condition="${pdict.CategoryList.length !== 0}">
@@ -57,7 +57,7 @@
 								<isset name="itemCategoryList" value="${new dw.util.HashSet()}" scope="page"/>
 								<option value="${'unassigned'}">${'unassigned'}</option>
 								<isloop items="${pdict.ItemList}" var="item" status="loopstate">
-									<isif condition="${item.primaryCategory !== null}">
+									<isif condition="${item.primaryCategory !== null && item.primaryCategory !== undefined}">
 										<isset name="isCategoryAdded" value="${itemCategoryList.add(item.primaryCategory.displayName)}" scope="page"/>
 										<isif condition="${isCategoryAdded}">
 											<option value="${item.primaryCategory.displayName}">${item.primaryCategory.displayName}</option>
@@ -100,7 +100,7 @@
 		                    </isif>
 	        		</td>
 	        	</isif>
-	            <isif condition="${pdict.Type != 'content'}">
+	            <isif condition="${pdict.Type != 'content' && pdict.Type != 'folder'}">
 					<isif condition="${pdict.Type == 'category'}">
 						<isset name="categoryName" value="${item.parent.displayName}" scope="page"/>
 					<iselse>
@@ -121,8 +121,8 @@
 	            </isif>
 	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
 	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
-	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
-	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
+                <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
+                <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
 	        </tr>
 	    </isloop>
     </tbody>
@@ -133,15 +133,17 @@
 (function($){
 	$(document).ready(function(){
 		var itemType = $('select[name=item-type]').val();
-		$('select[multiple]').multiselect();		
-		Calendar.setup(
-		    {
-		      inputField  : "datefield",         // ID of the input field
-		      ifFormat    : "%Y-%m-%d",          // the date format
-		      button      : "trigger",       // ID of the button
-		      onUpdate     : function() { $( 'input#datefield', $('tfoot th').get(7)).trigger('dateupdate'); }
-		    }
-	    );
+		$('select[multiple]').multiselect();
+		if ($('#datefield').length) {
+			Calendar.setup(
+			    {
+			      inputField  : "datefield",         // ID of the input field
+			      ifFormat    : "%Y-%m-%d",          // the date format
+			      button      : "trigger",       // ID of the button
+			      onUpdate     : function() { $( 'input#datefield', $('tfoot th').get(7)).trigger('dateupdate'); }
+			    }
+		    );
+		}
 		
 		var table = $("#filtertableProjects").DataTable({
 			  "dom": 'lrtip',
@@ -151,25 +153,27 @@
 		table.columns().every( function () {
 		    var column = this;
 		    
-		    $( 'input#inputfield', this.footer()).on( 'keyup change', function () {
+		    $( 'input.inputfield', this.footer()).on( 'keyup change', function () {
 		        column
 		            .search( this.value )
 		            .draw();
 		    } );
-		    $( 'input#datefield', this.footer()).on( 'keyup change dateupdate', function () {
-		    	$.fn.dataTable.ext.search.push(
-	    			function( settings, data, dataIndex ) {
-	    				var stringDate = $('input#datefield').val();
-	    				var date = (stringDate != "") ? new Date(stringDate).getTime() : new Date('1200-01-01').getTime();
-						var dateData = new Date ((itemType == 'category' || itemType == 'content') ? data[6] : data[7]).getTime();
-	    			    var showData = false;
-	    			    if (dateData >= date) {
-	    			    	showData = true;
-	    			    }
-	    			    return showData;
-	    		});
-		        column.draw();
-		    });
+		    if ($('#datefield').length) {
+			    $( 'input#datefield', this.footer()).on( 'keyup change dateupdate', function () {
+			    	$.fn.dataTable.ext.search.push(
+		    			function( settings, data, dataIndex ) {
+		    				var stringDate = $('input#datefield').val();
+		    				var date = (stringDate != "") ? new Date(stringDate).getTime() : new Date('1200-01-01').getTime();
+							var dateData = new Date ((itemType == 'category' || itemType == 'content' || itemType == 'folder') ? data[6] : data[7]).getTime();
+		    			    var showData = false;
+		    			    if (dateData >= date) {
+		    			    	showData = true;
+		    			    }
+		    			    return showData;
+		    		});
+			        column.draw();
+			    });
+			}
 		    $( 'select', this.footer() ).not('[multiple]').on( 'change', function () {
 		        column
 		            .search( this.value )
@@ -226,7 +230,15 @@
 		    	$.fn.dataTable.ext.search.push(
 	    			function( settings, data, dataIndex ) {
 	    			    var languageArray = $('select[multiple]#languagefield').val();
-	    			    var languageData = (itemType == 'category' || itemType == 'content') ? data[5] : (data[6] || []);
+	    			    var languageData = (itemType == 'category' || itemType == 'content' || itemType == 'folder') ? data[5] : (data[6] || []);
+	    			    switch (itemType) {
+	    			    	case 'category':
+	    			    	case 'content':
+	    			    		languageData = data[5];
+	    			    		break;
+	    			    	default:
+	    			    		languageData = data[6];
+	    			    }
 	    			    var showData = false;
 	    			    if (!languageArray) {
 	    			        showData = true;

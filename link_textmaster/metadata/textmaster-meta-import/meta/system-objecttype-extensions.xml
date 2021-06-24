@@ -40,6 +40,27 @@
             </attribute-definition>
         </custom-attribute-definitions>
     </type-extension>
+	<type-extension type-id="Folder">
+        <custom-attribute-definitions>
+        	<attribute-definition attribute-id="TranslatedLanguages">
+                <display-name xml:lang="x-default">Translated Languages</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <site-specific-flag>false</site-specific-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+			<attribute-definition attribute-id="exportDate">
+                <display-name xml:lang="x-default">Export Date</display-name>
+                <type>date</type>
+                <localizable-flag>false</localizable-flag>
+                <site-specific-flag>false</site-specific-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
     <type-extension type-id="Product">
     	<custom-attribute-definitions>
     		<attribute-definition attribute-id="TranslatedLanguages">
@@ -124,6 +145,15 @@
             <attribute-definition attribute-id="TMContentAttributes">
                 <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>
                 <description xml:lang="x-default">TextMaster default content asset attributes for translation (Set via Default Attribute Setup page)</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>[]</default-value>
+            </attribute-definition>
+	    <attribute-definition attribute-id="TMFolderAttributes">
+                <display-name xml:lang="x-default">TextMaster Folder Attributes</display-name>
+                <description xml:lang="x-default">TextMaster default folder attributes for translation (Set via Default Attribute Setup page)</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -262,6 +292,7 @@
                 <attribute attribute-id="TMCategoryAttributes"/>
                 <attribute attribute-id="TMProductAttributes"/>
                 <attribute attribute-id="TMContentAttributes"/>
+		<attribute attribute-id="TMFolderAttributes"/>
                 <attribute attribute-id="TMCategoryCode"/>
                 <attribute attribute-id="TMEmail"/>
                 <attribute attribute-id="TMLibraryType"/>

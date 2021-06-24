@@ -44,7 +44,8 @@ function getOutput(input) {
 
         projects[proj].documentsCount = documentsCount;
         projects[proj].currency = currencyVal;
-        projects[proj].locale = utils.getLocaleName(projects[proj].custom_data && projects[proj].custom_data.sfccLanguageTo ? projects[proj].custom_data.sfccLanguageTo : projects[proj].language_to_code);
+        projects[proj].localeID = projects[proj].custom_data && projects[proj].custom_data.sfccLanguageTo ? projects[proj].custom_data.sfccLanguageTo : projects[proj].language_to_code;
+        projects[proj].locale = utils.getLocaleName(projects[proj].localeID);
     }
 
     return {

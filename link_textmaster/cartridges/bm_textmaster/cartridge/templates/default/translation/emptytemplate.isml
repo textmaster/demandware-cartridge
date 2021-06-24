@@ -1,1 +1,1 @@
-<!--- TEMPLATENAME: emptytemplate.isml AJAX response already sent back from DS file --->
+<isif condition="${pdict.Error && pdict.Error !== null}"><span class="error-message">${pdict.Error}</span></isif>

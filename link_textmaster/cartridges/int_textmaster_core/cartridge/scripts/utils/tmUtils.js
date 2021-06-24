@@ -55,6 +55,10 @@ Utils.attributes.product = [
     'name', 'shortDescription', 'longDescription', 'pageTitle', 'pageDescription', 'pageKeywords', 'pageURL'
 ];
 
+Utils.attributes.folder = [
+    'displayName', 'description', 'pageDescription', 'pageKeywords', 'pageTitle', 'pageURL'
+];
+
 /**
  * Common configurations
  */
@@ -165,9 +169,7 @@ Utils.getProductType = function (product) {
  */
 Utils.isAttributeAccessible = function (itemType, attribute) {
     var attrList = Utils.attributes[itemType];
-    var strAttrs = attrList.join('|');
-
-    return (strAttrs.indexOf('|' + attribute) > -1 || strAttrs.indexOf(attribute + '|') > -1);
+    return attrList.indexOf(attribute) > -1;
 };
 
 /**
@@ -465,15 +467,15 @@ Utils.isTranslationLanguage = function (languageCheck) {
             return true;
         }
     }
-    
+
     var mappingLanguage = Utils.getSfccMappingLanguage(languageCheck);
-    
+
     if (mappingLanguage) {
-	    for (i = 0; i < languages.length; i++) {
-	        if (languages[i].id === mappingLanguage) {
-	            return true;
-	        }
-	    }
+        for (i = 0; i < languages.length; i++) {
+            if (languages[i].id === mappingLanguage) {
+                return true;
+            }
+        }
     }
 
     return false;

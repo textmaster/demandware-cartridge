@@ -46,13 +46,13 @@
             <step step-id="TMImportCatalog" type="ImportCatalog" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="WorkingFolder">textmaster/category</parameter>
+                    <parameter name="WorkingFolder">textmaster/catalog</parameter>
                     <parameter name="FileNamePattern">(.*).xml</parameter>
                     <parameter name="NoFilesFoundHandling">WARN</parameter>
                     <parameter name="ImportMode">Merge</parameter>
                     <parameter name="ImportFailedHandling">WARN</parameter>
                     <parameter name="AfterImportFileHandling">Archive</parameter>
-                    <parameter name="ArchiveFolder">src/textmaster/archives/category/imported</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/archives/catalog/imported</parameter>
                 </parameters>
             </step>
         </flow>
@@ -110,32 +110,4 @@
             </run-once>
         </triggers>
     </job>
-
-    <job job-id="TextMasterImportProductRefArch" priority="1">
-        <description/>
-        <parameters/>
-        <flow>
-            <context site-id="Sites"/>
-            <step step-id="TMImportProduct" type="ImportCatalog" enforce-restart="false">
-                <description/>
-                <parameters>
-                    <parameter name="WorkingFolder">textmaster/product</parameter>
-                    <parameter name="FileNamePattern">(.*).xml</parameter>
-                    <parameter name="NoFilesFoundHandling">WARN</parameter>
-                    <parameter name="ImportMode">Merge</parameter>
-                    <parameter name="ImportFailedHandling">WARN</parameter>
-                    <parameter name="AfterImportFileHandling">Archive</parameter>
-                    <parameter name="ArchiveFolder">src/textmaster/archives/product/imported</parameter>
-                </parameters>
-            </step>
-        </flow>
-        <rules/>
-        <triggers>
-            <run-once enabled="true">
-                <date>2020-01-29Z</date>
-                <time>23:10:41.000Z</time>
-            </run-once>
-        </triggers>
-    </job>
-
 </jobs>

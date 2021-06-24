@@ -74,6 +74,33 @@ function followUp() {
 }
 
 /**
+ * Gets store front URL for review translation, according to item type
+ * @param {string} itemType - type of the item for eg: product, category, content assets, folders, Page designer
+ * @param {string} targetLangID - to which language the translation needs to be done
+ * @returns {string} store URL
+ */
+function getStoreURL(itemType, targetLangID) {
+    var storeLangID = utils.formatLocaleDemandware(utils.formatLocaleStandard(targetLangID));
+    var storeURL = 'https://' + Site.current.getHttpsHostName() + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + storeLangID;
+    var controllerPart = '';
+    switch (itemType) {
+    case 'product':
+        controllerPart = '/Product-Show?pid=';
+        break;
+    case 'category':
+        controllerPart = '/Search-Show?cgid=';
+        break;
+    case 'content':
+    case 'pagedesigner':
+        controllerPart = '/Page-Show?cid=';
+        break;
+    default:
+        controllerPart = '';
+    }
+    return controllerPart ? (storeURL + controllerPart) : '';
+}
+
+/**
  * Documents Dashboard page
  */
 function documentsFollowUp() {
@@ -86,9 +113,11 @@ function documentsFollowUp() {
     var targetLangID = request.httpParameterMap.get('targetLang').stringValue;
     var creationDate = request.httpParameterMap.get('creationDate').stringValue;
     var lastUpdatedDate = request.httpParameterMap.get('lastUpdatedDate').stringValue;
+    var itemType = request.httpParameterMap.get('itemType').stringValue;
 
     var sourceLang = utils.getLocaleName(sourceLangID);
     var targetLang = utils.getLocaleName(targetLangID);
+    var storeURL = getStoreURL(itemType, targetLangID);
 
     if (registered) {
         ISML.renderTemplate('translation/secondarydashboard', {
@@ -97,6 +126,7 @@ function documentsFollowUp() {
             refer: refer,
             sourceLang: sourceLang,
             targetLang: targetLang,
+            storeURL: storeURL,
             creationDate: creationDate,
             lastUpdatedDate: lastUpdatedDate,
             utils: utils

@@ -18,6 +18,7 @@
 						<option value="product">${Resource.msg('general.product','textmaster',null)}</option>
 						<option value="category">${Resource.msg('general.category','textmaster',null)}</option>
 						<option value="content">${Resource.msg('general.contentasset','textmaster',null)}</option>
+						<option value="folder">${Resource.msg('general.libraryfolder','textmaster',null)}</option>
 					</select>
 				</div>
 			</div>

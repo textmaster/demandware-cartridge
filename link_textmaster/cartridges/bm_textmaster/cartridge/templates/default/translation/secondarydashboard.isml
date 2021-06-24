@@ -10,6 +10,7 @@
 <isset name="utils" value="${pdict.utils}" scope="page"/>
 <div class="followup docs-followup">
     <h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
+    <input type="hidden" name="storeurl" value="${pdict.storeURL}" />
     <div class="project-title">
         <div class="project-name-reference">
             <isset name="singleQuote" value="'" scope="page">
