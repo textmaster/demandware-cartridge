@@ -87,9 +87,8 @@
                 $.post(app.urls.docDashboardData, {
                     projectID: vars['projectID'],
                     documentPageNumber: docFollow.config.documentPageNumber
-                }, function (data) {
+                }, function (output) {
                     try {
-                        var output = data;
                         var documents = output.Documents;
                         var firstDocument;
                         docFollow.config.documentPageNumber++;
@@ -137,7 +136,7 @@
                 documents.forEach(function (document) {
                     if (document) {
                         var itemID =  document.custom_data.item ? document.custom_data.item.id : '';
-                        var itemName =  document.custom_data.item ? document.custom_data.item.name : '';
+                        var itemName =  document.custom_data.item ? (document.custom_data.item.name ? document.custom_data.item.name : itemID) : '';
                         var words =  document.word_count ? document.word_count : '';
                         var updatedAt = document.updated_at ? document.updated_at.full : document.created_at.full;
                         var datePart = updatedAt && updatedAt.indexOf(' ') > -1 ? updatedAt.split(' ')[0] : '';
@@ -146,7 +145,10 @@
                         var minute = timePart ? timePart.split(':')[1] : '00';
                         var documentDate = datePart + ' ' + hour + ':' + minute;
                         var documentStatus = document.status ? document.status : '';
-                        var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
+                        var storeURL = $('input[name=storeurl]').val();
+                        storeURL = storeURL ? (storeURL + itemID) : '';
+                        var reviewButton = storeURL ? '<a href="' + storeURL + '" target="_blank">' + Resources.REVIEW_BUTTON_LABEL + '</a><br/>' : '';
+                        var validateAction = reviewButton + '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
                         var actions = documentStatus === Resources.IN_REVIEW ? validateAction : '';
 
                         docFollow.dataTable.row.add([itemID, itemName, words, documentDate, documentStatus, actions]).draw();

@@ -139,7 +139,8 @@
                         var hour = timePart ? timePart.split(':')[0] : '00';
                         var minute = timePart ? timePart.split(':')[1] : '00';
                         var projectDate = datePart + ' ' + hour + ':' + minute;
-                        var itemType = project.custom_data.itemType ? app.utils.firstLetterCapital(project.custom_data.itemType) : '';
+                        var itemType = project.custom_data.itemType ? project.custom_data.itemType : '';
+                        var itemTypeFormatted = app.utils.firstLetterCapital(itemType);
                         var projectLocale = project.locale ? project.locale : '';
                         var projectStatus = project.status;
                         var translateAction = '<button class="dashboard-action-button actions-translate" value=' + project.id + '>' + Resources.TRANSLATE_ACTION + '</button>';
@@ -147,12 +148,13 @@
                         var price = project.currency;
                         var createdAt = project.created_at.full;
                         var creationDate = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
-                        var projectName = encodeURIComponent(project.name.trim())
-                        var queryParam = '?projectID=' + project.id + '&projName=' + projectName + '&projRef=' + project.reference + '&sourceLang=' + project.language_from + '&targetLang=' + project.language_to
-                        + '&creationDate=' + creationDate + '&lastUpdatedDate=' + datePart;
+                        var projectName = encodeURIComponent(project.name.trim());
+                        var sourceLanguage = project && project.custom_data && project.custom_data.sfccLanguageFrom ? project.custom_data.sfccLanguageFrom : project.language_from;
+                        var queryParam = '?projectID=' + project.id + '&projName=' + projectName + '&projRef=' + project.reference + '&sourceLang=' + sourceLanguage + '&targetLang=' + project.localeID
+                        + '&creationDate=' + creationDate + '&lastUpdatedDate=' + datePart + '&itemType=' + itemType;
                         var projectTitle = '<a href='+ app.urls.documentFollowUp + queryParam + ' target="_blank" class ="doc-link"> '+ project.name +'</a>';
 
-                        follow.dataTable.row.add([projectTitle, docsCount, itemType, projectLocale, price, projectDate, projectStatus, actions]).draw();
+                        follow.dataTable.row.add([projectTitle, docsCount, itemTypeFormatted, projectLocale, price, projectDate, projectStatus, actions]).draw();
 
                         if (projectStatus) {
                             switch (projectStatus) { // eslint-disable-line default-case

@@ -128,6 +128,7 @@ function createTranslation() {
         Items: request.httpParameterMap.get('items').stringValue,
         AutoLaunch: request.httpParameterMap.get('autoLaunch').stringValue
     };
+
     var output = translationCreation.output(input);
 
     r.renderJSON(output);

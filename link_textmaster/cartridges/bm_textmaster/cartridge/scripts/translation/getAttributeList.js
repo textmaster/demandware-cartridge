@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-continue: 0 */
 
 /* API Includes */
 var Site = require('dw/system/Site');
@@ -39,20 +40,21 @@ function getTMDefault(ID, name, defaultAttributes) {
  */
 function getOutput(input) {
     var attributes = [];
-    var defaultAttributes = Site.getCurrent().getCustomPreferenceValue('TM' + input.itemType + 'Attributes');
+    var itemType = input.itemType;
+    var defaultAttributes = Site.getCurrent().getCustomPreferenceValue('TM' + itemType + 'Attributes');
 
     try {
         defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
     } catch (ex) {
-        log.error('Exception on getting default attribute list for ' + input.itemType + ' from Site Preferences: ' + ex.message);
+    	log.error('Exception on getting default attribute list for ' + input.itemType + ' from Site Preferences: ' + ex.message);
     }
 
     try {
-        var attrDefinitions = SystemObjectMgr.describe(input.itemType).getAttributeDefinitions().toArray();
+    	var attrDefinitions = SystemObjectMgr.describe(input.itemType).getAttributeDefinitions().toArray();
 
         for (var attrDef = 0; attrDef < attrDefinitions.length; attrDef++) {
-            if ((input.itemType.toLowerCase() !== 'product' && attrDefinitions[attrDef].system && !utils.isAttributeAccessible(input.itemType.toLowerCase(), attrDefinitions[attrDef].ID)) || attrDefinitions[attrDef].ID === 'ID' || attrDefinitions[attrDef].ID === 'TranslatedLanguages' || attrDefinitions[attrDef].ID === 'UUID' || attrDefinitions[attrDef].ID === 'taxClassID') {
-                continue; // eslint-disable-line no-continue
+        	if ((input.itemType.toLowerCase() !== 'product' && attrDefinitions[attrDef].system && !utils.isAttributeAccessible(input.itemType.toLowerCase(), attrDefinitions[attrDef].ID)) || attrDefinitions[attrDef].ID === 'ID' || attrDefinitions[attrDef].ID === 'TranslatedLanguages' || attrDefinitions[attrDef].ID === 'UUID' || attrDefinitions[attrDef].ID === 'taxClassID') {
+                continue;
             }
 
             if (attrDefinitions[attrDef].valueTypeCode === 3 || attrDefinitions[attrDef].valueTypeCode === 4 || attrDefinitions[attrDef].valueTypeCode === 5) {
@@ -66,7 +68,7 @@ function getOutput(input) {
             }
         }
     } catch (ex) {
-        log.error('Exception on dealing with attributeDefinitions for ' + input.itemType + ': ' + ex.message);
+    	log.error('Exception on dealing with attributeDefinitions for ' + input.itemType + ': ' + ex.message);
     }
 
     return {

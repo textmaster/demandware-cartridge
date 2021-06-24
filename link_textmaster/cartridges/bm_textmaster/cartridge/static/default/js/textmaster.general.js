@@ -52,7 +52,9 @@
             var items = [];
             var postData;
             var errorTimeID;
+            var searchText;
             var itemsLimit = $('#itemsLimit').val();
+            var exportDate = '';
 
             itemsLimit = parseInt(itemsLimit, 10);
 
@@ -162,8 +164,10 @@
                         date = date.toISOString().substr(0, 10);
                     }
                 }
+                
+                exportDate = date;
 
-                var searchText = $(this).val();
+                searchText = $(this).val();
                 var itemType = $('select[name=item-type]').val();
                 var searchBy = $('select[name=search-type]').val();
                 var category = [];
@@ -179,7 +183,7 @@
                     itemType: itemType,
                     category: searchBy === 'category' ? category.join(',') : '',
                     pids: searchBy === 'productid' ? pids : '',
-                    date: date
+                    date: exportDate
                 };
 
                 if (itemType === '') {
@@ -208,6 +212,7 @@
                 $('.items .ajax-loader').addClass('show');
                 $('.common-error.search').removeClass('show');
                 $(this).prop('disabled', true).val('Please wait...');
+                
                 $.post(app.urls.translationItemList, postData, function (data) {
                     $('#items-holder').html(data);
                     $('#filter-search').prop('disabled', false).val(searchText);

@@ -23,6 +23,7 @@ var resourceHelper = {
             VALIDATED: Resource.msg('status.validated', 'textmaster', null),
             SWITCH_TO_COMPLETED: Resource.msg('follow.document.switch.to.completed', 'textmaster', null),
             TRANSLATED_SUCCESS_MESSAGE: Resource.msg('follow.translated.success.message', 'textmaster', null),
+            REVIEW_BUTTON_LABEL: Resource.msg('follow.review.button.label', 'textmaster', null),
             VALIDATED_SUCCESS_MESSAGE: Resource.msg('follow.validated.success.message', 'textmaster', null)
         };
 

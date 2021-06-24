@@ -1,5 +1,12 @@
 'use strict';
 
+/* global empty, XML */
+/* eslint new-cap: 0 */
+/* eslint no-unneeded-ternary: 0 */
+/* eslint default-case: 0 */
+/* eslint no-nested-ternary: 0 */
+/* eslint no-loop-func: 0 */
+
 /* API Includes */
 var Site = require('dw/system/Site');
 var System = require('dw/system/System');
@@ -17,6 +24,7 @@ var StringUtils = require('dw/util/StringUtils');
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
 var utils = require('*/cartridge/scripts/utils/tmUtils');
 
+/* Global Variables */
 var log = logUtils.getLogger('CreateTranslation');
 
 /**
@@ -44,11 +52,12 @@ function postBulkDocuments(documents, projectID, autoLaunch) {
             documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + utils.config.api.get.document + '/' + documentID;
 
             var wordCount = 0;
-            // eslint-disable-next-line
-            for (var key in document.original_content) {
-                wordCount += utils.getWordCount(document.original_content[key].original_phrase);
-            }
 
+            Object.keys(document.original_content).forEach(function (key) {
+                if (Object.prototype.hasOwnProperty.call(document.original_content, key)) {
+                    wordCount += utils.getWordCount(document.original_content[key].original_phrase);
+                }
+            });
             var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-Data?projectid=' + projectID + '&documentid=' + documentID;
             var autoLaunchCallBackURL = autoLaunch.toLowerCase() === 'true' ? 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMAutoLaunch-Document?projectid=' + projectID + '&documentid=' + documentID : '';
 
@@ -121,7 +130,7 @@ function getOutput(input) {
     var items = JSON.parse(input.Items);
     var autoLaunch = input.AutoLaunch;
     var categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || '';
-    var calendarDate = Calendar(); // eslint-disable-line new-cap
+    var calendarDate = Calendar();
     var bulkLimit = Resource.msg('api.bulk.doc.limit', 'textmaster', null) || 20;
     var bulkLimitCount = 0;
     var itemCount = 0;
@@ -130,6 +139,7 @@ function getOutput(input) {
     var contentValue;
     var itemAttrs;
     var attrData;
+    var itemName;
     var avoidItems = [];
 
     bulkLimit = isNaN(bulkLimit) ? 25 : parseInt(bulkLimit, 10);
@@ -139,14 +149,14 @@ function getOutput(input) {
             var projectPostData = {};
             var project = {};
 
-            project.name = utils.firstLetterCapital(itemType) + ' - ' + localeTo.template.name + ' - ' + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd'); // eslint-disable-line new-cap
+            project.name = utils.firstLetterCapital(itemType) + ' - ' + localeTo.template.name + ' - ' + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd');
             project.ctype = Resource.msg('constant.translation', 'textmaster', null);
 
             var mappedLanguageFrom = utils.getMappedLanguage(localeFrom);
             var mappedLanguageTo = utils.getMappedLanguage(localeTo.id);
 
-            project.language_from = mappedLanguageFrom ? mappedLanguageFrom : localeFrom; // eslint-disable-line no-unneeded-ternary
-            project.language_to = mappedLanguageTo ? mappedLanguageTo : localeTo.id; // eslint-disable-line no-unneeded-ternary
+            project.language_from = mappedLanguageFrom ? mappedLanguageFrom : localeFrom;
+            project.language_to = mappedLanguageTo ? mappedLanguageTo : localeTo.id;
             project.category = categoryCode;
             project.project_briefing = 'LANGUAGE - FROM ' + utils.getLocaleName(localeFrom) + ' [' + localeFrom + '] TO ' + utils.getLocaleName(localeTo.id) + ' [' + localeTo.id + '] - ' + Resource.msg('constant.briefing', 'textmaster', null);
             project.options = {
@@ -182,7 +192,7 @@ function getOutput(input) {
                 var document = {};
                 var markupFlag = false;
 
-                switch (itemType) { // eslint-disable-line default-case
+                switch (itemType) {
                 case 'product':
                     item = ProductMgr.getProduct(items[i]);
                     itemAttrs = SystemObjectMgr.describe('Product').getAttributeDefinitions().toArray();
@@ -192,6 +202,12 @@ function getOutput(input) {
                     break;
                 case 'category':
                     item = CatalogMgr.getCategory(items[i]);
+                    break;
+                case 'folder':
+                    item = ContentMgr.getFolder(items[i]);
+                    if (empty(item)) {
+                        item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), items[i]);
+                    }
                     break;
                 }
 
@@ -204,12 +220,11 @@ function getOutput(input) {
                     attrData = {};
                     contentValue = '';
 
-                    switch (itemType) { // eslint-disable-line default-case
+                    switch (itemType) {
                     case 'product':
                         for (var itemAttr = 0; itemAttr < itemAttrs.length; itemAttr++) {
                             var itemAttribute = itemAttrs[itemAttr];
                             if (attribute.id === itemAttribute.ID) {
-                                // eslint-disable-next-line no-nested-ternary
                                 contentValue = (attribute.id === 'shortDescription' || attribute.id === 'longDescription') ? (item[attribute.id] ? (item[attribute.id].source ? item[attribute.id].source : item[attribute.id]) : '') : item.attributeModel.getDisplayValue(itemAttribute);
                                 if (contentValue) {
                                     contentValue = contentValue.source ? contentValue.source : contentValue;
@@ -220,7 +235,7 @@ function getOutput(input) {
                         break;
                     case 'content':
                     case 'category':
-                        // eslint-disable-next-line no-nested-ternary
+                    case 'folder':
                         contentValue = attribute.type === 'system' ? (item[attribute.id] || '') : (item.custom[attribute.id] ? (item.custom[attribute.id].source ? item.custom[attribute.id].source : item.custom[attribute.id]) : '');
 
                         if (contentValue) {
@@ -239,6 +254,16 @@ function getOutput(input) {
                 }
 
                 if (customData.length) {
+                    switch (itemType) {
+                    case 'category':
+                    case 'folder':
+                        itemName = item.displayName;
+                        break;
+                    case 'product':
+                    case 'content':
+                        itemName = item.name;
+                        break;
+                    }
                     document.title = itemType + '-' + items[i];
                     document.original_content = itemData;
                     document.type = Resource.msg('constant.key.value', 'textmaster', null);
@@ -246,8 +271,8 @@ function getOutput(input) {
                     document.markup_in_content = markupFlag;
                     document.custom_data = {
                         item: {
-                            id: item.ID,
-                            name: (itemType === 'category' ? item.displayName : item.name)
+                            id: items[i],
+                            name: itemName
                         },
                         attribute: customData
                     };
@@ -256,7 +281,7 @@ function getOutput(input) {
                     bulkLimitCount++;
                 } else {
                     // No content to be exported
-                    avoidItems.push(item.ID);
+                    avoidItems.push(items[i]);
                 }
 
                 itemCount++;

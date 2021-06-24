@@ -1,5 +1,7 @@
 'use strict';
 
+/* global empty */
+
 /* API Includes */
 var Resource = require('dw/web/Resource');
 var Site = require('dw/system/Site');
@@ -49,7 +51,13 @@ function execute(projectID, documentID) {
 
         try {
             var baseFolder = File.IMPEX + File.SEPARATOR + 'src';
-            relativeFolder = 'textmaster' + File.SEPARATOR + itemType;
+            var genericFolder;
+            if (itemType === 'content' || itemType === 'folder') {
+                genericFolder = 'content';
+            } else if (itemType === 'product' || itemType === 'category') {
+                genericFolder = 'catalog';
+            }
+            relativeFolder = 'textmaster' + File.SEPARATOR + genericFolder;
             fileName = documentID + '.xml';
 
             var importDir = new File(baseFolder + File.SEPARATOR + relativeFolder);
@@ -113,18 +121,30 @@ function execute(projectID, documentID) {
                     }
                 }
 
+                if (itemType === 'folder') {
+                    var libraryFolder = ContentMgr.getFolder(itemID);
+                    if (empty(libraryFolder)) {
+                        libraryFolder = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
+                    }
+                    writer.writeStartElement('parent');
+                    writer.writeCharacters(libraryFolder ? libraryFolder.parent.ID : 'root');
+                    writer.writeEndElement();
+                }
+
                 // each system attribute
                 writer.writeStartElement('page-attributes');
 
-                for (var pageAttr = 0; pageAttr < pageAttrs.length; pageAttr++) {
-                    var pageAttribute = pageAttrs[pageAttr];
-                    if (pageAttribute.id) {
-                        writer.writeStartElement(utils.idToXMLTag(pageAttribute.id));
-                        writer.writeAttribute('xml:lang', language);
-                        writer.writeCharacters(pageAttribute.value);
-                        writer.writeEndElement();
+                Object.keys(pageAttrs).forEach(function (pageKey) {
+                    if (Object.prototype.hasOwnProperty.call(pageAttrs, pageKey)) {
+                        var pageAttribute = pageAttrs[pageKey];
+                        if (pageAttribute.id) {
+                            writer.writeStartElement(utils.idToXMLTag(pageAttribute.id));
+                            writer.writeAttribute('xml:lang', language);
+                            writer.writeCharacters(pageAttribute.value);
+                            writer.writeEndElement();
+                        }
                     }
-                }
+                });
 
                 writer.writeEndElement();
 
@@ -163,12 +183,11 @@ function execute(projectID, documentID) {
             var jobName;
             switch (itemType) { // eslint-disable-line default-case
             case 'product':
-                jobName = Resource.msg('import.product.job.name', 'textmaster', null) + Site.current.ID;
-                break;
             case 'category':
                 jobName = Resource.msg('import.catalog.job.name', 'textmaster', null) + Site.current.ID;
                 break;
             case 'content':
+            case 'folder':
                 jobName = Resource.msg('import.content.job.name', 'textmaster', null) + Site.current.ID;
                 break;
             }

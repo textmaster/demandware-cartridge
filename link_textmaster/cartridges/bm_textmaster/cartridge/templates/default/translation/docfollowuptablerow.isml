@@ -6,8 +6,7 @@
 	<isset name="timePart" value="${updatedAt && updatedAt.indexOf(' ') > -1 ? updatedAt.split(' ')[1] : ''}" scope="page">
 	<isset name="hour" value="${timePart ? timePart.split(':')[0] : '00'}" scope="page">
 	<isset name="minute" value="${timePart ? timePart.split(':')[1] : '00'}" scope="page">
-
-	<td class="table_detail e s capitalize">${document.custom_data.item ? document.custom_data.item.name : ''}</td>
+	<td class="table_detail e s capitalize">${document.custom_data.item ? (document.custom_data.item.name ? document.custom_data.item.name : document.custom_data.item.id) : ''}</td>
 	<td class="table_detail e s left">${document.word_count ? document.word_count : ''}</td>
 	<td class="table_detail e s left"><span class="spContentId">${datePart + " " + hour + ":" + minute}</span></td>
 	<td class="table_detail e s">${document.status ? document.status : ''}</td>

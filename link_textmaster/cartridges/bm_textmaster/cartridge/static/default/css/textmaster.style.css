@@ -369,6 +369,7 @@
 
 #filtertableProjects tfoot tr th {
     border-bottom: 0.08em solid #dadada;
+    text-align: left;
 }
 
 #filtertableProjects tfoot tr th div button {
