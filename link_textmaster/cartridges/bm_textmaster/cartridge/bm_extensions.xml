@@ -31,6 +31,9 @@
 			<pipeline name="TMComponents-CreateTranslation" />
 			<pipeline name="TMComponents-GetLanguageToList" />
 			<pipeline name="TMComponents-HandleAutoLaunch" />
+			<pipeline name="TMComponents-CheckContentXMLExists" />
+			<pipeline name="TMComponents-GetPageDesigners" />
+			<pipeline name="TMComponents-GetPageComponents" />
 		</sub-pipelines>
 		<icon>icons/tm_new_project.png</icon>
 	</menuaction>

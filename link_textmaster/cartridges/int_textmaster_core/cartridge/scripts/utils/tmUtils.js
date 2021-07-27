@@ -125,6 +125,13 @@ Utils.config = {
             documents: 'documents/filter',
             document: 'documents'
         }
+    },
+    pageDesigner: {
+        jobName: 'TextMasterExportContent',
+        xmlName: 'TextMasterExportContent.xml',
+        components: {
+            generalID: 'components'
+        }
     }
 };
 
@@ -888,6 +895,11 @@ Utils.textMasterClient = function (method, endPoint, request) {
     var service = Utils.setServiceRegistry(serviceConfig);
     var result = service.call(serviceArgs);
 
+    if (result.status !== 'OK') {
+    	Utils.log.error('Error on Service call to endpoint: ' + method + ' ' + endPointUrl);
+    	Utils.log.error('Error message: ' + result.errorMessage);
+    }
+
     var response = result.status === 'OK' ? result.object : null;
 
     return response;
@@ -949,6 +961,45 @@ Utils.textMasterPublic = function (method, endPoint, request) {
     var apiBaseLink = Utils.config.apiEnv === 'live' ? Utils.config.tmApiBaseUrlLive : Utils.config.tmApiBaseUrlDemo;
     var apiVersion = Utils.config.apiEnv === 'live' ? Utils.config.tmApiVersionUrlLive : Utils.config.tmApiVersionUrlDemo;
     var endPointUrl = apiBaseLink + apiVersion + '/' + Resource.msg('api.public', 'textmaster', null) + endPoint;
+
+    request = request || '';
+    var serviceConfig = Utils.getServiceConfigPublic();
+    var service = Utils.setServiceRegistry(serviceConfig);
+
+    var serviceArgs = {
+        method: method,
+        endPointUrl: endPointUrl,
+        request: request
+    };
+
+    var result = service.call(serviceArgs);
+
+    var response = result.status === 'OK' ? result.object : null;
+
+    return response;
+};
+
+/**
+ * Communicates with storefront endpoints for page related queries
+ * @param {string} method - method
+ * @param {string} endPoint - endpoint
+ * @param {string} request - request body
+ * @param {string} locale - locale
+ * @returns {Object} response body
+ */
+Utils.storefrontCall = function (method, endPoint, request, locale) {
+    var languageList = Utils.getLanguageFromList();
+    var languageCode = 'default';
+
+    if (locale) {
+        languageCode = locale;
+    } else if (languageList && languageList.length) {
+        languageCode = Utils.formatLocaleDemandware(languageList[0].id);
+    }
+
+    var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
+    var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
+    var endPointUrl = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + languageCode + endPoint;
 
     request = request || '';
     var serviceConfig = Utils.getServiceConfigPublic();
@@ -1337,6 +1388,20 @@ Utils.filterLogData = function (data) {
         }
     }
     return result;
+};
+
+/**
+ * Gets PageDesigner Object from storefront
+ * @param {string} pageID - pageID
+ * @returns {Object} returns page object
+ */
+Utils.getPageObject = function (pageID) {
+    var pageObject;
+    var endPoint = '/TMPageDesignersImpex-GetPage?pageid=' + pageID;
+
+    pageObject = Utils.storefrontCall('GET', endPoint, {}, null);
+
+    return pageObject;
 };
 
 module.exports = Utils;

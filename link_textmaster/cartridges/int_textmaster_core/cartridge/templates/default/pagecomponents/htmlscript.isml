@@ -4,3 +4,4 @@
 
 <script src="${URLUtils.staticURL('lib/jquery/jquery-2.1.1.min.js')}"></script>
 <script src="${URLUtils.staticURL('js/textmaster.general.js')}"></script>
+<script src="${URLUtils.staticURL('js/textmaster.component.js')}"></script>

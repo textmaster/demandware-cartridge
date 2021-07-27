@@ -1,0 +1,97 @@
+<script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
+<link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.multiselect.css')}" />
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
+    <thead>
+    	<th class="table_header center n e s w" width="8%"></th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.id','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.name','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.languages','textmaster',null)}</th>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>&nbsp;<input type="hidden" name="items" value=""></th>
+            <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" class="inputfield" /></th>
+            <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" class="inputfield" /></th>
+            <th>
+                <select multiple="multiple" id="languagefield">
+                    <isloop items="${pdict.Languages}" var="lang" status="loopstate">
+						<option value="${pdict.Utils.toDemandwareLocaleID(lang.id)}">${pdict.Utils.getLocaleName(lang.id)}</option>
+					</isloop>
+                </select>
+            </th>
+        </tr>
+    </tfoot>
+    <tbody>
+    	<isloop items="${pdict.ItemList}" var="item" status="loopstate">
+	    	<tr>
+	        	<td class="table_detail center" nowrap="nowrap">
+	        		<input type="checkbox" name="item[]" id="${'item-'+pdict.Type+'-'+item.id}" value="${item.id}" />
+	        		<input type="hidden" class="item-attribute" value="${JSON.stringify(item.attributes)}" />
+	        	</td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.id}</label></td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.name}</label></td>
+	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
+	        </tr>
+	    </isloop>
+    </tbody>
+</table>
+<script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
+<script>
+(function($){
+	$(document).ready(function(){
+		var itemType = 'component';
+		$('select[multiple]').multiselect();
+		
+		var table = $("#filtertableProjects").DataTable({
+			  "dom": 'lrtip',
+			  "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]]
+		});
+		
+		table.columns().every( function () {
+		    var column = this;
+		    
+		    $( 'input.inputfield', this.footer()).on( 'keyup change', function () {
+		        column
+		            .search( this.value )
+		            .draw();
+		    } );
+		    $( 'select', this.footer() ).not('[multiple]').on( 'change', function () {
+		        column
+		            .search( this.value )
+		            .draw();
+		    } );		    
+		    $( 'select[multiple]#languagefield', this.footer() ).on( 'change', function () {
+		    	$.fn.dataTable.ext.search.push(
+	    			function( settings, data, dataIndex ) {
+	    			    var languageArray = $('select[multiple]#languagefield').val();
+	    			    var languageData = [];
+	    			    switch (itemType) {
+	    			    	case 'component':
+	    			    		languageData = data[3];
+	    			    		break;
+	    			    }
+	    			    var showData = false;
+	    			    if (!languageArray) {
+	    			        showData = true;
+	    			    } else if (languageData.length == 0) {
+	    			    	showData = false;
+	    			    } else {
+	    			        for (var i=0; i < languageArray.length; i++) {
+	    			        	var list = languageData.split(",");
+	    			        	if (jQuery.inArray(languageArray[i], list) != -1) {
+	    			        		showData = true;
+	    			        		break;
+	    			        	}
+	    			        }
+	    			    }
+
+	    			    return showData;
+	    			});
+		        column.draw();
+		    } );
+		} );
+	})
+})(jQuery);
+</script>

@@ -18,6 +18,39 @@ var utils = require('*/cartridge/scripts/utils/tmUtils');
 var log = logUtils.getLogger('ImportScript');
 
 /**
+ * Populates component data in library XML with translated content for import
+ * @param {string} pageID - pageID
+ * @param {string} componentID - componentID
+ * @param {Object} attrList - attribute List
+ * @param {string} sfccLanguageTo - language code, example fr-fr
+ * @param {string} language - language code, example fr_FR
+ * @param {Object} content - translated content
+ * @param {Object} writer - XML writer
+ */
+function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, language, content, writer) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var componentsCacheUrl = '/pages/' + pageID + '/components/' + sfccLanguageTo;
+    var components = customCache.getCache(componentsCacheUrl);
+    var data;
+
+    for (var i = 0; i < components.length; i++) {
+        if (components[i].id === componentID) {
+            data = components[i].data;
+            break;
+        }
+    }
+
+    for (var j = 0; j < attrList.length; j++) {
+        data[attrList[j].id] = content[attrList[j].id];
+    }
+
+    writer.writeStartElement('data');
+    writer.writeAttribute('xml:lang', language);
+    writer.writeCharacters(JSON.stringify(data));
+    writer.writeEndElement();
+}
+
+/**
  * Imports translation data from textMaster projects
  * @param {string} projectID - textmaster project ID
  * @param {string} documentID - textmaster document ID
@@ -40,10 +73,11 @@ function execute(projectID, documentID) {
 
     if (project && project.custom_data.itemType) {
         var itemType = project.custom_data.itemType;
+        var attrItemType = itemType === 'pagedesigner' || itemType === 'component' ? 'content' : itemType; // Pagedesigner's attributes are of Content Asset
         var catalogID = project.custom_data.catalogID;
         var sfccLanguageTo = project.custom_data.sfccLanguageTo;
         var language = utils.toDemandwareLocaleID(sfccLanguageTo);
-        var sysAttrList = utils.attributes[itemType];
+        var sysAttrList = utils.attributes[attrItemType];
 
         if (itemType === 'product' && !catalogID) {
             return;
@@ -52,7 +86,7 @@ function execute(projectID, documentID) {
         try {
             var baseFolder = File.IMPEX + File.SEPARATOR + 'src';
             var genericFolder;
-            if (itemType === 'content' || itemType === 'folder') {
+            if (itemType === 'content' || itemType === 'folder' || itemType === 'pagedesigner' || itemType === 'component') {
                 genericFolder = 'content';
             } else if (itemType === 'product' || itemType === 'category') {
                 genericFolder = 'catalog';
@@ -96,73 +130,78 @@ function execute(projectID, documentID) {
                 var attrList = doc.custom_data.attribute || [];
                 var content = doc.author_work ? doc.author_work : {};
 
-                writer.writeStartElement(itemType);
-                writer.writeAttribute(itemType + '-id', itemID);
+                writer.writeStartElement(attrItemType);
+                writer.writeAttribute(attrItemType + '-id', itemID);
 
-                // each system attribute without page attributes
-                for (var sysAttr = 0; sysAttr < sysAttrList.length; sysAttr++) {
-                    var sysAttribute = sysAttrList[sysAttr];
-                    if (sysAttribute.indexOf('page') !== 0 && content[sysAttribute]) {
-                        writer.writeStartElement(utils.idToXMLTag(sysAttribute === 'name' ? 'displayName' : sysAttribute));
-                        writer.writeAttribute('xml:lang', language);
-                        writer.writeCharacters(content[sysAttribute]);
-                        writer.writeEndElement();
-                    }
-                }
-
-                // keep each system page attribute ordered list
-                for (var attr = 0; attr < attrList.length; attr++) {
-                    var attribute = attrList[attr];
-                    if (attribute.type === 'system' && attribute.id.indexOf('page') === 0 && content[attribute.id]) {
-                        pageAttrs[attribute.id] = {
-                            id: attribute.id,
-                            value: content[attribute.id]
-                        };
-                    }
-                }
-
-                if (itemType === 'folder') {
-                    var libraryFolder = ContentMgr.getFolder(itemID);
-                    if (empty(libraryFolder)) {
-                        libraryFolder = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
-                    }
-                    writer.writeStartElement('parent');
-                    writer.writeCharacters(libraryFolder ? libraryFolder.parent.ID : 'root');
-                    writer.writeEndElement();
-                }
-
-                // each system attribute
-                writer.writeStartElement('page-attributes');
-
-                Object.keys(pageAttrs).forEach(function (pageKey) {
-                    if (Object.prototype.hasOwnProperty.call(pageAttrs, pageKey)) {
-                        var pageAttribute = pageAttrs[pageKey];
-                        if (pageAttribute.id) {
-                            writer.writeStartElement(utils.idToXMLTag(pageAttribute.id));
+                if (itemType === 'component') {
+                    var pageID = doc.custom_data.item.page_id;
+                    writePageComponents(pageID, itemID, attrList, sfccLanguageTo, language, content, writer);
+                } else {
+                    // each system attribute without page attributes
+                    for (var sysAttr = 0; sysAttr < sysAttrList.length; sysAttr++) {
+                        var sysAttribute = sysAttrList[sysAttr];
+                        if (sysAttribute.indexOf('page') !== 0 && content[sysAttribute]) {
+                            writer.writeStartElement(utils.idToXMLTag(sysAttribute === 'name' ? 'displayName' : sysAttribute));
                             writer.writeAttribute('xml:lang', language);
-                            writer.writeCharacters(pageAttribute.value);
+                            writer.writeCharacters(content[sysAttribute]);
                             writer.writeEndElement();
                         }
                     }
-                });
 
-                writer.writeEndElement();
+                    // keep each system page attribute ordered list
+                    for (var attr = 0; attr < attrList.length; attr++) {
+                        var attribute = attrList[attr];
+                        if (attribute.type === 'system' && attribute.id.indexOf('page') === 0 && content[attribute.id]) {
+                            pageAttrs[attribute.id] = {
+                                id: attribute.id,
+                                value: content[attribute.id]
+                            };
+                        }
+                    }
 
-                // each custom attribute
-                writer.writeStartElement('custom-attributes');
-
-                for (var list = 0; list < attrList.length; list++) {
-                    var attributeList = attrList[list];
-                    if (attributeList.type === 'custom' && content[attributeList.id]) {
-                        writer.writeStartElement('custom-attribute');
-                        writer.writeAttribute('attribute-id', attributeList.id);
-                        writer.writeAttribute('xml:lang', language);
-                        writer.writeCharacters(content[attributeList.id]);
+                    if (itemType === 'folder') {
+                        var libraryFolder = ContentMgr.getFolder(itemID);
+                        if (empty(libraryFolder)) {
+                            libraryFolder = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
+                        }
+                        writer.writeStartElement('parent');
+                        writer.writeCharacters(libraryFolder ? libraryFolder.parent.ID : 'root');
                         writer.writeEndElement();
                     }
-                }
 
-                writer.writeEndElement(); // custom-attributes
+                    // each system attribute
+                    writer.writeStartElement('page-attributes');
+
+                    Object.keys(pageAttrs).forEach(function (pageKey) {
+                        if (Object.prototype.hasOwnProperty.call(pageAttrs, pageKey)) {
+                            var pageAttribute = pageAttrs[pageKey];
+                            if (pageAttribute.id) {
+                                writer.writeStartElement(utils.idToXMLTag(pageAttribute.id));
+                                writer.writeAttribute('xml:lang', language);
+                                writer.writeCharacters(pageAttribute.value);
+                                writer.writeEndElement();
+                            }
+                        }
+                    });
+
+                    writer.writeEndElement();
+
+                    // each custom attribute
+                    writer.writeStartElement('custom-attributes');
+
+                    for (var list = 0; list < attrList.length; list++) {
+                        var attributeList = attrList[list];
+                        if (attributeList.type === 'custom' && content[attributeList.id]) {
+                            writer.writeStartElement('custom-attribute');
+                            writer.writeAttribute('attribute-id', attributeList.id);
+                            writer.writeAttribute('xml:lang', language);
+                            writer.writeCharacters(content[attributeList.id]);
+                            writer.writeEndElement();
+                        }
+                    }
+
+                    writer.writeEndElement(); // custom-attributes
+                }
 
                 writer.writeEndElement(); // itemType
                 canImport = true;
@@ -187,6 +226,8 @@ function execute(projectID, documentID) {
                 jobName = Resource.msg('import.catalog.job.name', 'textmaster', null) + Site.current.ID;
                 break;
             case 'content':
+            case 'pagedesigner':
+            case 'component':
             case 'folder':
                 jobName = Resource.msg('import.content.job.name', 'textmaster', null) + Site.current.ID;
                 break;

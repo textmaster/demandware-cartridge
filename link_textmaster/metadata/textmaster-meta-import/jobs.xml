@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="TextMasterExportContentRefArch" priority="1">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="Sites"/>
+            <step step-id="TextMasterExportContentRefArch" type="ExportContent" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="LibraryID">RefArchSharedLibrary</parameter>
+                    <parameter name="ExportFile">TextMasterExportContent</parameter>
+                    <parameter name="OverwriteExportFile">true</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2021-04-19Z</date>
+                <time>11:19:05.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
     <job job-id="TextMasterAskForQuoteRefArch" priority="1">
         <description/>
         <parameters/>

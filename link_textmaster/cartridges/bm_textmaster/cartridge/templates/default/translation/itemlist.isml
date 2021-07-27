@@ -8,14 +8,16 @@
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.id','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.name','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.online.flag','textmaster',null)}</th>
-    	<isif condition="${pdict.Type != 'category'}">
+    	<isif condition="${pdict.Type != 'category' && pdict.Type != 'pagedesigner'}">
     		<th class="table_header left n e s" nowrap="nowrap" width="8%">${pdict.Type == 'product' ? Resource.msg('translation.product.type','textmaster',null) : Resource.msg('translation.search.status','textmaster',null)}</th>
     	</isif>
-    	<isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder')}">
+    	<isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder' && pdict.Type != 'pagedesigner')}">
     		<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.category','textmaster',null)}</th>
     	</isif>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.languages','textmaster',null)}</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.date','textmaster',null)}</th>
+    	<isif condition="${pdict.Type != 'pagedesigner'}">
+    		<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.date','textmaster',null)}</th>
+    	</isif>
     </thead>
     <tfoot>
             <tr>
@@ -29,7 +31,7 @@
                         <option value="${Resource.msg('general.no','textmaster',null)}">${Resource.msg('general.no','textmaster',null)}</option>
                     </select>
                 </th>
-                <isif condition="${pdict.Type != 'category'}">
+                <isif condition="${pdict.Type != 'category' && pdict.Type != 'pagedesigner'}">
 	                <th>
 	                	<isif condition="${pdict.Type == 'product'}">
 		                	<select multiple="multiple" id="producttype">
@@ -46,7 +48,7 @@
 	                    </isif>
 	                </th>
 	            </isif>
-	            <isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder')}">
+	            <isif condition="${(pdict.Type != 'content' && pdict.Type != 'folder' && pdict.Type != 'pagedesigner')}">
 	                <th>
 	                    <select multiple="multiple" id="categoryfield">
 							<isif condition="${pdict.CategoryList.length !== 0}">
@@ -80,7 +82,9 @@
 						</isloop>
                     </select>
                 </th>
-                <th><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
+                <isif condition="${pdict.Type != 'pagedesigner'}">
+                	<th><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
+                </isif>
             </tr>
         </tfoot>
     <tbody>
@@ -91,7 +95,7 @@
 	        	<isset name="itemName" value="${'displayName' in item ? item.displayName : ('name' in item ? item.name : '')}" scope="page"/>
 	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}" title="${itemName}">${itemName}</label></td>
 	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${item.online ? Resource.msg('general.yes','textmaster',null) : Resource.msg('general.no','textmaster',null)}</label></td>
-	        	<isif condition="${pdict.Type != 'category'}">
+	        	<isif condition="${pdict.Type != 'category' && pdict.Type != 'pagedesigner'}">
 	        		<td class="table_detail left" nowrap="nowrap">
 	        				<isif condition="${pdict.Type == 'product'}">
 								<label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}"><isprint value="${pdict.Utils.getProductType(item)}"></label>
@@ -100,7 +104,7 @@
 		                    </isif>
 	        		</td>
 	        	</isif>
-	            <isif condition="${pdict.Type != 'content' && pdict.Type != 'folder'}">
+	            <isif condition="${pdict.Type != 'content' && pdict.Type != 'folder' && pdict.Type != 'pagedesigner'}">
 					<isif condition="${pdict.Type == 'category'}">
 						<isset name="categoryName" value="${item.parent.displayName}" scope="page"/>
 					<iselse>
@@ -120,9 +124,11 @@
 	            	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${categoryName}</label></td>
 	            </isif>
 	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
-	            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
-                <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
-                <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
+	            <isif condition="${pdict.Type != 'pagedesigner'}">
+		            <isset name="calendarDate" value="${dw.util.Calendar(item.lastModified)}" scope="page"/>
+		            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
+		            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.ID}">${lastModifiedDate}</label></td>
+		        </isif>
 	        </tr>
 	    </isloop>
     </tbody>
@@ -232,6 +238,9 @@
 	    			    var languageArray = $('select[multiple]#languagefield').val();
 	    			    var languageData = (itemType == 'category' || itemType == 'content' || itemType == 'folder') ? data[5] : (data[6] || []);
 	    			    switch (itemType) {
+	    			    	case 'pagedesigner':
+	    			    		languageData = data[4];
+	    			    		break;
 	    			    	case 'category':
 	    			    	case 'content':
 	    			    		languageData = data[5];

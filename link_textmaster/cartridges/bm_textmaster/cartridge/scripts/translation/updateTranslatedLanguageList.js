@@ -10,6 +10,8 @@ var Transaction = require('dw/system/Transaction');
 
 /* Script Modules */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
+
 var log = logUtils.getLogger('removeImportedFile');
 
 /**
@@ -20,34 +22,48 @@ var log = logUtils.getLogger('removeImportedFile');
  */
 function execute(itemType, itemID, language) {
     try {
-    	var item;
-        switch (itemType) { // eslint-disable-line default-case
-        case 'product':
-            item = ProductMgr.getProduct(itemID);
-            break;
-        case 'category':
-            item = CatalogMgr.getCategory(itemID);
-            break;
-        case 'content':
-            item = ContentMgr.getContent(itemID);
-            break;
-        case 'folder':
-            item = ContentMgr.getFolder(itemID);
-            if (empty(item)) {
-                item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
-            }
-            break;
-        }
+        if (itemType === 'pagedesigner') {
+            var customAttributes = pageUtils.getPageCustom(itemID);
 
-        Transaction.begin();
-        if (item.custom.TranslatedLanguages !== '' && item.custom.TranslatedLanguages != null) {
-            if (item.custom.TranslatedLanguages.indexOf(language) < 0) {
-                item.custom.TranslatedLanguages += ',' + language;
+            if (customAttributes.TranslatedLanguages !== '' && customAttributes.TranslatedLanguages != null) {
+                if (customAttributes.TranslatedLanguages.indexOf(language) < 0) {
+                    customAttributes.TranslatedLanguages += ',' + language;
+                }
+            } else {
+                customAttributes.TranslatedLanguages = language;
             }
+
+            pageUtils.setPageCustom(itemID, customAttributes);
         } else {
-            item.custom.TranslatedLanguages = language;
+            var item;
+            switch (itemType) { // eslint-disable-line default-case
+            case 'product':
+                item = ProductMgr.getProduct(itemID);
+                break;
+            case 'category':
+                item = CatalogMgr.getCategory(itemID);
+                break;
+            case 'content':
+                item = ContentMgr.getContent(itemID);
+                break;
+            case 'folder':
+                item = ContentMgr.getFolder(itemID);
+                if (empty(item)) {
+                    item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
+                }
+                break;
+            }
+
+            Transaction.begin();
+            if (item.custom.TranslatedLanguages !== '' && item.custom.TranslatedLanguages != null) {
+                if (item.custom.TranslatedLanguages.indexOf(language) < 0) {
+                    item.custom.TranslatedLanguages += ',' + language;
+                }
+            } else {
+                item.custom.TranslatedLanguages = language;
+            }
+            Transaction.commit();
         }
-        Transaction.commit();
     } catch (ex) {
         log.error(ex.message);
     }
