@@ -116,6 +116,81 @@ function setAutoLaunchCustomObject(projectID, count) {
 }
 
 /**
+ * Gets attributes of specific Page Designer objects from storefront custom code, since those values are accessible only on storefront context
+ * @param {string} pageID - pageID
+ * @param {string} attrID - attribute ID
+ * @param {string} locale - locale
+ * @returns {string} attribute value
+ */
+function getPDAttrValueFromStorefront(pageID, attrID, locale) {
+    var pageObject;
+    var attrVal = '';
+    var endPoint = '/TMPageDesignersImpex-GetPage?pageid=' + pageID;
+
+    pageObject = utils.storefrontCall('GET', endPoint, {}, locale);
+
+    if (pageObject) {
+        attrVal = pageObject[attrID];
+    }
+
+    return attrVal;
+}
+
+/**
+ * Gets PageDesigner single Attribute Value
+ * @param {string} pageID - pageID
+ * @param {string} attrID - attribute ID
+ * @param {string} locale - locale
+ * @returns {string} attribute value
+ */
+function getPageDesignerAttrValue(pageID, attrID, locale) {
+    var attrValue = getPDAttrValueFromStorefront(pageID, attrID, locale);
+
+    return attrValue;
+}
+
+/**
+ * Gets Page Component single Attribute Value
+ * @param {string} pageID - pageID
+ * @param {string} componentID - componentID
+ * @param {string} attributeID - attribute ID
+ * @param {string} language - language
+ * @returns {string} attribute value
+ */
+function getComponentAttrValue(pageID, componentID, attributeID, language) {
+    var attrValue = '';
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var componentsCacheUrl = '/pages/' + pageID + '/components/' + language;
+    var components = customCache.getCache(componentsCacheUrl);
+
+    for (var i = 0; i < components.length; i++) {
+        if (components[i].id === componentID && attributeID === 'component-name' && components[i].name) {
+            attrValue = components[i].name;
+            break;
+        } else if (components[i].id === componentID && components[i].data && components[i].data[attributeID]) {
+            attrValue = components[i].data[attributeID];
+            break;
+        }
+    }
+
+    return attrValue;
+}
+
+/**
+ * Sets PageDesigner Export Date in custom cache
+ * @param {string} pageID - pageID
+ * @param {Object} time - time
+ */
+function setPageDesignerExportDate(pageID, time) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var pageCustomUrl = '/pages/' + pageID + '/custom';
+    var custom = customCache.getCache(pageCustomUrl);
+    custom = custom ? custom : {};
+    custom.exportDate = time;
+    customCache.setCache(pageCustomUrl, custom);
+}
+
+/**
  * Creates translation documents
  * @param {Object} input - input object
  * @returns {string} project id
@@ -126,7 +201,9 @@ function getOutput(input) {
     var localeTo = JSON.parse(input.LocaleTo);
     var itemType = input.ItemType;
     var catalogID = input.CatalogID;
+    var pageID = input.PageID;
     var attributes = JSON.parse(input.Attributes);
+    var componentAttributes = attributes;
     var items = JSON.parse(input.Items);
     var autoLaunch = input.AutoLaunch;
     var categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || '';
@@ -211,9 +288,23 @@ function getOutput(input) {
                     break;
                 }
 
-                Transaction.begin();
-                item.custom.exportDate = Site.getCurrent().getCalendar().getTime();
-                Transaction.commit();
+                if (itemType === 'pagedesigner' || itemType === 'component') {
+                    setPageDesignerExportDate(items[i], Site.getCurrent().getCalendar().getTime());
+                } else {
+                    Transaction.begin();
+                    item.custom.exportDate = Site.getCurrent().getCalendar().getTime();
+                    Transaction.commit();
+                }
+
+                if (itemType === 'component') {
+                    attributes = [];
+
+                    for (var j = 0; j < componentAttributes.length; j++) {
+                        if (componentAttributes[j].componentID === items[i]) {
+                            attributes.push(componentAttributes[j]);
+                        }
+                    }
+                }
 
                 for (var attr = 0; attr < attributes.length; attr++) {
                     var attribute = attributes[attr];
@@ -243,11 +334,35 @@ function getOutput(input) {
                             itemData[attribute.id] = contentValue;
                         }
                         break;
+                    case 'pagedesigner':
+                        contentValue = getPageDesignerAttrValue(items[i], attribute.id, dwLocaleID);
+
+                        if (contentValue) {
+                            itemData[attribute.id] = contentValue;
+                        }
+
+                        if (attribute.id === 'name') {
+                            itemName = contentValue;
+                        }
+
+                        break;
+                    case 'component':
+                        contentValue = getComponentAttrValue(pageID, items[i], attribute.id, localeFrom);
+
+                        if (contentValue) {
+                            itemData[attribute.id] = contentValue;
+                        }
+
+                        break;
                     }
 
                     if (contentValue) {
                         attrData.id = attribute.id;
-                        attrData.type = attribute.type;
+
+                        if (itemType !== 'component') {
+                            attrData.type = attribute.type;
+                        }
+
                         markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
                         customData.push(attrData);
                     }
@@ -263,6 +378,12 @@ function getOutput(input) {
                     case 'content':
                         itemName = item.name;
                         break;
+                    case 'pagedesigner':
+                        itemName = itemName ? itemName : getPageDesignerAttrValue(items[i], 'name', dwLocaleID);
+                        break;
+                    case 'component':
+                        itemName = getComponentAttrValue(pageID, items[i], 'component-name', localeFrom);
+                        break;
                     }
                     document.title = itemType + '-' + items[i];
                     document.original_content = itemData;
@@ -276,6 +397,10 @@ function getOutput(input) {
                         },
                         attribute: customData
                     };
+
+                    if (itemType === 'component') {
+                        document.custom_data.item.page_id = pageID;
+                    }
 
                     documents.push(document);
                     bulkLimitCount++;

@@ -1,0 +1,9 @@
+<div class="label-holder">${Resource.msg('general.pagedesigner','textmaster',null)}: </div>
+<div class="input-holder">
+	<select name="page-designer">
+		<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+		<isloop items="${pdict.ItemList}" var="item" status="loopstate">
+			<option value="${item.ID}">${item.name}</option>
+	    </isloop>
+	</select>
+</div>

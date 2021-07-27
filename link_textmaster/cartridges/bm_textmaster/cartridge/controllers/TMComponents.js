@@ -92,14 +92,18 @@ function itemList() {
         }
     }
 
-    ISML.renderTemplate('translation/itemlist', {
-        Type: output.Type,
-        ItemList: output.ItemList,
-        CategoryList: output.CategoryList,
-        Languages: languages,
-        ProductTypes: productTypes,
-        Utils: utils
-    });
+    if (output.Type === 'pagedesigner' || output.Type === 'component') {
+        ISML.renderTemplate('translation/emptytemplate', output);
+    } else {
+        ISML.renderTemplate('translation/itemlist', {
+            Type: output.Type,
+            ItemList: output.ItemList,
+            CategoryList: output.CategoryList,
+            Languages: languages,
+            ProductTypes: productTypes,
+            Utils: utils
+        });
+    }
 }
 
 /**
@@ -125,6 +129,7 @@ function createTranslation() {
         ItemType: request.httpParameterMap.get('itemType').stringValue,
         CatalogID: request.httpParameterMap.get('catalogID').stringValue,
         Attributes: request.httpParameterMap.get('attributes').stringValue,
+        PageID: request.httpParameterMap.get('pageID').stringValue,
         Items: request.httpParameterMap.get('items').stringValue,
         AutoLaunch: request.httpParameterMap.get('autoLaunch').stringValue
     };
@@ -291,6 +296,65 @@ function documentComplete() {
     r.renderJSON(output);
 }
 
+/**
+ * Checks if Content Assets XML file Exists after executing the relevant export job
+ */
+function checkContentXMLExists() {
+    var File = require('dw/io/File');
+    var SEP = File.SEPARATOR;
+    var filePath = File.IMPEX + SEP + 'src' + SEP + utils.config.pageDesigner.xmlName;
+    var xmlFile = new File(filePath);
+
+    r.renderJSON({ fileFound: xmlFile.exists() });
+}
+
+/**
+ * Gets Page Designer list if Content Assets XML file Exists after executing the relevant export job
+ */
+function getPageDesigners() {
+    var exportDate = request.httpParameterMap.get('exportDate').stringValue;
+    var itemType = request.httpParameterMap.get('itemType').stringValue;
+    var items = require('~/cartridge/scripts/translation/tmPageDesigners').getPageDesignerList(exportDate);
+    var languages = utils.getTranslationLanguages();
+
+    if (itemType === 'component') {
+        ISML.renderTemplate('translation/tmpagedesignersindropdown', {
+            ItemList: items
+        });
+    } else {
+        ISML.renderTemplate('translation/itemlist', {
+            Type: 'pagedesigner',
+            ItemList: items,
+            CategoryList: [],
+            Languages: languages,
+            ProductTypes: [],
+            Utils: utils
+        });
+    }
+}
+
+/**
+ * Gets page components in ajax call
+ */
+function getPageComponents() {
+    var components = require('~/cartridge/scripts/translation/tmGetPageComponentList');
+
+    var input = {
+        PageID: request.httpParameterMap.get('pageID').stringValue,
+        Date: request.httpParameterMap.get('date').stringValue,
+        Language: request.httpParameterMap.get('language').stringValue
+    };
+    var output = components.output(input);
+    var languages = utils.getTranslationLanguages();
+
+    ISML.renderTemplate('translation/tmcomponentlist', {
+        Type: 'component',
+        ItemList: output.ItemList,
+        Languages: languages,
+        Utils: utils
+    });
+}
+
 /*
  * Web exposed methods
  */
@@ -314,6 +378,9 @@ clearCache.public = true;
 launchProject.public = true;
 getDocDashboardData.public = true;
 documentComplete.public = true;
+checkContentXMLExists.public = true;
+getPageDesigners.public = true;
+getPageComponents.public = true;
 
 exports.APIKeyTest = apiKeyTest;
 exports.AttributeList = attributeList;
@@ -332,3 +399,6 @@ exports.ClearCache = clearCache;
 exports.LaunchProject = launchProject;
 exports.DocDashboardData = getDocDashboardData;
 exports.DocumentComplete = documentComplete;
+exports.CheckContentXMLExists = checkContentXMLExists;
+exports.GetPageDesigners = getPageDesigners;
+exports.GetPageComponents = getPageComponents;

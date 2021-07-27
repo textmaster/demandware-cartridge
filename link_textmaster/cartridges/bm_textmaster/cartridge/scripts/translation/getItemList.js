@@ -65,6 +65,26 @@ function getOutput(input) {
     /* Populate item list according to the itemType selected */
     var Site = require('dw/system/Site');
 
+    if (itemType === 'pagedesigner' || itemType === 'component') {
+        var jobName = utils.config.pageDesigner.jobName + Site.current.ID;
+        var ocapiJobUrl = utils.config.ocapi.jobs.post;
+        ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
+        var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);
+        var error;
+
+        var result = jobResponse && (jobResponse.execution_status.toLowerCase() === 'running' || jobResponse.execution_status.toLowerCase() === 'pending' || jobResponse.execution_status.toLowerCase() === 'finished' || jobResponse.execution_status.toLowerCase() === 'jobalreadyrunningexception');
+
+        if (!result) {
+            error = 'Error fetching Page Designer Objects: Job "' + jobName + '" is not found or not enabled';
+            log.error(error);
+        }
+
+        return {
+            Type: itemType,
+            Error: error
+        };
+    }
+
     switch (itemType) { // eslint-disable-line default-case
     case 'product':
         if (categoryIDs && categoryIDs.length) {

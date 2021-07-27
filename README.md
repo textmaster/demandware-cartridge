@@ -13,6 +13,8 @@ The Textmaster extension with Salesforce Commerce Cloud allows you to easily tra
 - Categories
 - Content assets*
 - Library Folders
+- Page Designers
+- Page Designer Components
 
 _*Note: Content assets cannot be extracted and sent for translation if they don't belong to a library folder._
 
@@ -84,6 +86,10 @@ The TextMaster menu will appear under the section 'Merchant Tools' of each site 
 The project will be immediately created on TextMaster and you will receive an instant quote before launching the project on TextMaster! 
 
 Once launched, you will be able to follow the status of your translation projects directly from Salesforce Commerce Cloud by going to **TextMaster > Translation dashboard**!
+
+### Note on Page Designer
+- There are no straight forward API methods to get the list of Page Designers and Page Components. So loading of such items may take longer on export page when compare with other item types like Product, Category etc
+- Page Designer's Component objects need to be marked as Localized for relevant target languages within default Page Designer User Interface before they are getting imported back to SFCC (https://documentation.b2c.commercecloud.salesforce.com/DOC1/topic/com.demandware.dochelp/content/b2c_commerce/topics/page_designer/b2c_localized_page.html)
 
 # Installation
 ***

@@ -124,7 +124,7 @@
                             docFollow.config.lastPage = parseInt($('#filterTableDocuments_paginate span a.paginate_button:last-of-type').text(), 10);
                             docFollow.populateMoreDocData(documents);
                         } else {
-                            $('#filterTableDocuments .ajax-loader').text('No records').css('padding-top', '40px');
+                            $('#filterTableDocuments .ajax-loader').text('No records (Check error logs also)').css('padding-top', '40px');
                         }
                     } catch (err) {
                         alert('Error on loading data: ' + err.message);
@@ -136,6 +136,7 @@
                 documents.forEach(function (document) {
                     if (document) {
                         var itemID =  document.custom_data.item ? document.custom_data.item.id : '';
+                        var pageID =  document.custom_data.item ? document.custom_data.item.page_id : '';
                         var itemName =  document.custom_data.item ? (document.custom_data.item.name ? document.custom_data.item.name : itemID) : '';
                         var words =  document.word_count ? document.word_count : '';
                         var updatedAt = document.updated_at ? document.updated_at.full : document.created_at.full;
@@ -146,7 +147,9 @@
                         var documentDate = datePart + ' ' + hour + ':' + minute;
                         var documentStatus = document.status ? document.status : '';
                         var storeURL = $('input[name=storeurl]').val();
-                        storeURL = storeURL ? (storeURL + itemID) : '';
+                        var itemType = $('input[name=itemtype]').val();
+                        var storeLinkID = itemType === 'component' ? pageID : itemID;
+                        storeURL = storeURL ? (storeURL + storeLinkID) : '';
                         var reviewButton = storeURL ? '<a href="' + storeURL + '" target="_blank">' + Resources.REVIEW_BUTTON_LABEL + '</a><br/>' : '';
                         var validateAction = reviewButton + '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
                         var actions = documentStatus === Resources.IN_REVIEW ? validateAction : '';

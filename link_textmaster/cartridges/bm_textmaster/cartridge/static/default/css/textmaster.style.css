@@ -164,6 +164,23 @@
     overflow-x: hidden;
     max-height: 20em;
     overflow-y: auto;
+    padding-bottom: 20px;
+    padding-top: 10px;
+}
+
+.translation-module .attributes-main .attributes-holder:first-of-type {
+    padding: 0;
+}
+
+.translation-module .attributes-main .attributes-holder h2 {
+	background-color: #efefef;
+    padding: 5px;
+    margin-bottom: 8px;
+}
+
+.translation-module .attributes-main .attributes-holder h2 span {
+    font-weight: normal;
+    font-size: 0.75em;
 }
 
 .translation-module .attributes-main .attributes-holder>li {
@@ -361,6 +378,12 @@
 
 .translation-module .new-translation ul.multi-select.select-category>li ul {
     margin-left: 0.8em;
+}
+.new-translation .form-holder.page-designer {
+    display: none;
+}
+.new-translation .form-holder.page-designer.show {
+    display: block;
 }
 
 #filtertableProjects tfoot {

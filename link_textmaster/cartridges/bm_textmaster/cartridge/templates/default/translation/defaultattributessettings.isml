@@ -19,6 +19,7 @@
 						<option value="category">${Resource.msg('general.category','textmaster',null)}</option>
 						<option value="content">${Resource.msg('general.contentasset','textmaster',null)}</option>
 						<option value="folder">${Resource.msg('general.libraryfolder','textmaster',null)}</option>
+						<option value="pagedesigner">${Resource.msg('general.pagedesigner','textmaster',null)}</option>
 					</select>
 				</div>
 			</div>

@@ -92,6 +92,7 @@ function getStoreURL(itemType, targetLangID) {
         break;
     case 'content':
     case 'pagedesigner':
+    case 'component':
         controllerPart = '/Page-Show?cid=';
         break;
     default:
@@ -123,6 +124,7 @@ function documentsFollowUp() {
         ISML.renderTemplate('translation/secondarydashboard', {
             id: id,
             name: name,
+            itemType: itemType,
             refer: refer,
             sourceLang: sourceLang,
             targetLang: targetLang,
@@ -167,8 +169,10 @@ function placeOrder() {
         LocaleTo: request.httpParameterMap.get('locale-to[]').values.toArray(),
         MappedLocaleTo: mappedLanguageTo,
         Attributes: request.httpParameterMap.get('attribute[]').values.toArray(),
+        PageID: request.httpParameterMap.get('page-designer').stringValue,
         Items: request.httpParameterMap.get('items').stringValue.split(',')
     };
+
     var transParams = require('~/cartridge/scripts/translation/setupTranslationParameters');
 
     var output = transParams.output(input);

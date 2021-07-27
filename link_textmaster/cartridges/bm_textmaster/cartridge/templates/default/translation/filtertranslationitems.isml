@@ -20,6 +20,8 @@
 							<option value="category">${Resource.msg('general.category','textmaster',null)}</option>
 							<option value="content">${Resource.msg('general.contentasset','textmaster',null)}</option>
 							<option value="folder">${Resource.msg('general.libraryfolder','textmaster',null)}</option>
+							<option value="pagedesigner">${Resource.msg('general.pagedesigner','textmaster',null)}</option>
+							<option value="component">${Resource.msg('general.component','textmaster',null)}</option>
 						</select>
 					</div>
 				</div>
@@ -65,11 +67,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-holder">
+			<div class="form-holder page-designer">
 				<div class="field-holder title-holder">
-					<h2>${Resource.msg('translation.select.attributes','textmaster',null)}</h2>
+					<h2>${Resource.msg('general.select','textmaster',null) + ' ' + Resource.msg('general.pagedesigner','textmaster',null)}</h2>
 				</div>
-				<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
+				<div class="field-holder page-designer-list"><input type="button" value="${Resource.msg('general.load','textmaster',null) + ' ' + Resource.msg('general.pagedesigner','textmaster',null) + ' ' + Resource.msg('general.list','textmaster',null)}" id="load-page-designer"></div>
 			</div>
 			<div class="form-holder filter-items">
 				<div class="field-holder title-holder">
@@ -98,6 +100,12 @@
 					<input type="hidden" id="itemsLimit" value="${Resource.msg('translation.items.limit','textmaster',null)}" />
 				</div>
 				<div class="ajax-loader"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}"></div>
+			</div>
+			<div class="form-holder">
+				<div class="field-holder title-holder">
+					<h2>${Resource.msg('translation.select.attributes','textmaster',null)}</h2>
+				</div>
+				<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
 			</div>
 			<div class="submit-error"></div>
 			<div class="right">

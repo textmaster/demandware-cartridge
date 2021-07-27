@@ -46,7 +46,10 @@
             newMappingRow: 'TMLanguageMapping-NewMappingRow',
             saveLanguageMapping: 'TMLanguageMapping-SaveLanguageMapping',
             deleteRowMapping: 'TMLanguageMapping-DeleteLanguageMappingRow',
-            clearCache: 'TMComponents-ClearCache'
+            clearCache: 'TMComponents-ClearCache',
+            checkContentXMLExists: 'TMComponents-CheckContentXMLExists',
+            getPageDesigners: 'TMComponents-GetPageDesigners',
+            getPageComponents: 'TMComponents-GetPageComponents'
         },
         newTranslation: function () {
             var items = [];
@@ -71,6 +74,13 @@
 
             $('select[name=item-type]').on('change', function () {
                 var itemType = this.value;
+
+                if ($(this).val() === 'component') {
+                	$('.form-holder.page-designer').addClass('show');
+                } else {
+                	$('.form-holder.page-designer').removeClass('show');
+                }
+
                 if ($(this).val() === 'product') {
                     $('.search-by').removeClass('hide');
                     var searchType = app.utils.getCookie('searchType');
@@ -172,19 +182,14 @@
                 var searchBy = $('select[name=search-type]').val();
                 var category = [];
                 var pids = $('textarea[name=product-ids]').val();
+                var pageID = $('select[name=page-designer]').val();
+                var language = $('select[name=locale-from]').val();
                 var error = false;
                 var errorText = '';
 
                 $('input[type="checkbox"][name="category[]"]:checked').each(function () {
                     category.push($(this).val());
                 });
-
-                postData = {
-                    itemType: itemType,
-                    category: searchBy === 'category' ? category.join(',') : '',
-                    pids: searchBy === 'productid' ? pids : '',
-                    date: exportDate
-                };
 
                 if (itemType === '') {
                     $('select[name=item-type]').addClass('error-field');
@@ -201,6 +206,14 @@
                 } else if (itemType === 'category' && category.length === 0) {
                     error = true;
                     errorText = 'Select Categories';
+                } else if (itemType === 'component') {
+                	if (!pageID) {
+                		error = true;
+                        errorText = 'Select Page Designer';
+                	} else if (!language) {
+                		error = true;
+                        errorText = 'Select Language from';
+                	}
                 }
 
                 if (error) {
@@ -213,11 +226,46 @@
                 $('.common-error.search').removeClass('show');
                 $(this).prop('disabled', true).val('Please wait...');
                 
-                $.post(app.urls.translationItemList, postData, function (data) {
-                    $('#items-holder').html(data);
-                    $('#filter-search').prop('disabled', false).val(searchText);
-                    $('.items .ajax-loader').removeClass('show');
-                });
+                if (itemType === 'component') {
+                	postData = {
+                        pageID: pageID,
+                        date: exportDate,
+                        language: language
+                    };
+                	$.post(app.urls.getPageComponents, postData, function (data) {
+                        $('#items-holder').html(data);
+                        $('#filter-search').prop('disabled', false).val(searchText);
+                    	$('.items .ajax-loader').removeClass('show');
+                    });
+                	// Keep content of existing component of each target language, in cache
+                	$('input[name="locale-to[]"]:checked').each(function(){
+                		var toLanguage = $(this).val();
+                		postData = {
+                            pageID: pageID,
+                            date: exportDate,
+                            language: toLanguage
+                        };
+                    	$.post(app.urls.getPageComponents, postData, function () {
+                            // do nothing - because no impact on UI, but saving existing content in to cache in server side code
+                        });
+                	});
+                } else {
+                	postData = {
+                        itemType: itemType,
+                        category: searchBy === 'category' ? category.join(',') : '',
+                        pids: searchBy === 'productid' ? pids : '',
+                        date: exportDate
+                    };
+                	$.post(app.urls.translationItemList, postData, function (data) {
+                        $('#items-holder').html(data);
+                        if (itemType !== 'pagedesigner') {
+                        	$('#filter-search').prop('disabled', false).val(searchText);
+                        	$('.items .ajax-loader').removeClass('show');
+                        } else {
+                        	dealFetchingPageDesigners();
+                        }
+                    });
+                }
             });
 
             var addItem = function (itemID) {
@@ -244,6 +292,52 @@
                     items.splice(index, 1);
                 }
             };
+            
+            var dealFetchingPageDesigners = function () {
+            	if ($('#items-holder').html()) {
+            		/* Error on triggering Content Export job */
+            		$('#filter-search').prop('disabled', false).val(searchText || 'Search');
+                	$('.items .ajax-loader').removeClass('show');
+            	} else {
+            		checkIfContentXMLReady();
+            	}
+            }
+            
+            var contentCheckCount = 0;
+
+            var checkIfContentXMLReady = function () {
+            	setTimeout(checkContentXMLExists, 1000);
+            }
+            
+            var checkContentXMLExists = function () {
+            	contentCheckCount++;
+
+            	$.post(app.urls.checkContentXMLExists, {}, function (data) {
+                    if (data.fileFound) {
+                    	getPageDesigners();
+                    } else {
+                    	if (contentCheckCount < 15) {
+                    		setTimeout(checkContentXMLExists, 1000);
+                    	} else {
+                    		$('#items-holder').html('Something went wrong. Please check log');
+                    		$('#filter-search').prop('disabled', false).val(searchText || 'Search');
+                        	$('.items .ajax-loader').removeClass('show');
+                    	}
+                    }
+                });
+            }
+            
+            var getPageDesigners = function () {
+            	$.ajax({
+            		url: app.urls.getPageDesigners + '?exportDate=' + exportDate,
+            		async: false,
+            		success: function (data) {
+                		$('#items-holder').html(data);
+                		$('#filter-search').prop('disabled', false).val(searchText || 'Search');
+                    	$('.items .ajax-loader').removeClass('show');
+                    }
+            	});
+            }
 
             $('#items-holder').on('click', 'input[type="checkbox"][name="item[]"]', function () {
                 var itemID = $(this).val();
@@ -305,6 +399,15 @@
 
                 if (items.length === 0) {
                     errors.push('- Select item(s)');
+                }
+                
+                if ($('select[name=item-type]').val() === 'component') {
+                	$('.attributes-holder').each(function() {
+                    	if ($(this).find('li input[name="attribute[]"]').length && $(this).find('li input[name="attribute[]"]:checked').length === 0) {
+                    		$(this).find('h2').addClass('error');
+                    		errors.push('- Select attributes of component ' + $(this).find('h2 span').text());
+                    	}
+                    });
                 }
 
                 if (errors.length > 1) {
@@ -467,6 +570,7 @@
                     itemType: transParams.itemType,
                     catalogID: transParams.catalogID,
                     attributes: JSON.stringify(transParams.attributes),
+                    pageID: transParams.pageID,
                     items: JSON.stringify(items),
                     autoLaunch: localeTo.autoLaunch
                 };

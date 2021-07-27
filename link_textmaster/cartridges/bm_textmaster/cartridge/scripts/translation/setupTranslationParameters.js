@@ -45,11 +45,21 @@ function getOutput(input) {
     for (var index = 0; index < attributes.length; index++) {
         var attribute = attributes[index];
         var attr = attribute.split('|');
-        attributes[count] = {
-            id: attr[0],
-            name: attr[1],
-            type: attr[2]
-        };
+
+        if (itemType === 'component') {
+            attributes[count] = {
+                componentID: attr[0],
+                id: attr[1],
+                componentName: attr[2]
+            };
+        } else {
+            attributes[count] = {
+                id: attr[0],
+                name: attr[1],
+                type: attr[2]
+            };
+        }
+
         count++;
     }
 
@@ -64,6 +74,7 @@ function getOutput(input) {
         itemType: itemType,
         catalogID: catalogID,
         attributes: attributes,
+        pageID: input.PageID,
         items: items
     };
 

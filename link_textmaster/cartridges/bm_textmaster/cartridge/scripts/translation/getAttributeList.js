@@ -41,19 +41,25 @@ function getTMDefault(ID, name, defaultAttributes) {
 function getOutput(input) {
     var attributes = [];
     var itemType = input.itemType;
+    var attrItemType = itemType === 'Pagedesigner' ? 'Content' : itemType; // Pagedesigner's attributes are of Content Asset
     var defaultAttributes = Site.getCurrent().getCustomPreferenceValue('TM' + itemType + 'Attributes');
 
     try {
         defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
     } catch (ex) {
-    	log.error('Exception on getting default attribute list for ' + input.itemType + ' from Site Preferences: ' + ex.message);
+        log.error('Exception on getting default attribute list for ' + itemType + ' from Site Preferences: ' + ex.message);
     }
 
     try {
-    	var attrDefinitions = SystemObjectMgr.describe(input.itemType).getAttributeDefinitions().toArray();
+        var attrDefinitions = SystemObjectMgr.describe(attrItemType).getAttributeDefinitions().toArray();
 
         for (var attrDef = 0; attrDef < attrDefinitions.length; attrDef++) {
-        	if ((input.itemType.toLowerCase() !== 'product' && attrDefinitions[attrDef].system && !utils.isAttributeAccessible(input.itemType.toLowerCase(), attrDefinitions[attrDef].ID)) || attrDefinitions[attrDef].ID === 'ID' || attrDefinitions[attrDef].ID === 'TranslatedLanguages' || attrDefinitions[attrDef].ID === 'UUID' || attrDefinitions[attrDef].ID === 'taxClassID') {
+            if ((attrItemType.toLowerCase() !== 'product' && attrDefinitions[attrDef].system && !utils.isAttributeAccessible(attrItemType.toLowerCase(), attrDefinitions[attrDef].ID)) || attrDefinitions[attrDef].ID === 'ID' || attrDefinitions[attrDef].ID === 'TranslatedLanguages' || attrDefinitions[attrDef].ID === 'UUID' || attrDefinitions[attrDef].ID === 'taxClassID') {
+                continue;
+            }
+
+            if (itemType.toLowerCase() === 'pagedesigner' && (!attrDefinitions[attrDef].system || attrDefinitions[attrDef].ID === 'pageURL')) {
+                // for page designers, no need to consider custom attributes of Content Asset
                 continue;
             }
 
@@ -68,7 +74,7 @@ function getOutput(input) {
             }
         }
     } catch (ex) {
-    	log.error('Exception on dealing with attributeDefinitions for ' + input.itemType + ': ' + ex.message);
+        log.error('Exception on dealing with attributeDefinitions for ' + itemType + ': ' + ex.message);
     }
 
     return {
