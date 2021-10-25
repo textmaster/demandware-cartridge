@@ -68,7 +68,7 @@ function getDocsOutput(input) {
     var documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + utils.config.api.get.documents
                            + '?page=' + documentPageNumber + '&per_page=' + resultLimit + '&order=-updated_at';
     var documentResult = utils.textMasterClient('GET', documentEndPoint);
-    
+
     var documents = (documentResult && documentResult.documents) ? documentResult.documents : [];
 
     for (var doc = 0; doc < documents.length; doc++) {

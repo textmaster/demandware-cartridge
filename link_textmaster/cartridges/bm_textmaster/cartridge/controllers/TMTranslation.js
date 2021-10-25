@@ -13,6 +13,7 @@ var Site = require('dw/system/Site');
 
 /* Script Modules */
 var utils = require('*/cartridge/scripts/utils/tmUtils');
+var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
 
 /**
  * Registration link to TextMaster
@@ -20,7 +21,6 @@ var utils = require('*/cartridge/scripts/utils/tmUtils');
 function register() {
     var apiConfig = require('*/cartridge/scripts/translation/getAPIConfigurations');
     var config = apiConfig.output();
-    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
 
     if (utils.config.tmApiCache === 'disabled') {
         utils.resetLanguageCache();
@@ -34,20 +34,52 @@ function register() {
 }
 
 /**
+ * Authentication main page
+ * */
+function authentication() {
+    var code = request.httpParameterMap.get('code').stringValue || '';
+
+    if (code) {
+        var saveInput = {
+            authCode: code
+        };
+
+        var saveAuthData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+        saveAuthData.execute(saveInput);
+    }
+
+    var apiConfig = require('*/cartridge/scripts/translation/getAPIConfigurations');
+    var config = apiConfig.output();
+    var authData = customCache.getCache(utils.config.cache.url.authentication);
+    var redirectURI = utils.config.api.authentication.redirectURI;
+    redirectURI = redirectURI.replace('{0}', Site.current.httpsHostName);
+
+    config.ClientID = authData && authData.clientID ? authData.clientID : '';
+    config.ClientSecret = authData && authData.clientSecret ? authData.clientSecret : '';
+    config.Token = authData && authData.accessToken ? authData.accessToken : '';
+    config.AuthCode = authData && authData.authCode ? authData.authCode : '';
+    config.AuthLink = utils.config.api.authentication.authorize;
+    config.RedirectURI = redirectURI;
+    config.ResponseType = utils.config.api.authentication.responseType;
+    config.Scope = utils.config.api.authentication.scope;
+
+    ISML.renderTemplate('translation/authentication', config);
+}
+
+/**
  * Check API key and API secret entered in Site Preference
  * @returns {boolean} true or false
  */
 function loginCheck() {
-    var APIKey = Site.current.getCustomPreferenceValue('TMApiKey') || '';
-    var APISecret = Site.current.getCustomPreferenceValue('TMApiSecret') || '';
+    var authData = customCache.getCache(utils.config.cache.url.authentication);
 
-    if (APIKey === '' || APISecret === '') {
-        register();
-
-        return false;
+    if (authData && authData.accessToken) {
+        return true;
     }
 
-    return true;
+    authentication();
+
+    return false;
 }
 
 /**
@@ -226,6 +258,7 @@ notification.public = true;
 defaultAttributes.public = true;
 languageMapping.public = true;
 documentsFollowUp.public = true;
+authentication.public = true;
 
 exports.New = newTranslation;
 exports.FollowUp = followUp;
@@ -235,3 +268,4 @@ exports.Notification = notification;
 exports.DefaultAttributes = defaultAttributes;
 exports.LanguageMapping = languageMapping;
 exports.DocumentsFollowUp = documentsFollowUp;
+exports.Authentication = authentication;

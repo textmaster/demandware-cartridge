@@ -33,7 +33,6 @@
             }
         },
         urls: {
-            apiKeyTest: 'TMComponents-APIKeyTest',
             attributeList: 'TMComponents-AttributeList',
             categoryDropdown: 'TMComponents-CategoryDropdown',
             createTranslation: 'TMComponents-CreateTranslation',
@@ -49,7 +48,10 @@
             clearCache: 'TMComponents-ClearCache',
             checkContentXMLExists: 'TMComponents-CheckContentXMLExists',
             getPageDesigners: 'TMComponents-GetPageDesigners',
-            getPageComponents: 'TMComponents-GetPageComponents'
+            getPageComponents: 'TMComponents-GetPageComponents',
+            saveAuthData: 'TMComponents-SaveAuthData',
+            generateToken: 'TMComponents-GenerateToken',
+            clearToken: 'TMComponents-ClearToken'
         },
         newTranslation: function () {
             var items = [];
@@ -571,8 +573,7 @@
                     catalogID: transParams.catalogID,
                     attributes: JSON.stringify(transParams.attributes),
                     pageID: transParams.pageID,
-                    items: JSON.stringify(items),
-                    autoLaunch: localeTo.autoLaunch
+                    items: JSON.stringify(items)
                 };
 
                 transParams.itemProgress += items.length;
@@ -702,7 +703,7 @@
 
                 $('a#reg-link').on('click', function () {
                     $('.error').html('');
-                    var apiEnv = $('select[name=api-env]').val();
+                    var apiEnv = $('select[name=api-env]').length ? $('select[name=api-env]').val() : $('input[name=api-env]').val();
                     var backOfficeLink = $('input[name=backoffice-base' + apiEnv + 'url]').val();
 
                     if ($.trim(backOfficeLink) === '') {
@@ -728,11 +729,86 @@
                         }
                     });
                 });
+
+                $('input[name=authorize]').on('click', function () {
+                    var clientID = $('input[name=client-id]').val();
+                    var clientSecret = $('input[name=client-secret]').val();
+
+                    if (clientID === '') {
+                    	$('.error-id').html('Enter Application ID');
+                    } else {
+                        var apiEnv = $('input[name=api-env]').val();
+                        var backOfficeLink = $('input[name=backoffice-base' + apiEnv + 'url]').val();
+
+                        if ($.trim(backOfficeLink) === '') {
+                            $('.error-id').html('Go to API Setup page and save Backoffice Base URL (' + app.utils.firstLetterCapital(apiEnv) + ')');
+                        } else {
+                        	$('.error-id').html('');
+                        	this.value = Resources.WAITING_MESSAGE;
+                        	$(this).prop('disabled', true);
+                        	var authoriseLink = $(this).data('authorise-link');
+                        	var redirectURI = $('input[name=redirect-uri]').val();
+                        	var responseType = $('input[name=response-type]').val();
+                        	var scope = $('input[name=scope]').val();
+                        	var authURL = backOfficeLink + authoriseLink + '?client_id=' + clientID + '&redirect_uri=' + redirectURI + '&response_type=' + responseType + '&scope=' + scope;
+                        	var postData = {
+                        		clientID: clientID,
+                        		clientSecret: clientSecret,
+                        		redirectURI: redirectURI
+                        	};
+                        	
+                        	$.post(app.urls.saveAuthData, postData, function () {
+                                window.location.href = authURL;
+                            });
+                        }
+                    }
+                });
+                
+                $('input[name=generate-token]').on('click', function () {
+                    var clientSecret = $('input[name=client-secret]').val();
+
+                    if (clientSecret === '') {
+                    	$('.error-secret').html('Enter Application Secret');
+                    } else {
+                    	$('.error-secret').html('');
+                    	this.value = Resources.WAITING_MESSAGE;
+                    	$(this).prop('disabled', true);
+
+                    	var postData = {
+                    		clientSecret: clientSecret
+                    	};
+
+                    	$.post(app.urls.saveAuthData, postData, function() {
+                    		$.post(app.urls.generateToken, {}, function(result){
+                    			if (result) {
+                    				var redirectURI = $('input[name=redirect-uri]').val();
+                    				window.location.href = redirectURI;
+                    			} else {
+                    				$('.error-secret').html('Failed to generate token. Check error log on server.');
+                    			}
+                        	});
+                    	});
+                    }
+                });
+
+                $('input[name=clear-authentication]').on('click', function () {
+                	if (window.confirm('Are you sure you want to clear existing Access Token and Authorization Code?')) {
+                		this.value = Resources.WAITING_MESSAGE;
+                    	$(this).prop('disabled', true);
+
+                		$.post(app.urls.clearToken, {}, function(result){
+                			if (result) {
+                				var redirectURI = $('input[name=redirect-uri]').val();
+                				window.location.href = redirectURI;
+                			} else {
+                				$('.error-secret').html('Something went wrong. Check the log on server.');
+                			}
+                    	});
+                	}
+                });
             },
             setData: function () {
                 var data = this.data;
-                data.apiKey = $('input[name=api-key]').val().trim();
-                data.apiSecret = $('input[name=api-secret]').val().trim();
                 data.apiCategory = $('select[name=api-category]').val();
                 data.catalogID = $('input[name=api-catalog-id]').val().trim();
                 data.apiEnv = $('select[name=api-env]').val();
@@ -749,14 +825,6 @@
             validate: function () {
                 var errorMessages = [];
                 var data = this.data;
-
-                if (data.apiKey === '') {
-                    errorMessages.push('API Key is required');
-                }
-
-                if (data.apiSecret === '') {
-                    errorMessages.push('API Secret is required');
-                }
 
                 if (data.apiCategory === '' && $('select[name=api-category] option').length > 1) {
                     errorMessages.push('Store Category is required');
@@ -796,21 +864,6 @@
 
                 if (data.tmBackofficeBaseUrlLive === '') {
                     errorMessages.push('Backoffice Base URL (Live) is required');
-                }
-
-                if (errorMessages.length === 0) {
-                    // Check if API Key and Secret are valid in the API environment
-                    $.ajax({
-                        type: 'POST',
-                        url: app.urls.apiKeyTest,
-                        data: data,
-                        async: false,
-                        success: function (output) {
-                            if (output.toLowerCase() !== 'success') {
-                                errorMessages.push('API Key OR Secret OR Base URL (' + app.utils.firstLetterCapital(data.apiEnv) + ') is invalid');
-                            }
-                        }
-                    });
                 }
 
                 app.registration.showErrorMessages(errorMessages);

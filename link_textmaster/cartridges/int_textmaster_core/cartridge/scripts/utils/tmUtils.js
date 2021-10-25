@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- *	Utility functions for the cartridge
+ *    Utility functions for the cartridge
  */
 
 /* eslint-disable no-param-reassign */
@@ -19,8 +19,6 @@ var System = require('dw/system/System');
 var Transaction = require('dw/system/Transaction');
 var Resource = require('dw/web/Resource');
 var LocalServiceRegistry = require('dw/svc/LocalServiceRegistry');
-var MessageDigest = require('dw/crypto/MessageDigest');
-var Bytes = require('dw/util/Bytes');
 var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var StringUtils = require('dw/util/StringUtils');
 
@@ -49,7 +47,7 @@ Utils.attributes.category = [
 ];
 
 /*
- *	Accessible attributes of Product
+ *    Accessible attributes of Product
  */
 Utils.attributes.product = [
     'name', 'shortDescription', 'longDescription', 'pageTitle', 'pageDescription', 'pageKeywords', 'pageURL'
@@ -82,16 +80,9 @@ Utils.config = {
                 fromList: '/languages/fromList',
                 translation: '/languages/translation',
                 abilityList: '/languages/abilityList'
-            }
+            },
+            authentication: '/authentication'
         }
-    },
-    autolaunch: {
-        coName: 'TMAutoLaunchDataHolder',
-        jobName: 'TextMasterAutoLaunch',
-        waitingMessage: 'Waiting for call backs of all documents',
-        parameterError: 'Parameters projectid and documentid are required in URL',
-        successMessage: 'Project auto launch job triggered',
-        errorMessage: 'Some error occured. Please refer log file to get more details'
     },
     quote: {
         jobname: 'TextMasterAskForQuote'
@@ -124,6 +115,15 @@ Utils.config = {
             project: 'projects',
             documents: 'documents/filter',
             document: 'documents'
+        },
+        authentication: {
+            redirectURI: 'https://{0}/on/demandware.store/Sites-Site/default/TMTranslation-Authentication',
+            authorize: 'oauth/authorize',
+            scope: 'project:manage user:manage',
+            responseType: 'code',
+            token: 'oauth/token',
+            accessGrantType: 'authorization_code',
+            refreshGrantType: 'refresh_token'
         }
     },
     pageDesigner: {
@@ -280,7 +280,7 @@ Utils.formatLocaleDemandware = function (localeID) {
 };
 
 /*
- *	Converts Datawords locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
+ *    Converts Datawords locale ID format (eg:- en-us) to Demandware locale ID format (eg:- en-US)
  */
 Utils.formatLocaleStandard = function (locale) {
     var localePart = locale.split('-');
@@ -511,18 +511,18 @@ Utils.getLanguageAbilityList = function () {
 
         if (abilities && abilities.data && abilities.data.length > 0) {
             abilities = abilities.data;
+
+            for (var i = 0; i < abilities.length; i++) {
+                var ability = abilities[i];
+                if (Utils.isTranslationLanguage(ability.language_to)) {
+                    result.push({
+                        from: ability.language_from,
+                        to: ability.language_to
+                    });
+                }
+            }
         } else {
             fetchNextPage = false;
-        }
-
-        for (var i = 0; i < abilities.length; i++) {
-            var ability = abilities[i];
-            if (Utils.isTranslationLanguage(ability.language_to)) {
-                result.push({
-                    from: ability.language_from,
-                    to: ability.language_to
-                });
-            }
         }
 
         page++;
@@ -535,7 +535,7 @@ Utils.getLanguageAbilityList = function () {
 };
 
 /*
- *	Get 'language to' list with dropped 'language from'
+ *    Get 'language to' list with dropped 'language from'
  */
 Utils.getLanguageTo = function (languageFrom) {
     var languageTo = [];
@@ -819,34 +819,6 @@ Utils.setServiceRegistry = function (config) {
 };
 
 /**
- * Gets service arguments
- * @param {string} apiKey - api key
- * @param {string} apiSecret - api secret
- * @param {string} method - method
- * @param {string} endPointUrl - endPoint Url
- * @param {string} request - request body
- * @returns {Object} object of service argument
- */
-Utils.getServiceArguments = function (apiKey, apiSecret, method, endPointUrl, request) {
-    var now = new Date();
-    var date = now.getFullYear() + '-' + Utils.make2digits(now.getMonth() + 1) + '-' + Utils.make2digits(now.getDate()) + ' ' + Utils.make2digits(now.getHours()) + ':' + Utils.make2digits(now.getMinutes()) + ':' + Utils.make2digits(now.getSeconds());
-    var messageDigest = new MessageDigest(MessageDigest.DIGEST_SHA_1);
-    var signature = messageDigest.digest(new Bytes(apiSecret + date, 'UTF-8'));
-    var signatureString = signature.toString();
-
-    request = request || '';
-
-    return {
-        apiKey: apiKey,
-        date: date,
-        signatureString: signatureString,
-        method: method,
-        endPointUrl: endPointUrl,
-        request: request
-    };
-};
-
-/**
  * Get service configuration for TextMasterClient and TextMasterTest
  * @returns {Object} request
  */
@@ -855,10 +827,8 @@ Utils.getServiceConfigClient = function () {
         createRequest: function (service, args) {
             service.URL = args.endPointUrl;
             service.setRequestMethod(args.method);
+            service.addHeader('Authorization', 'Bearer ' + args.token);
             service.addHeader('Content-Type', 'application/json');
-            service.addHeader('Apikey', args.apiKey);
-            service.addHeader('Date', args.date);
-            service.addHeader('Signature', args.signatureString);
             service.addHeader('X-Partner-Id', Resource.msg('general.sfcc.partner.id.' + Utils.config.apiEnv, 'textmaster', null));
 
             return args.request;
@@ -886,18 +856,21 @@ Utils.getServiceConfigClient = function () {
 Utils.textMasterClient = function (method, endPoint, request) {
     var apiBaseLink = Utils.config.apiEnv === 'live' ? Utils.config.tmApiBaseUrlLive : Utils.config.tmApiBaseUrlDemo;
     var apiVersion = Utils.config.apiEnv === 'live' ? Utils.config.tmApiVersionUrlLive : Utils.config.tmApiVersionUrlDemo;
-    var apiKey = Site.getCurrent().getCustomPreferenceValue('TMApiKey') || '';
-    var apiSecret = Site.getCurrent().getCustomPreferenceValue('TMApiSecret') || '';
     var endPointUrl = apiBaseLink + apiVersion + '/' + Resource.msg('api.clients', 'textmaster', null) + endPoint;
-
-    var serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, method, endPointUrl, request);
+    var token = Utils.getSavedToken();
+    var serviceArgs = {
+        token: token,
+        method: method,
+        endPointUrl: endPointUrl,
+        request: request || ''
+    };
     var serviceConfig = Utils.getServiceConfigClient();
     var service = Utils.setServiceRegistry(serviceConfig);
     var result = service.call(serviceArgs);
 
     if (result.status !== 'OK') {
-    	Utils.log.error('Error on Service call to endpoint: ' + method + ' ' + endPointUrl);
-    	Utils.log.error('Error message: ' + result.errorMessage);
+        Utils.log.error('Error on Service call to endpoint: ' + method + ' ' + endPointUrl);
+        Utils.log.error('Error message: ' + result.msg);
     }
 
     var response = result.status === 'OK' ? result.object : null;
@@ -906,23 +879,66 @@ Utils.textMasterClient = function (method, endPoint, request) {
 };
 
 /**
- * Communicates with TextMaster Test API
- * @param {string} request - request body
- * @returns {Object} response object
- */
-Utils.textMasterTest = function (request) {
-    var apiKey = request.apiKey || '';
-    var apiSecret = request.apiSecret || '';
-    var endPointUrl = request.apiBaseURL + Resource.msg('api.test', 'textmaster', null);
+ * Get saved token from custom cache
+ * @returns {string} token - token
+ * */
+Utils.getSavedToken = function () {
+    var authData = customCache.getCache(Utils.config.cache.url.authentication);
+    var token;
 
-    var serviceArgs = Utils.getServiceArguments(apiKey, apiSecret, 'GET', endPointUrl, null);
-    var serviceConfig = Utils.getServiceConfigClient();
+    if (authData) {
+        var currentTimeStamp = new Date().getTime();
+        var authCreatedTime = authData.createdAt;
+
+        if (currentTimeStamp - authCreatedTime < authData.expiresIn) {
+            token = authData.accessToken;
+        } else {
+            token = Utils.getRefreshedToken(authData);
+        }
+    }
+
+    return token;
+};
+
+/**
+ * Get refreshed token
+ * @param {Object} authData - authorization data in custom cache
+ * @returns {string} token - token
+ * */
+Utils.getRefreshedToken = function (authData) {
+    var endPoint = Utils.config.api.authentication.token;
+    var apiBaseLink = Utils.config.apiEnv === 'live' ? Utils.config.tmApiBaseUrlLive : Utils.config.tmApiBaseUrlDemo;
+    var endPointUrl = apiBaseLink + endPoint;
+    var request = {
+        client_id: authData.clientID,
+        client_secret: authData.clientSecret,
+        grant_type: Utils.config.api.authentication.refreshGrantType,
+        refresh_token: authData.refreshToken
+    };
+    var serviceConfig = Utils.getServiceConfigPublic();
     var service = Utils.setServiceRegistry(serviceConfig);
+
+    var serviceArgs = {
+        method: 'POST',
+        endPointUrl: endPointUrl,
+        request: JSON.stringify(request)
+    };
+
     var result = service.call(serviceArgs);
 
     var response = result.status === 'OK' ? result.object : null;
 
-    return response;
+    if (result.status !== 'OK') {
+        Utils.log.error('Failed to refresh token. Below is the request.');
+        Utils.log.error('Error Message: ' + result.msg);
+        Utils.log.debug('Request: ' + JSON.stringify(request));
+    } else {
+        // Keep new data in custom cache
+        var saveAuthData = require('*/cartridge/scripts/translation/tmSaveAuthData');
+        saveAuthData.execute(response);
+    }
+
+    return response && response.access_token ? response.access_token : null;
 };
 
 /**
@@ -975,6 +991,45 @@ Utils.textMasterPublic = function (method, endPoint, request) {
     var result = service.call(serviceArgs);
 
     var response = result.status === 'OK' ? result.object : null;
+
+    return response;
+};
+
+/**
+ * Generates authorization token
+ * @returns {Object} response body
+ */
+Utils.generateToken = function () {
+    var endPoint = Utils.config.api.authentication.token;
+    var apiBaseLink = Utils.config.apiEnv === 'live' ? Utils.config.tmApiBaseUrlLive : Utils.config.tmApiBaseUrlDemo;
+    var endPointUrl = apiBaseLink + endPoint;
+
+    var authData = customCache.getCache(Utils.config.cache.url.authentication);
+    var request = {
+        client_id: authData.clientID,
+        client_secret: authData.clientSecret,
+        grant_type: Utils.config.api.authentication.accessGrantType,
+        redirect_uri: authData.redirectURI,
+        code: authData.authCode
+    };
+    var serviceConfig = Utils.getServiceConfigPublic();
+    var service = Utils.setServiceRegistry(serviceConfig);
+
+    var serviceArgs = {
+        method: 'POST',
+        endPointUrl: endPointUrl,
+        request: JSON.stringify(request)
+    };
+
+    var result = service.call(serviceArgs);
+
+    var response = result.status === 'OK' ? result.object : null;
+
+    if (result.status !== 'OK') {
+        Utils.log.error('Failed to generate token. Below is the request.');
+        Utils.log.error('Error Message: ' + result.msg);
+        Utils.log.debug('Request: ' + JSON.stringify(request));
+    }
 
     return response;
 };

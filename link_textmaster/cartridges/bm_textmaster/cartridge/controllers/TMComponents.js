@@ -130,8 +130,7 @@ function createTranslation() {
         CatalogID: request.httpParameterMap.get('catalogID').stringValue,
         Attributes: request.httpParameterMap.get('attributes').stringValue,
         PageID: request.httpParameterMap.get('pageID').stringValue,
-        Items: request.httpParameterMap.get('items').stringValue,
-        AutoLaunch: request.httpParameterMap.get('autoLaunch').stringValue
+        Items: request.httpParameterMap.get('items').stringValue
     };
 
     var output = translationCreation.output(input);
@@ -161,8 +160,6 @@ function saveAPIConfigurations() {
     var apiConfig = require('~/cartridge/scripts/translation/setAPIConfigurations');
 
     var input = {
-        APIKey: request.httpParameterMap.get('apiKey').stringValue,
-        APISecret: request.httpParameterMap.get('apiSecret').stringValue,
         APICategory: request.httpParameterMap.get('apiCategory').stringValue,
         APICatalogID: request.httpParameterMap.get('catalogID').stringValue,
         APIEnv: request.httpParameterMap.get('apiEnv').stringValue,
@@ -238,24 +235,6 @@ function getDocDashboardData() {
     };
 
     var output = followUpList.getDocsOutput(input);
-
-    r.renderJSON(output);
-}
-
-
-/**
- * Check if API Key and Secret are valid in the API environment
- */
-function apiKeyTest() {
-    var apiTest = require('~/cartridge/scripts/translation/apiKeyTest');
-    var apiBaseURL = request.httpParameterMap.get('apiEnv').stringValue === 'demo' ? request.httpParameterMap.get('tmApiBaseUrlDemo').stringValue : request.httpParameterMap.get('tmApiBaseUrlLive').stringValue; // eslint-disable-line no-undef
-    var input = {
-        apiKey: request.httpParameterMap.get('apiKey').stringValue,
-        apiSecret: request.httpParameterMap.get('apiSecret').stringValue,
-        apiBaseURL: apiBaseURL
-    };
-
-    var output = apiTest.output(input);
 
     r.renderJSON(output);
 }
@@ -355,13 +334,52 @@ function getPageComponents() {
     });
 }
 
+/**
+* Saves values to authentication data in custom cache
+**/
+function saveAuthData() {
+    var input = {
+        clientID: request.httpParameterMap.get('clientID').stringValue || '',
+        clientSecret: request.httpParameterMap.get('clientSecret').stringValue || '',
+        redirectURI: request.httpParameterMap.get('redirectURI').stringValue || ''
+    };
+
+    var saveData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+    saveData.execute(input);
+
+    r.renderJSON({ success: true });
+}
+
+/**
+ * Generates token for API communications
+ **/
+function generateToken() {
+    var result = utils.generateToken();
+
+    if (result) {
+        var saveData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+        saveData.execute(result);
+    }
+
+    r.renderJSON(result);
+}
+
+/**
+* Deletes existing access token and authentication code
+**/
+function clearToken() {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    customCache.setCache(utils.config.cache.url.authentication, {});
+
+    r.renderJSON({ success: true });
+}
+
 /*
  * Web exposed methods
  */
 /**
  * Calls ajax features for translation pages
  */
-apiKeyTest.public = true;
 attributeList.public = true;
 categoryDropdown.public = true;
 getLanguageToList.public = true;
@@ -381,8 +399,10 @@ documentComplete.public = true;
 checkContentXMLExists.public = true;
 getPageDesigners.public = true;
 getPageComponents.public = true;
+saveAuthData.public = true;
+generateToken.public = true;
+clearToken.public = true;
 
-exports.APIKeyTest = apiKeyTest;
 exports.AttributeList = attributeList;
 exports.CategoryDropdown = categoryDropdown;
 exports.GetLanguageToList = getLanguageToList;
@@ -402,3 +422,6 @@ exports.DocumentComplete = documentComplete;
 exports.CheckContentXMLExists = checkContentXMLExists;
 exports.GetPageDesigners = getPageDesigners;
 exports.GetPageComponents = getPageComponents;
+exports.SaveAuthData = saveAuthData;
+exports.GenerateToken = generateToken;
+exports.ClearToken = clearToken;

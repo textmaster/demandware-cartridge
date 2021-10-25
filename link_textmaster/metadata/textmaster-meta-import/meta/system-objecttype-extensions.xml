@@ -108,22 +108,6 @@
                 <min-length>0</min-length>
                 <default-value>enabled</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="TMApiKey">
-                <display-name xml:lang="x-default">TextMaster API Key</display-name>
-                <description xml:lang="x-default">Set via API Setup page</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="TMApiSecret">
-                <display-name xml:lang="x-default">TextMaster API Secret</display-name>
-                <description xml:lang="x-default">Set via API Setup page</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
             <attribute-definition attribute-id="TMCategoryAttributes">
                 <display-name xml:lang="x-default">TextMaster Category Attributes</display-name>
                 <description xml:lang="x-default">TextMaster default category attributes for translation (Set via API Setup page)</description>
@@ -296,8 +280,6 @@
         <group-definitions>
             <attribute-group group-id="TextMaster">
                 <display-name xml:lang="x-default">TextMaster</display-name>
-                <attribute attribute-id="TMApiKey"/>
-                <attribute attribute-id="TMApiSecret"/>
                 <attribute attribute-id="TMCategoryAttributes"/>
                 <attribute attribute-id="TMProductAttributes"/>
                 <attribute attribute-id="TMContentAttributes"/>

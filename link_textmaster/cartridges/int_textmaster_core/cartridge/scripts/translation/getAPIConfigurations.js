@@ -23,8 +23,6 @@ function getOutput() {
     return {
         APIEnv: site.getCustomPreferenceValue('TMAPIEnvironment'),
         APICache: site.getCustomPreferenceValue('TMAPICache'),
-        APIKey: site.getCustomPreferenceValue('TMApiKey') || '',
-        APISecret: site.getCustomPreferenceValue('TMApiSecret') || '',
         APICategory: site.getCustomPreferenceValue('TMCategoryCode') || '',
         APICatalogID: site.getCustomPreferenceValue('TMMasterCatalogID') || '',
         APICategories: categories,

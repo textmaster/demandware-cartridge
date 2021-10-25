@@ -73,7 +73,6 @@
 			<pipeline name="TMTranslation-DefaultAttributes" />
 			<pipeline name="TMComponents-AttributeList" />
 			<pipeline name="TMComponents-SaveDefaultAttributes" />
-			<pipeline name="TMComponents-APIKeyTest" />
 		</sub-pipelines>
 		<icon>icons/tm_attribute_setup.png</icon>
 	</menuaction>
@@ -96,6 +95,24 @@
 	</menuaction>
 
 	<menuaction id="textmastermenumenuaction5" menupath="textmastermenuitem1" position="1003" site="true">
+		<name xml:lang="x-default">API Authentication</name>
+		<short_description xml:lang="x-default">
+			Set up Authentication with TextMaster
+		</short_description>
+		<description xml:lang="x-default">
+			Set up Authentication with TextMaster
+		</description>
+		<exec pipeline="TMTranslation" node="Authentication"/>
+		<sub-pipelines>
+			<pipeline name="TMTranslation-Authentication" />
+			<pipeline name="TMComponents-SaveAuthData" />
+			<pipeline name="TMComponents-GenerateToken" />
+			<pipeline name="TMComponents-ClearToken" />
+		</sub-pipelines>
+		<icon>icons/tm_authentication.png</icon>
+	</menuaction>
+
+	<menuaction id="textmastermenumenuaction6" menupath="textmastermenuitem1" position="1004" site="true">
 		<name xml:lang="x-default">Language Mapping</name>
 		<short_description xml:lang="x-default">
 			Set up Language Mapping with TextMaster

@@ -16,7 +16,6 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var CatalogMgr = require('dw/catalog/CatalogMgr');
 var ContentMgr = require('dw/content/ContentMgr');
 var SystemObjectMgr = require('dw/object/SystemObjectMgr');
-var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Calendar = require('dw/util/Calendar');
 var StringUtils = require('dw/util/StringUtils');
 
@@ -31,9 +30,8 @@ var log = logUtils.getLogger('CreateTranslation');
  * Send documents to API to create bulk documents
  * @param {Object} documents - document details
  * @param {string} projectID - project id
- * @param {boolean} autoLaunch -true or false
  */
-function postBulkDocuments(documents, projectID, autoLaunch) {
+function postBulkDocuments(documents, projectID) {
     var documentPostData = {};
     var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
     var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
@@ -59,7 +57,6 @@ function postBulkDocuments(documents, projectID, autoLaunch) {
                 }
             });
             var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-Data?projectid=' + projectID + '&documentid=' + documentID;
-            var autoLaunchCallBackURL = autoLaunch.toLowerCase() === 'true' ? 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMAutoLaunch-Document?projectid=' + projectID + '&documentid=' + documentID : '';
 
             documentPostData = {
                 document: {
@@ -75,43 +72,10 @@ function postBulkDocuments(documents, projectID, autoLaunch) {
                 }
             };
 
-            if (autoLaunchCallBackURL) {
-                documentPostData.document.callback.word_count_finished = {
-                    url: autoLaunchCallBackURL
-                };
-            }
             log.debug('Request: PUT ' + documentEndPoint + ' ' + JSON.stringify(documentPostData));
             var updatedDocumentResult = utils.textMasterClient('PUT', documentEndPoint, JSON.stringify(documentPostData));
             log.debug('Response: ' + JSON.stringify(updatedDocumentResult));
         }
-    }
-}
-
-/**
- * Prepare Custom Object for Auto Launch feature
- * Keeping total number of documents in a project, in custom object.
- * @param {string} projectID - project id
- * @param {integer} count - count
- */
-function setAutoLaunchCustomObject(projectID, count) {
-    var customObjectName = utils.config.autolaunch.coName;
-    var customObjectInstanceID = projectID;
-    try {
-        var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
-
-        if (dataHolder == null) {
-            Transaction.begin();
-            dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
-            dataHolder.custom.documentCount = count;
-            dataHolder.custom.documents = '[]';
-            Transaction.commit();
-        } else {
-            Transaction.begin();
-            dataHolder.custom.documentCount += count;
-            Transaction.commit();
-        }
-    } catch (ex) {
-        log.error(ex.message + ' - No custom object found.');
     }
 }
 
@@ -205,7 +169,6 @@ function getOutput(input) {
     var attributes = JSON.parse(input.Attributes);
     var componentAttributes = attributes;
     var items = JSON.parse(input.Items);
-    var autoLaunch = input.AutoLaunch;
     var categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || '';
     var calendarDate = Calendar();
     var bulkLimit = Resource.msg('api.bulk.doc.limit', 'textmaster', null) || 20;
@@ -412,11 +375,7 @@ function getOutput(input) {
                 itemCount++;
 
                 if (bulkLimitCount === bulkLimit || itemCount === items.length) {
-                    postBulkDocuments(documents, projectID, autoLaunch);
-
-                    if (autoLaunch.toLowerCase() === 'true') {
-                        setAutoLaunchCustomObject(projectID, documents.length);
-                    }
+                    postBulkDocuments(documents, projectID);
 
                     bulkLimitCount = 0;
                     documents = [];

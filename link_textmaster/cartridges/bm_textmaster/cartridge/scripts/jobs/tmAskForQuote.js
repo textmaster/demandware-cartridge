@@ -1,5 +1,9 @@
 'use strict';
 
+/* Script Includes */
+var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
+var log = logUtils.getLogger('autoLaunch');
+
 /**
  * gets the render html for the given isml template
  * @param {Object} templateContext - object that will fill template placeholders
@@ -63,6 +67,7 @@ function askForQuote() {
             var mailContent = { MailInfos: mailInfos };
             var mailTemplate = 'mail/projectinfo';
             sendMail(mailTo, mailForm, mailSubject, mailContent, mailTemplate);
+            log.debug('Quote mail sent for project ID: ' + project.custom.projectid);
         }
 
         Transaction.begin();

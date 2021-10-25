@@ -42,25 +42,6 @@
         </triggers>
     </job>
 
-    <job job-id="TextMasterAutoLaunchRefArch" priority="1">
-        <description/>
-        <parameters/>
-        <flow>
-            <context site-id="RefArch"/>
-            <step step-id="TMAutoLaunchRefArch" type="custom.AutoLaunch" enforce-restart="false">
-                <description/>
-                <parameters/>
-            </step>
-        </flow>
-        <rules/>
-        <triggers>
-            <run-once enabled="true">
-                <date>2017-02-27Z</date>
-                <time>11:52:48.000Z</time>
-            </run-once>
-        </triggers>
-    </job>
-
     <job job-id="TextMasterImportCatalogRefArch" priority="1">
         <description/>
         <parameters/>
