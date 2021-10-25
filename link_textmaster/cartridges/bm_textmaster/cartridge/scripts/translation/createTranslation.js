@@ -16,7 +16,6 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var CatalogMgr = require('dw/catalog/CatalogMgr');
 var ContentMgr = require('dw/content/ContentMgr');
 var SystemObjectMgr = require('dw/object/SystemObjectMgr');
-var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Calendar = require('dw/util/Calendar');
 var StringUtils = require('dw/util/StringUtils');
 
