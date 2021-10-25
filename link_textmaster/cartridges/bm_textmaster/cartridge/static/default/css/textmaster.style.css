@@ -42,7 +42,7 @@
 }
 
 .translation-module input[type=button][disabled] {
-    color: #fff;
+    color: #666;
     background-color: #efefef;
     cursor: default;
 }
@@ -78,6 +78,15 @@
 
 .translation-module .hidden {
     display: none;
+}
+
+.translation-module .first-letter-cap {
+    text-transform: capitalize;
+}
+
+.translation-module .success-action {
+    color: #006400;
+    font-weight: bold;
 }
 
 .translation-module .submit-error {

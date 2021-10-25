@@ -23,8 +23,9 @@
 		<tbody>
 			<tr>
 				<td class="table_detail e s w right input-holder">				
-				  <isset name="currentBaseURL" value="${pdict.APIEnv == 'live' ? pdict.tmBackofficeBaseUrlLive : pdict.tmBackofficeBaseUrlDemo}" scope="page" />
+				  	<isset name="currentBaseURL" value="${pdict.APIEnv == 'live' ? pdict.tmBackofficeBaseUrlLive : pdict.tmBackofficeBaseUrlDemo}" scope="page" />
 					<a class="button" href="" data-signin-link="${Resource.msg('link.enter.textmaster', 'textmaster',null)}" target="_blank" id="reg-link">${Resource.msg('register.go.tm.link', 'textmaster',null)}</a>
+					<a class="button" href="${URLUtils.url('TMTranslation-Authentication')}">${Resource.msg('authentication.title', 'textmaster',null)}</a>
 				</td>
 			</tr>
 		</tbody>
@@ -56,22 +57,6 @@
 						<option value="demo" ${pdict.APIEnv == 'demo' ? 'selected="selected"' : ''}>${Resource.msg('api.demo', 'textmaster',null)}</option>
 						<option value="live" ${pdict.APIEnv == 'live' ? 'selected="selected"' : ''}>${Resource.msg('api.live', 'textmaster',null)}</option>
 					</select>
-				</td>
-			</tr>
-			<tr>
-				<td class="table_detail e s w right">
-					${Resource.msg('api.key.label', 'textmaster',null)}
-				</td>
-				<td class="table_detail e s">
-					<input type="text" name="api-key" value="${pdict.APIKey}"/>
-				</td>
-			</tr>
-			<tr>
-				<td class="table_detail e s w right">
-					${Resource.msg('api.secret.label', 'textmaster',null)}
-				</td>
-				<td class="table_detail e s">
-					<input type="text" name="api-secret" value="${pdict.APISecret}"/>
 				</td>
 			</tr>
 			<tr>

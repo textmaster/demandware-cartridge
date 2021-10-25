@@ -23,11 +23,11 @@ function getOutput(input) {
 
     try {
         if (projectid) {
-            var co = CustomObjectMgr.getCustomObject('TextMasterProject', projectid);
+            var co = CustomObjectMgr.getCustomObject('TMQuoteDataHolder', projectid);
 
             if (co == null) {
                 Transaction.begin();
-                co = CustomObjectMgr.createCustomObject('TextMasterProject', projectid);
+                co = CustomObjectMgr.createCustomObject('TMQuoteDataHolder', projectid);
                 Transaction.commit();
             }
 

@@ -12,8 +12,6 @@ var Transaction = require('dw/system/Transaction');
 function getOutput(input) {
     var site = Site.current;
     Transaction.begin();
-    site.setCustomPreferenceValue('TMApiKey', input.APIKey);
-    site.setCustomPreferenceValue('TMApiSecret', input.APISecret);
     site.setCustomPreferenceValue('TMCategoryCode', input.APICategory);
     site.setCustomPreferenceValue('TMMasterCatalogID', input.APICatalogID);
     site.setCustomPreferenceValue('TMAPIEnvironment', input.APIEnv);

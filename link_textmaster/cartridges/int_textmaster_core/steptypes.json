@@ -2,28 +2,6 @@
     "step-types": {
         "script-module-step": [
             {
-                "@type-id":"custom.AutoLaunch",
-                "module":"bm_textmaster/cartridge/scripts/jobs/tmAutoLaunchItem.js",
-                "description":"Import data from TextMaster projects if autoLanch true for templates",
-                "function":"execute",
-                "status-codes": {
-                    "status": [
-                        {
-                            "@code": "ERROR",
-                            "description": "Used when an error occurred."
-                        },
-                        {
-                            "@code": "OK",
-                            "description": "Used when everything went well."
-                        },
-                        {
-                            "@code": "WARN",
-                            "description": "Used when small, but acceptable problems occurred."
-                        }
-                    ]
-                }
-            },
-            {
                 "@type-id":"custom.AskForQuote",
                 "module":"bm_textmaster/cartridge/scripts/jobs/tmAskForQuote.js",
                 "description":"Send a mail about the information of a project",
