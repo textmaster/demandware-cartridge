@@ -12,6 +12,7 @@ var ISML = require('dw/template/ISML');
 
 /* Script Includes */
 var utils = require('*/cartridge/scripts/utils/tmUtils');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
 var r = require('*/cartridge/scripts/utils/response');
 var followUpList = require('~/cartridge/scripts/translation/getFollowUpList');
 
@@ -276,24 +277,12 @@ function documentComplete() {
 }
 
 /**
- * Checks if Content Assets XML file Exists after executing the relevant export job
- */
-function checkContentXMLExists() {
-    var File = require('dw/io/File');
-    var SEP = File.SEPARATOR;
-    var filePath = File.IMPEX + SEP + 'src' + SEP + utils.config.pageDesigner.xmlName;
-    var xmlFile = new File(filePath);
-
-    r.renderJSON({ fileFound: xmlFile.exists() });
-}
-
-/**
  * Gets Page Designer list if Content Assets XML file Exists after executing the relevant export job
  */
 function getPageDesigners() {
-    var exportDate = request.httpParameterMap.get('exportDate').stringValue;
     var itemType = request.httpParameterMap.get('itemType').stringValue;
-    var items = require('~/cartridge/scripts/translation/tmPageDesigners').getPageDesignerList(exportDate);
+    var exportDate = request.httpParameterMap.get('exportDate').stringValue;
+    var items = pageUtils.getPageItems(exportDate);
     var languages = utils.getTranslationLanguages();
 
     if (itemType === 'component') {
@@ -316,19 +305,14 @@ function getPageDesigners() {
  * Gets page components in ajax call
  */
 function getPageComponents() {
-    var components = require('~/cartridge/scripts/translation/tmGetPageComponentList');
-
-    var input = {
-        PageID: request.httpParameterMap.get('pageID').stringValue,
-        Date: request.httpParameterMap.get('date').stringValue,
-        Language: request.httpParameterMap.get('language').stringValue
-    };
-    var output = components.output(input);
+    var pageID = request.httpParameterMap.get('pageID').stringValue;
+    var exportDate = request.httpParameterMap.get('date').stringValue;
+    var items = pageUtils.getPageComponents(pageID, exportDate);
     var languages = utils.getTranslationLanguages();
 
     ISML.renderTemplate('translation/tmcomponentlist', {
         Type: 'component',
-        ItemList: output.ItemList,
+        ItemList: items,
         Languages: languages,
         Utils: utils
     });
@@ -396,7 +380,6 @@ clearCache.public = true;
 launchProject.public = true;
 getDocDashboardData.public = true;
 documentComplete.public = true;
-checkContentXMLExists.public = true;
 getPageDesigners.public = true;
 getPageComponents.public = true;
 saveAuthData.public = true;
@@ -419,7 +402,6 @@ exports.ClearCache = clearCache;
 exports.LaunchProject = launchProject;
 exports.DocDashboardData = getDocDashboardData;
 exports.DocumentComplete = documentComplete;
-exports.CheckContentXMLExists = checkContentXMLExists;
 exports.GetPageDesigners = getPageDesigners;
 exports.GetPageComponents = getPageComponents;
 exports.SaveAuthData = saveAuthData;

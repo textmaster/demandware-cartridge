@@ -10,8 +10,11 @@
 <isset name="utils" value="${pdict.utils}" scope="page"/>
 <div class="followup docs-followup">
     <h1>${Resource.msg("follow.main.title","textmaster",null)}</h1>
+    <isset name="currentBaseURL" value="${utils.config.apiEnv === 'live' ? utils.config.tmBackofficeBaseUrlLive : utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
+    <isset name="projectLink" value="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msgf('link.view.project','textmaster',null,pdict.projectID)}" scope="page" />
     <input type="hidden" name="storeurl" value="${pdict.storeURL}" />
     <input type="hidden" name="itemtype" value="${pdict.itemType}" />
+    <input type="hidden" name="documentlink" value="${projectLink + '/' + utils.config.api.get.document + '/<<documentid>>/edit?tab=working_tool'}" />
     <div class="project-title">
         <div class="project-name-reference">
             <isset name="singleQuote" value="'" scope="page">
@@ -26,6 +29,10 @@
                 <div class="target">
                     <span class="label"><isprint value="${Resource.msg('follow.target.language','textmaster',null)}"/>: </span>
                     <span class="value"><isprint value="${pdict.targetLang}"/></span>
+                </div>
+                <div class="page-details hide">
+                    <span class="label"><isprint value="${Resource.msg('general.pagedesigner','textmaster',null)}"/>: </span>
+                    <span class="value"></span>
                 </div>
             </div>
             <div class="right">
@@ -79,8 +86,7 @@
         </table>
     </div>
     <div class="textmaster-view">
-        <isset name="currentBaseURL" value="${utils.config.apiEnv === 'live' ? utils.config.tmBackofficeBaseUrlLive : utils.config.tmBackofficeBaseUrlDemo}" scope="page" />
-        <a href="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msgf('link.view.project','textmaster',null,pdict.id)}" target="_blank">${Resource.msg('follow.action.view.project','textmaster',null)}</a>
+        <a href="${projectLink}" target="_blank">${Resource.msg('follow.action.view.project','textmaster',null)}</a>
     </div>
     <div class="success-message"></div>
     <table class="table" id="filterTableDocuments" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -91,6 +97,7 @@
                 <th class="table_header n e s center">${Resource.msg("follow.words","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.date","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.status","textmaster",null)}</th>
+                <th class="table_header n e s center">${Resource.msg("follow.item.link","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.action","textmaster",null)}</th>
             </tr>
         </thead>

@@ -32,10 +32,12 @@ function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, lang
     var componentsCacheUrl = '/pages/' + pageID + '/components/' + sfccLanguageTo;
     var components = customCache.getCache(componentsCacheUrl);
     var data;
+    var componentPosition;
 
     for (var i = 0; i < components.length; i++) {
         if (components[i].id === componentID) {
             data = components[i].data;
+            componentPosition = i;
             break;
         }
     }
@@ -48,6 +50,10 @@ function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, lang
     writer.writeAttribute('xml:lang', language);
     writer.writeCharacters(JSON.stringify(data));
     writer.writeEndElement();
+
+    // write imported data back in cache
+    components[componentPosition].data = data;
+    customCache.setCache(componentsCacheUrl, components);
 }
 
 /**
@@ -125,7 +131,7 @@ function execute(projectID, documentID) {
 
             var doc = utils.textMasterClient('GET', docEndPoint, '');
 
-            if (doc && (doc.status.toLowerCase() === 'in_review' || doc.status.toLowerCase() === 'completed')) {
+            if (doc && (doc.status.toLowerCase() === 'in_extra_review' || doc.status.toLowerCase() === 'in_review' || doc.status.toLowerCase() === 'completed')) {
                 itemID = doc.custom_data.item.id || '';
                 var attrList = doc.custom_data.attribute || [];
                 var content = doc.author_work ? doc.author_work : {};
@@ -232,6 +238,7 @@ function execute(projectID, documentID) {
                 jobName = Resource.msg('import.content.job.name', 'textmaster', null) + Site.current.ID;
                 break;
             }
+
             var ocapiJobUrl = utils.config.ocapi.jobs.post;
             ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
             var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);

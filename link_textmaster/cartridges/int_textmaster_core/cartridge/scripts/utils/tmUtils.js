@@ -127,8 +127,9 @@ Utils.config = {
         }
     },
     pageDesigner: {
-        jobName: 'TextMasterExportContent',
+        populatePagesJobName: 'TextMasterExportContent',
         xmlName: 'TextMasterExportContent.xml',
+        populateComponentsJobName: 'TextMasterPopulateComponents',
         components: {
             generalID: 'components'
         }

@@ -22,6 +22,7 @@ var StringUtils = require('dw/util/StringUtils');
 /* Script Includes */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
 var utils = require('*/cartridge/scripts/utils/tmUtils');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
 
 /* Global Variables */
 var log = logUtils.getLogger('CreateTranslation');
@@ -61,6 +62,9 @@ function postBulkDocuments(documents, projectID) {
             documentPostData = {
                 document: {
                     callback: {
+                        in_extra_review: {
+                            url: callBackURL
+                        },
                         in_review: {
                             url: callBackURL
                         },
@@ -127,11 +131,13 @@ function getComponentAttrValue(pageID, componentID, attributeID, language) {
     var componentsCacheUrl = '/pages/' + pageID + '/components/' + language;
     var components = customCache.getCache(componentsCacheUrl);
 
+    // components has all the components and its data of specified page in specific language
     for (var i = 0; i < components.length; i++) {
         if (components[i].id === componentID && attributeID === 'component-name' && components[i].name) {
             attrValue = components[i].name;
             break;
         } else if (components[i].id === componentID && components[i].data && components[i].data[attributeID]) {
+            // components[i].data has id and value of all attributes of that selected component
             attrValue = components[i].data[attributeID];
             break;
         }
@@ -141,17 +147,27 @@ function getComponentAttrValue(pageID, componentID, attributeID, language) {
 }
 
 /**
- * Sets PageDesigner Export Date in custom cache
+ * Sets Page Designer Export Date in custom cache
  * @param {string} pageID - pageID
  * @param {Object} time - time
  */
 function setPageDesignerExportDate(pageID, time) {
-    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
-    var pageCustomUrl = '/pages/' + pageID + '/custom';
-    var custom = customCache.getCache(pageCustomUrl);
+    var custom = pageUtils.getPageCustom(pageID);
     custom = custom ? custom : {};
     custom.exportDate = time;
-    customCache.setCache(pageCustomUrl, custom);
+    pageUtils.setPageCustom(pageID, custom);
+}
+
+/**
+ * Sets Page Component Export Date in custom cache
+ * @param {string} componentID - component ID
+ * @param {Object} time - time
+ */
+function setPageComponentExportDate(componentID, time) {
+    var custom = pageUtils.getComponentCustom(componentID);
+    custom = custom ? custom : {};
+    custom.exportDate = time;
+    pageUtils.setComponentCustom(componentID, custom);
 }
 
 /**
@@ -251,8 +267,10 @@ function getOutput(input) {
                     break;
                 }
 
-                if (itemType === 'pagedesigner' || itemType === 'component') {
+                if (itemType === 'pagedesigner') {
                     setPageDesignerExportDate(items[i], Site.getCurrent().getCalendar().getTime());
+                } else if (itemType === 'component') {
+                    setPageComponentExportDate(items[i], Site.getCurrent().getCalendar().getTime());
                 } else {
                     Transaction.begin();
                     item.custom.exportDate = Site.getCurrent().getCalendar().getTime();

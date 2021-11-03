@@ -13,6 +13,7 @@ var resourceHelper = {
         var resources = {
             IN_CREATION: Resource.msg('status.in_creation', 'textmaster', null),
             IN_PROGRESS: Resource.msg('status.in_progress', 'textmaster', null),
+            IN_EXTRA_REVIEW: Resource.msg('status.in_extra_review', 'textmaster', null),
             IN_REVIEW: Resource.msg('status.in_review', 'textmaster', null),
             COMPLETED: Resource.msg('status.completed', 'textmaster', null),
             COUNTING: Resource.msg('status.counting', 'textmaster', null),
@@ -23,6 +24,8 @@ var resourceHelper = {
             VALIDATED: Resource.msg('status.validated', 'textmaster', null),
             SWITCH_TO_COMPLETED: Resource.msg('follow.document.switch.to.completed', 'textmaster', null),
             TRANSLATED_SUCCESS_MESSAGE: Resource.msg('follow.translated.success.message', 'textmaster', null),
+            PREVIEW_LINK_LABEL: Resource.msg('follow.preview.link.label', 'textmaster', null),
+            REVIEW_LINK_LABEL: Resource.msg('follow.review.link.label', 'textmaster', null),
             REVIEW_BUTTON_LABEL: Resource.msg('follow.review.button.label', 'textmaster', null),
             VALIDATED_SUCCESS_MESSAGE: Resource.msg('follow.validated.success.message', 'textmaster', null),
             WAITING_MESSAGE: Resource.msg('general.waiting', 'textmaster', null)

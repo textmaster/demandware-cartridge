@@ -77,12 +77,19 @@
                 });
             },
             loadDocData: function (initialLoad) {
+                var loadingText = 'Loading...';
                 var docFollow = this;
                 var button = $('.docs-followup .load-more input[type=button]');
 
                 button.prop('disabled', true);
-                button.val('Loading...');
+                button.val(loadingText);
                 var vars = docFollow.getParams();
+                var itemType = $('input[name=itemtype]').val();
+
+                if (initialLoad && itemType === 'component') {
+                    $('.page-details').find('.value').text(loadingText);
+                    $('.page-details').removeClass('hide');
+                }
 
                 $.post(app.urls.docDashboardData, {
                     projectID: vars['projectID'],
@@ -95,6 +102,10 @@
                         docFollow.config.showMore = output.ShowMore;
 
                         if (initialLoad && documents.length) {
+                            if (itemType === 'component') {
+                                $('.page-details').find('.value').text(output.PageName);
+                            }
+
                             firstDocument = documents[0];
                             // load DataTables with one row
                             $.post(app.urls.docDashboardFirstRow, {
@@ -148,13 +159,17 @@
                         var documentStatus = document.status ? document.status : '';
                         var storeURL = $('input[name=storeurl]').val();
                         var itemType = $('input[name=itemtype]').val();
+                        var documentLink = $('input[name=documentlink]').val();
+                        documentLink = documentLink.replace('<<documentid>>', document.id);
                         var storeLinkID = itemType === 'component' ? pageID : itemID;
                         storeURL = storeURL ? (storeURL + storeLinkID) : '';
-                        var reviewButton = storeURL ? '<a href="' + storeURL + '" target="_blank">' + Resources.REVIEW_BUTTON_LABEL + '</a><br/>' : '';
-                        var validateAction = reviewButton + '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
+                        var previewLink = storeURL ? '<a class="doc-link" href="' + storeURL + '" target="_blank">' + Resources.PREVIEW_LINK_LABEL + '</a><br/>' : '';
+                        var reviewLink = documentLink ? '<a class="doc-link" href="' + documentLink + '" target="_blank">' + Resources.REVIEW_LINK_LABEL + '</a><br/>' : '';
+                        var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
+                        var links = documentStatus === Resources.IN_EXTRA_REVIEW || documentStatus === Resources.IN_REVIEW ? (previewLink + reviewLink) : '';
                         var actions = documentStatus === Resources.IN_REVIEW ? validateAction : '';
 
-                        docFollow.dataTable.row.add([itemID, itemName, words, documentDate, documentStatus, actions]).draw();
+                        docFollow.dataTable.row.add([itemID, itemName, words, documentDate, documentStatus, links, actions]).draw();
 
                         if (documentStatus) {
                             switch (documentStatus) { // eslint-disable-line default-case
@@ -168,6 +183,7 @@
                             case Resources.INCOMPLETE:
                                 docFollow.statusValues.progress++;
                                 break;
+                            case Resources.IN_EXTRA_REVIEW:
                             case Resources.IN_REVIEW:
                                 docFollow.statusValues.review++;
                                 break;

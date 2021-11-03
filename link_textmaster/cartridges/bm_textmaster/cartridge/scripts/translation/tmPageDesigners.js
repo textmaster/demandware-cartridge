@@ -21,7 +21,7 @@ function writeToPageXML(formattedContentXML, xmlStreamWriter) {
  * @param {Object} exportDate - exportDate
  * @returns {Object} object
  */
-function getPageDesignerList(exportDate) {
+function getPageDesignerList() {
     var Site = require('dw/system/Site');
     var items = [];
     var File = require('dw/io/File');
@@ -86,17 +86,17 @@ function getPageDesignerList(exportDate) {
                     contentType = null;
 
                     if (contentXML) {
-                        formattedContentXML = XML(contentXML.toString().replace('xmlns', 'xmlns:i'));
-                        contentType = formattedContentXML.descendants('type');
+                        if (contentXML.toString().length < 1000000) { /* string quota limit */
+                            formattedContentXML = XML(contentXML.toString().replace('xmlns', 'xmlns:i'));
+                            contentType = formattedContentXML.descendants('type');
 
-                        if (!empty(contentType)) {
-                            // in the content object type attribute found
-                            pageObject = utils.getPageObject(pageID);
+                            if (!empty(contentType)) {
+                                // in the content object type attribute found
+                                pageObject = utils.getPageObject(pageID);
 
-                            if (pageObject && pageObject.isPage) {
-                                customAttributes = pageUtils.getPageCustom(pageID);
+                                if (pageObject && pageObject.isPage) {
+                                    customAttributes = pageUtils.getPageCustom(pageID);
 
-                                if (!pageUtils.isRecentlyExported(customAttributes.exportDate, exportDate)) {
                                     items.push({
                                         ID: pageID,
                                         name: pageObject.name,
@@ -106,8 +106,8 @@ function getPageDesignerList(exportDate) {
                                         }
                                     });
                                 }
+                                writeToPageXML(contentXML, xmlStreamWriter);
                             }
-                            writeToPageXML(contentXML, xmlStreamWriter);
                         }
                     }
                 }

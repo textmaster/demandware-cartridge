@@ -63,6 +63,7 @@ function getOutput(input) {
 function getDocsOutput(input) {
     var projectID = input.projectID;
     var resultLimit = Site.current.getCustomPreferenceValue('TMDashboardPageSize') || 100;
+    var pageName = '';
     resultLimit = isNaN(resultLimit) ? 100 : parseInt(resultLimit, 10);
     var documentPageNumber = input.documentPageNumber ? input.documentPageNumber : 1;
     var documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + utils.config.api.get.documents
@@ -79,8 +80,14 @@ function getDocsOutput(input) {
         }
     }
 
+    if (documents[0] && documents[0].custom_data && documents[0].custom_data.item && documents[0].custom_data.item.page_id) {
+        var pageObject = utils.getPageObject(documents[0].custom_data.item.page_id);
+        pageName = pageObject && pageObject.name ? pageObject.name : documents[0].custom_data.item.page_id;
+    }
+
     return {
         Documents: documents,
+        PageName: pageName,
         ShowMore: (documentResult && documentResult.total_pages && documentPageNumber < documentResult.total_pages)
     };
 }

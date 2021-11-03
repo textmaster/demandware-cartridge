@@ -14,7 +14,6 @@ function getOutput(input) {
     var items = [];
     var componentMgr = require('~/cartridge/scripts/translation/tmPageComponents');
     var components = componentMgr.getComponents(input);
-    var exportDate = input.Date;
     var item;
     var i;
     var component;
@@ -26,7 +25,7 @@ function getOutput(input) {
         customAttributes = pageUtils.getComponentCustom(component.id);
         attrFound = false;
 
-        if (component.data && !pageUtils.isRecentlyExported(customAttributes.exportDate, exportDate)) {
+        if (component.data) {
             item = {
                 id: component.id,
                 name: component.name,
@@ -51,9 +50,7 @@ function getOutput(input) {
         }
     }
 
-    return {
-        ItemList: items
-    };
+    return items;
 }
 
 module.exports = {

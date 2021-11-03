@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global jQuery, localStorage */
 /* eslint-disable wrap-iife */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-else-return */
@@ -46,7 +46,6 @@
             saveLanguageMapping: 'TMLanguageMapping-SaveLanguageMapping',
             deleteRowMapping: 'TMLanguageMapping-DeleteLanguageMappingRow',
             clearCache: 'TMComponents-ClearCache',
-            checkContentXMLExists: 'TMComponents-CheckContentXMLExists',
             getPageDesigners: 'TMComponents-GetPageDesigners',
             getPageComponents: 'TMComponents-GetPageComponents',
             saveAuthData: 'TMComponents-SaveAuthData',
@@ -58,6 +57,7 @@
             var postData;
             var errorTimeID;
             var searchText;
+            var pageID;
             var itemsLimit = $('#itemsLimit').val();
             var exportDate = '';
 
@@ -77,13 +77,18 @@
             $('select[name=item-type]').on('change', function () {
                 var itemType = this.value;
 
-                if ($(this).val() === 'component') {
+                if (itemType === 'component') {
                 	$('.form-holder.page-designer').addClass('show');
+                	var loaderImgSrc = $('.ajax-loader img').attr('src');
+                	var loaderImg = '<img src="' + loaderImgSrc + '" width="30px">';
+                	$('.field-holder.page-designer-list').html(loaderImg);
+
+                	getComponentPageDesigners();
                 } else {
                 	$('.form-holder.page-designer').removeClass('show');
                 }
 
-                if ($(this).val() === 'product') {
+                if (itemType === 'product') {
                     $('.search-by').removeClass('hide');
                     var searchType = app.utils.getCookie('searchType');
                     if (searchType) {
@@ -110,7 +115,7 @@
                         }
                     });
                     $('select[name=search-type]').change();
-                } else if ($(this).val() === 'category') {
+                } else if (itemType === 'category') {
                     $('.search-by').addClass('hide');
                     $('.product-id').addClass('hide');
                     $('.category').addClass('show');
@@ -128,19 +133,25 @@
                     $('.category').removeClass('show');
                 }
 
-                postData = {
-                    itemType: app.utils.firstLetterCapital(itemType)
-                };
                 $('.attributes-main').html('');
-                $.post(app.urls.attributeList, postData, function (data) {
-                    $('.attributes-main').html(data);
+                $('.submit-error').html('');
+                items = [];
 
-                    if ($('input[type=checkbox][name="attribute[]"]:checked').length === 0) {
-                        $('.attributes-holder').addClass('show-all');
-                    } else {
-                        $('.attributes-holder').removeClass('show-all');
-                    }
-                });
+                if (itemType !== 'component') { // No attributes need to be fetched for page components here
+	                postData = {
+	                    itemType: app.utils.firstLetterCapital(itemType)
+	                };
+	                
+	                $.post(app.urls.attributeList, postData, function (data) {
+	                    $('.attributes-main').html(data);
+	
+	                    if ($('input[type=checkbox][name="attribute[]"]:checked').length === 0) {
+	                        $('.attributes-holder').addClass('show-all');
+	                    } else {
+	                        $('.attributes-holder').removeClass('show-all');
+	                    }
+	                });
+                }
 
                 $(this).removeClass('error-field');
                 $('.common-error.search').removeClass('show');
@@ -184,10 +195,9 @@
                 var searchBy = $('select[name=search-type]').val();
                 var category = [];
                 var pids = $('textarea[name=product-ids]').val();
-                var pageID = $('select[name=page-designer]').val();
-                var language = $('select[name=locale-from]').val();
                 var error = false;
                 var errorText = '';
+                pageID = $('select[name=page-designer]').val();
 
                 $('input[type="checkbox"][name="category[]"]:checked').each(function () {
                     category.push($(this).val());
@@ -212,9 +222,6 @@
                 	if (!pageID) {
                 		error = true;
                         errorText = 'Select Page Designer';
-                	} else if (!language) {
-                		error = true;
-                        errorText = 'Select Language from';
                 	}
                 }
 
@@ -228,29 +235,10 @@
                 $('.common-error.search').removeClass('show');
                 $(this).prop('disabled', true).val('Please wait...');
                 
-                if (itemType === 'component') {
-                	postData = {
-                        pageID: pageID,
-                        date: exportDate,
-                        language: language
-                    };
-                	$.post(app.urls.getPageComponents, postData, function (data) {
-                        $('#items-holder').html(data);
-                        $('#filter-search').prop('disabled', false).val(searchText);
-                    	$('.items .ajax-loader').removeClass('show');
-                    });
-                	// Keep content of existing component of each target language, in cache
-                	$('input[name="locale-to[]"]:checked').each(function(){
-                		var toLanguage = $(this).val();
-                		postData = {
-                            pageID: pageID,
-                            date: exportDate,
-                            language: toLanguage
-                        };
-                    	$.post(app.urls.getPageComponents, postData, function () {
-                            // do nothing - because no impact on UI, but saving existing content in to cache in server side code
-                        });
-                	});
+                if (itemType === 'pagedesigner') {
+                    getPageDesigners();
+                } else if (itemType === 'component') {
+                	getPageComponents();
                 } else {
                 	postData = {
                         itemType: itemType,
@@ -263,8 +251,6 @@
                         if (itemType !== 'pagedesigner') {
                         	$('#filter-search').prop('disabled', false).val(searchText);
                         	$('.items .ajax-loader').removeClass('show');
-                        } else {
-                        	dealFetchingPageDesigners();
                         }
                     });
                 }
@@ -295,40 +281,6 @@
                 }
             };
             
-            var dealFetchingPageDesigners = function () {
-            	if ($('#items-holder').html()) {
-            		/* Error on triggering Content Export job */
-            		$('#filter-search').prop('disabled', false).val(searchText || 'Search');
-                	$('.items .ajax-loader').removeClass('show');
-            	} else {
-            		checkIfContentXMLReady();
-            	}
-            }
-            
-            var contentCheckCount = 0;
-
-            var checkIfContentXMLReady = function () {
-            	setTimeout(checkContentXMLExists, 1000);
-            }
-            
-            var checkContentXMLExists = function () {
-            	contentCheckCount++;
-
-            	$.post(app.urls.checkContentXMLExists, {}, function (data) {
-                    if (data.fileFound) {
-                    	getPageDesigners();
-                    } else {
-                    	if (contentCheckCount < 15) {
-                    		setTimeout(checkContentXMLExists, 1000);
-                    	} else {
-                    		$('#items-holder').html('Something went wrong. Please check log');
-                    		$('#filter-search').prop('disabled', false).val(searchText || 'Search');
-                        	$('.items .ajax-loader').removeClass('show');
-                    	}
-                    }
-                });
-            }
-            
             var getPageDesigners = function () {
             	$.ajax({
             		url: app.urls.getPageDesigners + '?exportDate=' + exportDate,
@@ -339,7 +291,31 @@
                     	$('.items .ajax-loader').removeClass('show');
                     }
             	});
+            };
+
+            var getComponentPageDesigners = function () {
+            	$.ajax({
+            		url: app.urls.getPageDesigners + '?itemType=component',
+            		async: false,
+            		success: function (data) {
+            			$('.field-holder.page-designer-list').html(data);
+                    }
+            	});
             }
+
+            var getPageComponents = function () {
+            	var language = $('select[name=locale-from]').val();
+            	var postData = {
+                    pageID: pageID,
+                    date: exportDate,
+                    language: language
+                };
+            	$.post(app.urls.getPageComponents, postData, function (data) {
+                    $('#items-holder').html(data);
+                    $('#filter-search').prop('disabled', false).val(searchText);
+                	$('.items .ajax-loader').removeClass('show');
+                });
+            };
 
             $('#items-holder').on('click', 'input[type="checkbox"][name="item[]"]', function () {
                 var itemID = $(this).val();
