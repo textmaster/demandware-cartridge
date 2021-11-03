@@ -139,7 +139,7 @@ function getStoreURL(itemType, targetLangID) {
 function documentsFollowUp() {
     var registered = loginCheck();
 
-    var id = request.httpParameterMap.get('projectID').stringValue;
+    var projectID = request.httpParameterMap.get('projectID').stringValue;
     var name = request.httpParameterMap.get('projName').stringValue;
     var refer = request.httpParameterMap.get('projRef').stringValue;
     var sourceLangID = request.httpParameterMap.get('sourceLang').stringValue;
@@ -154,7 +154,7 @@ function documentsFollowUp() {
 
     if (registered) {
         ISML.renderTemplate('translation/secondarydashboard', {
-            id: id,
+            projectID: projectID,
             name: name,
             itemType: itemType,
             refer: refer,

@@ -18,59 +18,9 @@
         },
         urls: {
         	translationItemList: 'TMComponents-ItemList',
-        	checkContentXMLExists: 'TMComponents-CheckContentXMLExists',
-        	getPageDesigners: 'TMComponents-GetPageDesigners'
+        	checkPageItemsExists: 'TMComponents-CheckPageItemsExists'
         },
         newTranslation: function () {
-            $('#load-page-designer').on('click', function () {
-            	var loaderImgSrc = $('.ajax-loader img').attr('src');
-            	var loaderImg = '<img src="' + loaderImgSrc + '" width="30px">';
-            	$('.field-holder.page-designer-list').html(loaderImg);
-            	var postData = {
-                    itemType: $('select[name=item-type]').val()
-                };
-
-            	$.post(compApp.urls.translationItemList, postData, function (data) {
-            		if (data) {
-            			$('.field-holder.page-designer-list').html(data);
-            		} else {
-            			checkIfComponentContentXMLReady();
-            		}
-                });
-            });
-            
-            var contentCheckCount = 0;
-
-            var checkIfComponentContentXMLReady = function () {
-            	setTimeout(checkComponentContentXMLExists, 1000);
-            }
-            
-            var checkComponentContentXMLExists = function () {
-            	contentCheckCount++;
-
-            	$.post(compApp.urls.checkContentXMLExists, {}, function (data) {
-                    if (data.fileFound) {
-                    	getComponentPageDesigners();
-                    } else {
-                    	if (contentCheckCount < 15) {
-                    		setTimeout(checkComponentContentXMLExists, 1000);
-                    	} else {
-                    		$('.field-holder.page-designer-list').html('Something went wrong. Please check log');
-                    	}
-                    }
-                });
-            }
-            
-            var getComponentPageDesigners = function () {
-            	$.ajax({
-            		url: compApp.urls.getPageDesigners + '?itemType=component',
-            		async: false,
-            		success: function (data) {
-            			$('.field-holder.page-designer-list').html(data);
-                    }
-            	});
-            }
-            
             function componentAttrAdd(componentID, checkbox) {
             	if (!$('.attributes-main ul#attributes-' + componentID).length) {
             		var componentName = checkbox.closest('tr').find('td:nth-of-type(3) label').text();
@@ -88,6 +38,12 @@
             function componentAttrRemove(componentID) {
             	$('.attributes-main ul#attributes-' + componentID).remove();
             }
+            
+            $('.page-designer-list').on('change', 'select[name=page-designer]', function () {
+            	$('.attributes-main').html('');
+            	$('.common-error.search').removeClass('show');
+                $('#items-holder').html('');
+            });
             
             $('#items-holder').on('click', 'input[type="checkbox"][name="item[]"]', function () {
                 if ($('select[name=item-type]').val() === 'component') {

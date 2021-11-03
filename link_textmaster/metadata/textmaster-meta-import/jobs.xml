@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
-    <job job-id="TextMasterExportContentRefArch" priority="1">
+    <job job-id="TextMasterConvertPagesToCacheRefArch" priority="1">
         <description/>
         <parameters/>
         <flow>
@@ -12,6 +12,17 @@
                     <parameter name="ExportFile">TextMasterExportContent</parameter>
                     <parameter name="OverwriteExportFile">true</parameter>
                 </parameters>
+            </step>
+        </flow>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TextMasterGeneratePageItems" type="custom.TextMasterGeneratePageItems" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+            <step step-id="TextMasterGeneratePageComponents" type="custom.TextMasterGeneratePageComponents" enforce-restart="false">
+                <description/>
+                <parameters/>
             </step>
         </flow>
         <rules/>

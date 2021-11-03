@@ -169,6 +169,7 @@
                                 follow.statusValues.progress++;
                                 break;
                             case Resources.IN_REVIEW:
+                            case Resources.IN_EXTRA_REVIEW:
                                 follow.statusValues.review++;
                                 break;
                             case Resources.COMPLETED:

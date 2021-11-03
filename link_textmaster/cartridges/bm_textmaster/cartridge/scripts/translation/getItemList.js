@@ -66,7 +66,10 @@ function getOutput(input) {
     var Site = require('dw/system/Site');
 
     if (itemType === 'pagedesigner' || itemType === 'component') {
-        var jobName = utils.config.pageDesigner.jobName + Site.current.ID;
+        var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
+        pageUtils.clearPageItems();
+        var jobName = utils.config.pageDesigner.populatePagesJobName + Site.current.ID;
+        pageUtils.setInputForJob(jobName, { exportDate: date });
         var ocapiJobUrl = utils.config.ocapi.jobs.post;
         ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
         var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);

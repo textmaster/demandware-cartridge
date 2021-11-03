@@ -22,8 +22,10 @@ var log = logUtils.getLogger('removeImportedFile');
  */
 function execute(itemType, itemID, language) {
     try {
+        var customAttributes;
+
         if (itemType === 'pagedesigner') {
-            var customAttributes = pageUtils.getPageCustom(itemID);
+            customAttributes = pageUtils.getPageCustom(itemID);
 
             if (customAttributes.TranslatedLanguages !== '' && customAttributes.TranslatedLanguages != null) {
                 if (customAttributes.TranslatedLanguages.indexOf(language) < 0) {
@@ -34,6 +36,18 @@ function execute(itemType, itemID, language) {
             }
 
             pageUtils.setPageCustom(itemID, customAttributes);
+        } else if (itemType === 'component') {
+            customAttributes = pageUtils.getComponentCustom(itemID);
+
+            if (customAttributes.TranslatedLanguages !== '' && customAttributes.TranslatedLanguages != null) {
+                if (customAttributes.TranslatedLanguages.indexOf(language) < 0) {
+                    customAttributes.TranslatedLanguages += ',' + language;
+                }
+            } else {
+                customAttributes.TranslatedLanguages = language;
+            }
+
+            pageUtils.setComponentCustom(itemID, customAttributes);
         } else {
             var item;
             switch (itemType) { // eslint-disable-line default-case

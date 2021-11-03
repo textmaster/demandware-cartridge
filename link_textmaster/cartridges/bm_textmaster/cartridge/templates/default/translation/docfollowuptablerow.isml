@@ -10,5 +10,6 @@
 	<td class="table_detail e s left">${document.word_count ? document.word_count : ''}</td>
 	<td class="table_detail e s left"><span class="spContentId">${datePart + " " + hour + ":" + minute}</span></td>
 	<td class="table_detail e s">${document.status ? document.status : ''}</td>
+	<td class="table_detail e s left links"></td>
 	<td class="table_detail e s left action"></td>
 </tr>
