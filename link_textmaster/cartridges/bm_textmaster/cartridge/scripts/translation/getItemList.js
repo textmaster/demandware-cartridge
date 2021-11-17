@@ -65,29 +65,6 @@ function getOutput(input) {
     /* Populate item list according to the itemType selected */
     var Site = require('dw/system/Site');
 
-    if (itemType === 'pagedesigner' || itemType === 'component') {
-        var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
-        pageUtils.clearPageItems();
-        var jobName = utils.config.pageDesigner.populatePagesJobName + Site.current.ID;
-        pageUtils.setInputForJob(jobName, { exportDate: date });
-        var ocapiJobUrl = utils.config.ocapi.jobs.post;
-        ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
-        var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);
-        var error;
-
-        var result = jobResponse && (jobResponse.execution_status.toLowerCase() === 'running' || jobResponse.execution_status.toLowerCase() === 'pending' || jobResponse.execution_status.toLowerCase() === 'finished' || jobResponse.execution_status.toLowerCase() === 'jobalreadyrunningexception');
-
-        if (!result) {
-            error = 'Error fetching Page Designer Objects: Job "' + jobName + '" is not found or not enabled';
-            log.error(error);
-        }
-
-        return {
-            Type: itemType,
-            Error: error
-        };
-    }
-
     switch (itemType) { // eslint-disable-line default-case
     case 'product':
         if (categoryIDs && categoryIDs.length) {
