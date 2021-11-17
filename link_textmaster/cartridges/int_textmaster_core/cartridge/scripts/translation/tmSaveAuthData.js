@@ -1,14 +1,14 @@
 'use strict';
 
 /* Script Includes */
-var utils = require('*/cartridge/scripts/utils/tmUtils');
+var utils = require('~/cartridge/scripts/utils/tmUtils');
 
 /**
  * Saves Authentication Data to custom cache
  * @param {Object} input - input object
  */
 function saveAuthData(input) {
-    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var customCache = require('~/cartridge/scripts/utils/customCacheWebdav');
     var authData = customCache.getCache(utils.config.cache.url.authentication) || {};
 
     if (input.clientID) {

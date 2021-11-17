@@ -328,7 +328,7 @@ function saveAuthData() {
         redirectURI: request.httpParameterMap.get('redirectURI').stringValue || ''
     };
 
-    var saveData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+    var saveData = require('*/cartridge/scripts/translation/tmSaveAuthData');
     saveData.execute(input);
 
     r.renderJSON({ success: true });
@@ -341,7 +341,7 @@ function generateToken() {
     var result = utils.generateToken();
 
     if (result) {
-        var saveData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+        var saveData = require('*/cartridge/scripts/translation/tmSaveAuthData');
         saveData.execute(result);
     }
 

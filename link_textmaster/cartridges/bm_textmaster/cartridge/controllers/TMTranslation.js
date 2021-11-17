@@ -44,7 +44,7 @@ function authentication() {
             authCode: code
         };
 
-        var saveAuthData = require('~/cartridge/scripts/translation/tmSaveAuthData');
+        var saveAuthData = require('*/cartridge/scripts/translation/tmSaveAuthData');
         saveAuthData.execute(saveInput);
     }
 

@@ -124,15 +124,6 @@ Utils.getPageItems = function (exportDate) {
 };
 
 /**
- * Clears Page Designer Objects list from custom cache
- */
-Utils.clearPageItems = function () {
-    var siteID = Site.current.ID;
-    var pageItemsUrl = '/' + siteID + '/pages/page-items.txt';
-    customCache.clearCache(pageItemsUrl);
-};
-
-/**
  * Sets Page components list into custom cache (this data is supposed be populated by a job)
  * @param {string} pageID - pageID
  * @param {Object} items - array of page component objects

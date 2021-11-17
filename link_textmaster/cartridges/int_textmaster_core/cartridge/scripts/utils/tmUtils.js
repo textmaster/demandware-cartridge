@@ -127,12 +127,7 @@ Utils.config = {
         }
     },
     pageDesigner: {
-        populatePagesJobName: 'TextMasterExportContent',
-        xmlName: 'TextMasterExportContent.xml',
-        populateComponentsJobName: 'TextMasterPopulateComponents',
-        components: {
-            generalID: 'components'
-        }
+        xmlName: 'TextMasterExportContent.xml'
     }
 };
 
@@ -935,8 +930,9 @@ Utils.getRefreshedToken = function (authData) {
         Utils.log.debug('Request: ' + JSON.stringify(request));
     } else {
         // Keep new data in custom cache
-        var saveAuthData = require('*/cartridge/scripts/translation/tmSaveAuthData');
+        var saveAuthData = require('~/cartridge/scripts/translation/tmSaveAuthData');
         saveAuthData.execute(response);
+        Utils.log.debug('API authentication token refreshed');
     }
 
     return response && response.access_token ? response.access_token : null;
