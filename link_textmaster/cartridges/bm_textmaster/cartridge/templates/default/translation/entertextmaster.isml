@@ -2,6 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/menuframe">
+<script src="${URLUtils.staticURL('js/textmaster.apisetup.js')}"></script>
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-Register')}" bctext1="${Resource.msg('register.title', 'textmaster',null)}" />
 <div class="registration">
 	<h1>${Resource.msg('register.title', 'textmaster',null)}</h1>
@@ -178,4 +179,5 @@
 		</tbody>
 	</table>
 </div>
+<isinclude template="resources/appresources"/>
 </isdecorate>

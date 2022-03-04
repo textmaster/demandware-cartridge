@@ -5,7 +5,7 @@ var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/utils/tmLogUtils');
-
+var utils = require('*/cartridge/scripts/utils/tmUtils');
 var log = LogUtils.getLogger('getProjects');
 
 /**
@@ -14,7 +14,7 @@ var log = LogUtils.getLogger('getProjects');
  */
 function execute() {
     try {
-        var projects = CustomObjectMgr.getAllCustomObjects('TMQuoteDataHolder');
+        var projects = CustomObjectMgr.getAllCustomObjects(utils.config.quote.coName);
         var tmProjects = projects.asList();
         projects.close();
         return tmProjects;

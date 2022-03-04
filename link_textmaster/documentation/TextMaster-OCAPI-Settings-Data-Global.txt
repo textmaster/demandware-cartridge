@@ -1,0 +1,11 @@
+{
+	"resource_id": "/jobs/*/executions",
+	"methods": ["post"],
+	"read_attributes": "(**)",
+	"write_attributes": "(**)"
+}, {
+	"resource_id": "/locale_info/locales",
+	"methods": ["get"],
+	"read_attributes": "(**)",
+	"write_attributes": "(**)"
+}

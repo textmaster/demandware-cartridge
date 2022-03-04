@@ -19,19 +19,19 @@ var log = logUtils.getLogger('TMQuote Script');
  */
 function getOutput(input) {
     var statusCode;
-    var projectid = input.ProjectID;
+    var projectID = input.ProjectID;
 
     try {
-        if (projectid) {
-            var co = CustomObjectMgr.getCustomObject('TMQuoteDataHolder', projectid);
+        if (projectID) {
+            var co = CustomObjectMgr.getCustomObject(utils.config.quote.coName, projectID);
 
             if (co == null) {
                 Transaction.begin();
-                co = CustomObjectMgr.createCustomObject('TMQuoteDataHolder', projectid);
+                co = CustomObjectMgr.createCustomObject(utils.config.quote.coName, projectID);
                 Transaction.commit();
             }
 
-            var jobName = utils.config.quote.jobname + Site.current.ID;
+            var jobName = utils.config.quote.jobName + Site.current.ID;
             var ocapiJobUrl = utils.config.ocapi.jobs.post;
             ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
             var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);

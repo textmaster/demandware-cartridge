@@ -2,7 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/menuframe">
-<script src="${URLUtils.staticURL('/js/jquery.dataTables.min.js')}"></script>
+<script src="${URLUtils.staticURL('js/jquery.dataTables.min.js')}"></script>
 <script src="${URLUtils.staticURL('js/textmaster.dashboard.secondary.js')}"></script>
 <link rel="stylesheet" href="${URLUtils.staticURL('css/jquery.dataTables.css')}" />
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-FollowUp')}" bctext1="${Resource.msg('follow.main.title','textmaster',null)}" bctext2="${Resource.msg('follow.project','textmaster',null) + ' ' + pdict.refer}" />

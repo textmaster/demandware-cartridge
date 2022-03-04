@@ -25,9 +25,7 @@ server.post('Send', function (req, res, next) {
         Status: output.statusCode
     };
 
-    res.render('translation/tmquote', {
-        result: result
-    });
+    res.render('translation/tmquote', result);
 
     next();
 });

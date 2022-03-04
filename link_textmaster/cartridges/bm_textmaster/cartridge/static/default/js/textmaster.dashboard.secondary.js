@@ -1,12 +1,4 @@
-/* global jQuery */
-/* eslint-disable wrap-iife */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-else-return */
-/* eslint-disable consistent-return */
-/* eslint-disable no-param-reassign */
-/* eslint-disable new-cap */
-/* eslint-disable no-shadow */
-/* eslint-disable no-alert, no-confirm */
+/* global jQuery, window, Resources, alert, setTimeout, document */
 
 (function ($) {
     $ = $.noConflict();
@@ -50,23 +42,23 @@
                 docsFollowup.loadDocData(true);
 
                 $('#filterTableDocuments').on('click', '.actions-validate', function () {
-                    if (window.confirm(Resources.SWITCH_TO_COMPLETED)) {
+                    if (window.confirm(Resources.labels.SWITCH_TO_COMPLETED)) {
                         var $validateButton = $(this)
                         var vars = docsFollowup.getParams();
                         var projectID = vars['projectID'];
                         var documentID = $validateButton.val();
                         $validateButton.attr('disabled', true);
-                        $validateButton.text('Please wait...');
+                        $validateButton.text(Resources.messages.WAITING);
 
                         $.post(app.urls.documentComplete, {
                             projectID: projectID,
                             documentID: documentID
                         }, function (response) {
                             if (response) {
-                                $validateButton.closest('tr').children('td:eq(4)').text(Resources.VALIDATED);
+                                $validateButton.closest('tr').children('td:eq(4)').text(Resources.labels.VALIDATED);
                                 $validateButton.remove();
 
-                                app.showSuccessMessage(Resources.VALIDATED_SUCCESS_MESSAGE);
+                                app.showSuccessMessage(Resources.messages.VALIDATED_SUCCESS);
 
                                 docsFollowup.statusValues.review--;
                                 docsFollowup.temporaryDocumentStatus.validated++;
@@ -77,7 +69,7 @@
                 });
             },
             loadDocData: function (initialLoad) {
-                var loadingText = 'Loading...';
+                var loadingText = Resources.messages.LOADING;
                 var docFollow = this;
                 var button = $('.docs-followup .load-more input[type=button]');
 
@@ -135,10 +127,10 @@
                             docFollow.config.lastPage = parseInt($('#filterTableDocuments_paginate span a.paginate_button:last-of-type').text(), 10);
                             docFollow.populateMoreDocData(documents);
                         } else {
-                            $('#filterTableDocuments .ajax-loader').text('No records (Check error logs also)').css('padding-top', '40px');
+                            $('#filterTableDocuments .ajax-loader').text(Resources.errors.NO_RECORDS).css('padding-top', '40px');
                         }
                     } catch (err) {
-                        alert('Error on loading data: ' + err.message);
+                        alert(Resources.errors.LOADING + err.message);
                     }
                 });
             },
@@ -163,31 +155,31 @@
                         documentLink = documentLink.replace('<<documentid>>', document.id);
                         var storeLinkID = itemType === 'component' ? pageID : itemID;
                         storeURL = storeURL ? (storeURL + storeLinkID) : '';
-                        var previewLink = storeURL ? '<a class="doc-link" href="' + storeURL + '" target="_blank">' + Resources.PREVIEW_LINK_LABEL + '</a><br/>' : '';
-                        var reviewLink = documentLink ? '<a class="doc-link" href="' + documentLink + '" target="_blank">' + Resources.REVIEW_LINK_LABEL + '</a><br/>' : '';
-                        var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.VALIDATE_ACTION + '</button>';
-                        var links = documentStatus === Resources.IN_EXTRA_REVIEW || documentStatus === Resources.IN_REVIEW ? (previewLink + reviewLink) : '';
-                        var actions = documentStatus === Resources.IN_REVIEW ? validateAction : '';
+                        var previewLink = storeURL ? '<a class="doc-link" href="' + storeURL + '" target="_blank">' + Resources.labels.PREVIEW_LINK + '</a><br/>' : '';
+                        var reviewLink = documentLink ? '<a class="doc-link" href="' + documentLink + '" target="_blank">' + Resources.labels.REVIEW_LINK + '</a><br/>' : '';
+                        var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.labels.VALIDATE_ACTION + '</button>';
+                        var links = documentStatus === Resources.labels.IN_EXTRA_REVIEW || documentStatus === Resources.labels.IN_REVIEW ? (previewLink + reviewLink) : '';
+                        var actions = documentStatus === Resources.labels.IN_REVIEW ? validateAction : '';
 
                         docFollow.dataTable.row.add([itemID, itemName, words, documentDate, documentStatus, links, actions]).draw();
 
                         if (documentStatus) {
                             switch (documentStatus) { // eslint-disable-line default-case
-                            case Resources.IN_CREATION:
+                            case Resources.labels.IN_CREATION:
                                 docFollow.statusValues.creation++;
                                 break;
-                            case Resources.COUNTING:
+                            case Resources.labels.COUNTING:
                                 docFollow.statusValues.counting_words++;
                                 break;
-                            case Resources.IN_PROGRESS:
-                            case Resources.INCOMPLETE:
+                            case Resources.labels.IN_PROGRESS:
+                            case Resources.labels.INCOMPLETE:
                                 docFollow.statusValues.progress++;
                                 break;
-                            case Resources.IN_EXTRA_REVIEW:
-                            case Resources.IN_REVIEW:
+                            case Resources.labels.IN_EXTRA_REVIEW:
+                            case Resources.labels.IN_REVIEW:
                                 docFollow.statusValues.review++;
                                 break;
-                            case Resources.COMPLETED:
+                            case Resources.labels.COMPLETED:
                                 docFollow.statusValues.completed++;
                                 break;
                             }
