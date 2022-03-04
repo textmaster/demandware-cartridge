@@ -85,7 +85,8 @@ Utils.config = {
         }
     },
     quote: {
-        jobname: 'TextMasterAskForQuote'
+        coName: 'TMQuoteDataHolder',
+        jobName: 'TextMasterAskForQuote'
     },
     ocapi: {
         jobs: {

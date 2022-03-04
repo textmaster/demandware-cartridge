@@ -2,6 +2,8 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/menuframe">
+	<script src="${URLUtils.staticURL('js/textmaster.translation.js')}"></script>
+	<script src="${URLUtils.staticURL('js/textmaster.component.js')}"></script>
 	<isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-New')}" bctext1="${Resource.msg('translation.title','textmaster',null)}" />
 	
 	<div class="new-translation">
@@ -113,4 +115,5 @@
 			</div>
 		</form>
 	</div>
+	<isinclude template="resources/appresources"/>
 </isdecorate>

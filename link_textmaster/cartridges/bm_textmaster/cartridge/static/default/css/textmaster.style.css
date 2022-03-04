@@ -688,9 +688,13 @@ span.cache-message {
 .doc-link {
 	display: inline-block;
     padding: 0.25em 0.6em;
-    margin-bottom: 0.25em;
     background-color: #efefef;
     border-radius: 0.5em;
+    text-align: center;
+    min-width: 10em;
+}
+.doc-link:first-child {
+	margin-bottom: 0.5em;
 }
 .docs-followup .load-more input[type=button] {
     margin-right: 3.5em

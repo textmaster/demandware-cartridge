@@ -1,12 +1,4 @@
-/* global jQuery */
-/* eslint-disable wrap-iife */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-else-return */
-/* eslint-disable consistent-return */
-/* eslint-disable no-param-reassign */
-/* eslint-disable new-cap */
-/* eslint-disable no-shadow */
-/* eslint-disable no-alert, no-confirm */
+/* global jQuery, setTimeout, document, window, Resources, alert */
 
 (function ($) {
     $ = $.noConflict();
@@ -56,14 +48,14 @@
                     var projectID = $button.val();
                     var data = {projectID: projectID};
                     $button.attr('disabled', true);
-                    $button.text('Please wait...');
+                    $button.text(Resources.messages.WAITING);
 
                     $.post(app.urls.launchProject, data, function (response) {
                         if (response) {
-                            $button.closest('tr').children('td:eq(6)').text(Resources.IN_PROGRESS);
+                            $button.closest('tr').children('td:eq(6)').text(Resources.labels.IN_PROGRESS);
                             $button.remove();
 
-                            app.showSuccessMessage(Resources.TRANSLATED_SUCCESS_MESSAGE);
+                            app.showSuccessMessage(Resources.messages.TRANSLATED_SUCCESS);
 
                             followUp.statusValues.creation--;
                             followUp.statusValues.progress++;
@@ -71,7 +63,7 @@
                         } else {
                             $button.attr('disabled', false);
                             $button.text(buttonLabel);
-                            $button.parent().append($('<div class="translate-action-error"></div>').text(Resources.TRANSLATE_ACTION_ERROR));
+                            $button.parent().append($('<div class="translate-action-error"></div>').text(Resources.errors.TRANSLATE_ACTION));
                         }
                     });
                 });
@@ -81,7 +73,7 @@
                 var button = $('.followup .load-more input[type=button]');
 
                 button.prop('disabled', true);
-                button.val('Loading...');
+                button.val(Resources.messages.LOADING);
                 $.post(app.urls.dashboardData, follow.config, function (data) {
                     try {
                         var output = data;
@@ -124,7 +116,7 @@
                             $('#filtertableProjects .ajax-loader').text('No records').css('padding-top', '40px');
                         }
                     } catch (err) {
-                        alert('Error on loading data: ' + err.message);
+                        alert(Resources.errors.LOADING + err.message);
                     }
                 });
             },
@@ -143,8 +135,8 @@
                         var itemTypeFormatted = app.utils.firstLetterCapital(itemType);
                         var projectLocale = project.locale ? project.locale : '';
                         var projectStatus = project.status;
-                        var translateAction = '<button class="dashboard-action-button actions-translate" value=' + project.id + '>' + Resources.TRANSLATE_ACTION + '</button>';
-                        var actions = projectStatus === Resources.IN_CREATION ? translateAction : '';
+                        var translateAction = '<button class="dashboard-action-button actions-translate" value=' + project.id + '>' + Resources.labels.TRANSLATE_ACTION + '</button>';
+                        var actions = projectStatus === Resources.labels.IN_CREATION ? translateAction : '';
                         var price = project.currency;
                         var createdAt = project.created_at.full;
                         var creationDate = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
@@ -158,21 +150,21 @@
 
                         if (projectStatus) {
                             switch (projectStatus) { // eslint-disable-line default-case
-                            case Resources.IN_CREATION:
+                            case Resources.labels.IN_CREATION:
                                 follow.statusValues.creation++;
                                 break;
-                            case Resources.COUNTING:
+                            case Resources.labels.COUNTING:
                                 follow.statusValues.counting_words++;
                                 break;
-                            case Resources.IN_PROGRESS:
-                            case Resources.INCOMPLETE:
+                            case Resources.labels.IN_PROGRESS:
+                            case Resources.labels.INCOMPLETE:
                                 follow.statusValues.progress++;
                                 break;
-                            case Resources.IN_REVIEW:
-                            case Resources.IN_EXTRA_REVIEW:
+                            case Resources.labels.IN_REVIEW:
+                            case Resources.labels.IN_EXTRA_REVIEW:
                                 follow.statusValues.review++;
                                 break;
-                            case Resources.COMPLETED:
+                            case Resources.labels.COMPLETED:
                                 follow.statusValues.completed++;
                                 break;
                             }

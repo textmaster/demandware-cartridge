@@ -2,6 +2,7 @@
 <iscontent type="text/html" charset="UTF-8" />
 <isinclude template="custom/modules"/>
 <isdecorate template="application/menuframe">
+<script src="${URLUtils.staticURL('js/textmaster.language.js')}"></script>
 <isbreadcrumbs bcurl1="${URLUtils.url('TMTranslation-LanguageMapping')}" bctext1="${Resource.msg('mapping.title', 'textmaster',null)}" />
 <div class="language-mapping">
 	<h1>${Resource.msg('mapping.title', 'textmaster',null)}</h1>
@@ -41,4 +42,5 @@
 		<input type="button" value=" ${Resource.msg('mapping.add.button', "textmaster",null)}" class="button main-action add-mapping" />
 	</div>
 </div>
+<isinclude template="resources/appresources"/>
 </isdecorate>
