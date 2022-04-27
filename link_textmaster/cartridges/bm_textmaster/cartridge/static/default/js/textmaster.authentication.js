@@ -10,6 +10,8 @@
         },
         registration: {
             init: function () {
+            	textMasterAuthenticationApp.registration.onLoad();
+
                 $('a#reg-link').on('click', function () {
                     $('.error').html('');
                     var apiEnv = $('select[name=api-env]').length ? $('select[name=api-env]').val() : $('input[name=api-env]').val();
@@ -48,13 +50,13 @@
                         	var redirectURI = $('input[name=redirect-uri]').val();
                         	var responseType = $('input[name=response-type]').val();
                         	var scope = $('input[name=scope]').val();
-                        	var authURL = backOfficeLink + authoriseLink + '?client_id=' + clientID + '&redirect_uri=' + redirectURI + '&response_type=' + responseType + '&scope=' + scope;
+                        	var authURL = backOfficeLink + authoriseLink + '?client_id=' + clientID + '&redirect_uri=' + encodeURIComponent(redirectURI) + '&response_type=' + responseType + '&scope=' + encodeURIComponent(scope) + '&random_param=to-avoid-malformed-scope';
                         	var postData = {
                         		clientID: clientID,
                         		clientSecret: clientSecret,
                         		redirectURI: redirectURI
                         	};
-                        	
+
                         	$.post(textMasterGeneralApp.urls.saveAuthData, postData, function () {
                                 window.location.href = authURL;
                             });
@@ -104,6 +106,16 @@
                     	});
                 	}
                 });
+            },
+            onLoad: function () {
+                $('input[name=redirect-uri]').val($('input[name=redirect-uri]').val().replace('{0}', window.location.hostname));
+                $('#redirect-uri-display').text($('input[name=redirect-uri]').val());
+
+                if ($('input[name=client-secret]').length && $('input[name=client-secret]').val() !== "" && $('input[name=generate-token]').length) {
+                	setTimeout(function () {
+                		$('input[name=generate-token]').trigger('click')
+                	}, 1000);
+                }
             }
         }
     };

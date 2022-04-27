@@ -109,6 +109,24 @@
 				</div>
 				<div class="field-holder attributes-main"><!-- Data populate here through ajax --></div>
 			</div>
+			<div class="form-holder">
+				<div class="field-holder title-holder">
+					<h2>${Resource.msg('translation.select.project.name','textmaster',null)}</h2>
+				</div>
+				<div class="field-holder">
+					<div class="label-holder">${Resource.msg('translation.project.name.entry','textmaster',null)} </div>
+					<select name="project-name-type">
+						<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+						<option value="automatic">${Resource.msg('translation.project.name.automatic','textmaster',null)}</option>
+						<option value="manual">${Resource.msg('translation.project.name.manual','textmaster',null)}</option>
+					</select>
+				</div>
+				<div class="field-holder project-name">
+					<div class="label-holder">${Resource.msg('translation.enter.project.name','textmaster',null)} </div>
+					<input type="text" name="project-name" id="project-name" value="">
+				</div>
+			</div>
+
 			<div class="submit-error"></div>
 			<div class="right">
 				<input type="submit" class="button main-action" value="${Resource.msg('translation.send.textmaster','textmaster',null)}" id="filter-item-submit">

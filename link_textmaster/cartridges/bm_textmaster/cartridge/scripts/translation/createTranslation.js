@@ -185,6 +185,8 @@ function getOutput(input) {
     var attributes = JSON.parse(input.Attributes);
     var componentAttributes = attributes;
     var items = JSON.parse(input.Items);
+    var projectNameType = input.ProjectNameType;
+    var projectName = input.ProjectName;
     var categoryCode = Site.getCurrent().getCustomPreferenceValue('TMCategoryCode') || '';
     var calendarDate = Calendar();
     var bulkLimit = Resource.msg('api.bulk.doc.limit', 'textmaster', null) || 20;
@@ -205,7 +207,11 @@ function getOutput(input) {
             var projectPostData = {};
             var project = {};
 
-            project.name = utils.firstLetterCapital(itemType) + ' - ' + localeTo.template.name + ' - ' + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd');
+            if (projectNameType === 'manual') {
+                project.name = projectName;
+            } else {
+                project.name = utils.firstLetterCapital(itemType) + ' - ' + localeTo.template.name + ' - ' + StringUtils.formatCalendar(Calendar(calendarDate), 'yyyy-MM-dd');
+            }
             project.ctype = Resource.msg('constant.translation', 'textmaster', null);
 
             var mappedLanguageFrom = utils.getMappedLanguage(localeFrom);

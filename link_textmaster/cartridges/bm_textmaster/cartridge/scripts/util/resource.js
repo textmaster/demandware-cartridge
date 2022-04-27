@@ -43,6 +43,8 @@ var resourceHelper = {
                 API_VERSION: Resource.msg('register.api.version.error', 'textmaster', null),
                 BACKOFFICE_BASE_URL: Resource.msg('register.backoffice.base.url.error', 'textmaster', null),
                 SELECT_ATTRIBUTE: Resource.msg('attributes.select.error', 'textmaster', null),
+                SELECT_PROJECT_NAME_ENTRY:Resource.msg('project.name.entry.select.error', 'textmaster', null),
+                ENTER_PROJECT_NAME:Resource.msg('project.name.enter.error', 'textmaster', null),
                 CHANGE_SELECT_ATTRIBUTE: Resource.msg('attributes.change.selection.error', 'textmaster', null),
                 APPLICATION_ID: Resource.msg('authentication.application.id.error', 'textmaster', null),
                 GO_APISETUP: Resource.msg('authentication.go.apisetup.error', 'textmaster', null),

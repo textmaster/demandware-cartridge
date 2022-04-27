@@ -52,7 +52,6 @@ function authentication() {
     var config = apiConfig.output();
     var authData = customCache.getCache(utils.config.cache.url.authentication);
     var redirectURI = utils.config.api.authentication.redirectURI;
-    redirectURI = redirectURI.replace('{0}', Site.current.httpsHostName);
 
     config.ClientID = authData && authData.clientID ? authData.clientID : '';
     config.ClientSecret = authData && authData.clientSecret ? authData.clientSecret : '';
@@ -202,7 +201,9 @@ function placeOrder() {
         MappedLocaleTo: mappedLanguageTo,
         Attributes: request.httpParameterMap.get('attribute[]').values.toArray(),
         PageID: request.httpParameterMap.get('page-designer').stringValue,
-        Items: request.httpParameterMap.get('items').stringValue.split(',')
+        Items: request.httpParameterMap.get('items').stringValue.split(','),
+        ProjectNameType: request.httpParameterMap.get('project-name-type').stringValue,
+        ProjectName: request.httpParameterMap.get('project-name').stringValue
     };
 
     var transParams = require('~/cartridge/scripts/translation/setupTranslationParameters');
