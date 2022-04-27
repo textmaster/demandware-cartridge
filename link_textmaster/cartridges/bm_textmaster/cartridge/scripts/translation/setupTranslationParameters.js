@@ -75,7 +75,9 @@ function getOutput(input) {
         catalogID: catalogID,
         attributes: attributes,
         pageID: input.PageID,
-        items: items
+        items: items,
+        projectNameType: input.ProjectNameType,
+        projectName: input.ProjectName
     };
 
     return {

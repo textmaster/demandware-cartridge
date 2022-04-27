@@ -42,6 +42,22 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="table_detail e s w right" width="30%">
+					${Resource.msg('redirect.uri.label', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<span id="redirect-uri-display"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('authentication.scopes', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<span>${pdict.Scope}</span>
+				</td>
+			</tr>
+			<tr>
 				<td class="table_detail e s w right">
 					${Resource.msg('client.id.label', 'textmaster',null)}
 				</td>

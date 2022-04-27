@@ -310,6 +310,15 @@
                 });
             });
 
+            $('select[name=project-name-type]').on('change', function () {
+                var projectNameType = $(this).val();
+                if (projectNameType === 'manual') {
+                    $('.project-name').show();
+                } else {
+                    $('.project-name').hide();
+                }
+            });
+
             $('#filter-item-form').on('submit', function () {
                 var errors = [Resources.errors.FIX_FOLLOWING];
                 var ul = $('<ul>');
@@ -342,6 +351,14 @@
                             errors.push('- ' + Resources.errors.SELECT_ATTRIBUTES_COMPONENTS + $(this).find('h2 span').text());
                         }
                     });
+                }
+
+                if ($('select[name=project-name-type]').val() === '') {
+                    errors.push('- ' + Resources.errors.SELECT_PROJECT_NAME_ENTRY);
+                }
+
+                if ($('select[name=project-name-type]').val() === 'manual' && $('#project-name').val() === '') {
+                    errors.push('- ' + Resources.errors.ENTER_PROJECT_NAME);
                 }
 
                 if (errors.length > 1) {

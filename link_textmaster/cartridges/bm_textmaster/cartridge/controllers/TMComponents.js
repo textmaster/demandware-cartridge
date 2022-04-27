@@ -131,7 +131,9 @@ function createTranslation() {
         CatalogID: request.httpParameterMap.get('catalogID').stringValue,
         Attributes: request.httpParameterMap.get('attributes').stringValue,
         PageID: request.httpParameterMap.get('pageID').stringValue,
-        Items: request.httpParameterMap.get('items').stringValue
+        Items: request.httpParameterMap.get('items').stringValue,
+        ProjectNameType: request.httpParameterMap.get('projectNameType').stringValue,
+        ProjectName: request.httpParameterMap.get('projectName').stringValue
     };
 
     var output = translationCreation.output(input);

@@ -247,7 +247,8 @@
     font-size: 1em;
 }
 
-.new-translation .field-holder.catalog-list {
+.new-translation .field-holder.catalog-list,
+.new-translation .field-holder.project-name {
     display: none;
 }
 

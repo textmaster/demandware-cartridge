@@ -150,7 +150,9 @@
                     catalogID: transParams.catalogID,
                     attributes: JSON.stringify(transParams.attributes),
                     pageID: transParams.pageID,
-                    items: JSON.stringify(items)
+                    items: JSON.stringify(items),
+                    projectNameType: transParams.projectNameType,
+                    projectName: transParams.projectName
                 };
 
                 transParams.itemProgress += items.length;
