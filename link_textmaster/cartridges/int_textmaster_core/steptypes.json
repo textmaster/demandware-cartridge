@@ -44,6 +44,49 @@
                         }
                     ]
                 }
+            },{
+                "@type-id":"custom.FailedImportData",
+                "module":"bm_textmaster/cartridge/scripts/jobs/tmFailedImportItem.js",
+                "description":"Import data from TextMaster projects which are failed",
+                "function":"execute",
+                "status-codes": {
+                    "status": [
+                        {
+                            "@code": "ERROR",
+                            "description": "Used when an error occurred."
+                        },
+                        {
+                            "@code": "OK",
+                            "description": "Used when everything went well."
+                        },
+                        {
+                            "@code": "WARN",
+                            "description": "Used when small, but acceptable problems occurred."
+                        }
+                    ]
+                }
+            },
+            {
+                "@type-id":"custom.ImportStatus",
+                "module":"bm_textmaster/cartridge/scripts/jobs/tmImportStatus.js",
+                "description":"Import data from TextMaster projects",
+                "function":"execute",
+                "status-codes": {
+                    "status": [
+                        {
+                            "@code": "ERROR",
+                            "description": "Used when an error occurred."
+                        },
+                        {
+                            "@code": "OK",
+                            "description": "Used when everything went well."
+                        },
+                        {
+                            "@code": "WARN",
+                            "description": "Used when small, but acceptable problems occurred."
+                        }
+                    ]
+                }
             },
             {
                 "@type-id":"custom.TextMasterGeneratePageItems",
@@ -71,6 +114,28 @@
                 "@type-id":"custom.TextMasterGeneratePageComponents",
                 "module":"bm_textmaster/cartridge/scripts/jobs/tmGeneratePageComponents.js",
                 "description":"Generates Page components list from default Content library XML",
+                "function":"execute",
+                "status-codes": {
+                    "status": [
+                        {
+                            "@code": "ERROR",
+                            "description": "Used when an error occurred."
+                        },
+                        {
+                            "@code": "OK",
+                            "description": "Used when everything went well."
+                        },
+                        {
+                            "@code": "WARN",
+                            "description": "Used when small, but acceptable problems occurred."
+                        }
+                    ]
+                }
+            },
+            {
+                "@type-id":"custom.TextMasterGenerateMasterProductCache",
+                "module":"bm_textmaster/cartridge/scripts/jobs/tmGenerateMasterProductCache.js",
+                "description":"Generates master product cache for keeping the variation attribute values",
                 "function":"execute",
                 "status-codes": {
                     "status": [

@@ -3,7 +3,7 @@
 	<isloop items="${pdict.Attributes}" var="itemAttribute" status="attrloopstate">
 		<li class="${itemAttribute.tmDefault ? 'default' :''}">
 			<input type="checkbox" id="attribute-${itemAttribute.ID}" value="${itemAttribute.ID +'|'+ itemAttribute.name +'|'+ itemAttribute.type}" name="attribute[]" ${itemAttribute.tmDefault ? 'checked' :''}>
-			<label class="checkbox-label" for="attribute-${itemAttribute.ID}">${itemAttribute.name}</label>
+			<label class="checkbox-label" for="attribute-${itemAttribute.ID}" title="${itemAttribute.ID}">${itemAttribute.name}</label>
 		</li>
 	</isloop>
 	<isif condition="${pdict.Attributes.length > 0}">

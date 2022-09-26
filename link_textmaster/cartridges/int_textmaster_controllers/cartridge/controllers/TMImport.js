@@ -22,9 +22,11 @@ function data() {
     var importData = require('*/cartridge/scripts/translation/importData');
     var projectid = request.httpParameterMap.get('projectid').value;
     var documentid = request.httpParameterMap.get('documentid').value;
+    var isFirstImport = request.httpParameterMap.get('isFirstImport').isSubmitted() ? request.httpParameterMap.get('isFirstImport').value : true;
     var input = {
         ProjectID: projectid,
-        DocumentID: documentid
+        DocumentID: documentid,
+        isFirstImport: isFirstImport
     };
 
     var output = importData.output(input);

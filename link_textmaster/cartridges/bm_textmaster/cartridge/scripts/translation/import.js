@@ -6,6 +6,7 @@
 var Resource = require('dw/web/Resource');
 var Site = require('dw/system/Site');
 var ContentMgr = require('dw/content/ContentMgr');
+var ProductMgr = require('dw/catalog/ProductMgr');
 var FileWriter = require('dw/io/FileWriter');
 var File = require('dw/io/File');
 var XMLIndentingStreamWriter = require('dw/io/XMLIndentingStreamWriter');
@@ -57,11 +58,48 @@ function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, lang
 }
 
 /**
+ * Gets existing variation attribute values of a master product
+ * @param {string} productID - productID
+ * @param {Object} variationModel - variationModel
+ * @param {Object} pvAttribute - Product Variation Attribute
+ * @returns {Object} array of all values
+ * */
+function getVariationAttributeAllValues(productID, variationModel, pvAttribute) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var cacheUrl = utils.config.cache.url.masterProducts + '/' + productID;
+    var cacheProduct = customCache.getCache(cacheUrl);
+    var allValues = [];
+
+    if (cacheProduct && Object.keys(cacheProduct).length) {
+        if (cacheProduct.attributes && cacheProduct.attributes.length) {
+            for (var a = 0; a < cacheProduct.attributes.length; a++) {
+                if (cacheProduct.attributes[a].id === pvAttribute.attributeID) {
+                    allValues = cacheProduct.attributes[a].values;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!allValues.length) {
+        var values = variationModel.getAllValues(pvAttribute);
+
+        for (var b = 0; b < values.length; b++) {
+            allValues.push(values[b].value);
+        }
+        utils.log.debug('all values in model: ' + JSON.stringify(allValues));
+    }
+
+    return allValues;
+}
+
+/**
  * Imports translation data from textMaster projects
  * @param {string} projectID - textmaster project ID
  * @param {string} documentID - textmaster document ID
+ * @param {string} isFirstImport - first time import or not
  */
-function execute(projectID, documentID) {
+function execute(projectID, documentID, isFirstImport) {
     var projectEndPoint = utils.config.api.get.project + '/' + projectID;
     var docEndPoint = projectEndPoint + '/' + utils.config.api.get.document + '/' + documentID;
     var canImport = false;
@@ -135,6 +173,29 @@ function execute(projectID, documentID) {
                 itemID = doc.custom_data.item.id || '';
                 var attrList = doc.custom_data.attribute || [];
                 var content = doc.author_work ? doc.author_work : {};
+                var variationAttributeCheck = false;
+                var isMasterProduct = false;
+                var variationAttributes;
+                var variationAttributeIDs = [];
+                var product;
+
+                if (itemType === 'product') {
+                    product = ProductMgr.getProduct(itemID);
+
+                    if (product.master || product.variant) {
+                        variationAttributes = utils.getVariationAttributes(product);
+                        variationAttributeCheck = true;
+
+                        for (var i = 0; i < variationAttributes.length; i++) {
+                            var productVariationAttribute = variationAttributes[i];
+                            variationAttributeIDs.push(productVariationAttribute.attributeID);
+                        }
+                    }
+
+                    if (product.master) {
+                        isMasterProduct = true;
+                    }
+                }
 
                 writer.writeStartElement(attrItemType);
                 writer.writeAttribute(attrItemType + '-id', itemID);
@@ -195,18 +256,77 @@ function execute(projectID, documentID) {
                     // each custom attribute
                     writer.writeStartElement('custom-attributes');
 
-                    for (var list = 0; list < attrList.length; list++) {
-                        var attributeList = attrList[list];
-                        if (attributeList.type === 'custom' && content[attributeList.id]) {
+                    for (var k = 0; k < attrList.length; k++) {
+                        var cAttribute = attrList[k];
+
+                        if (variationAttributeCheck && variationAttributeIDs.indexOf(cAttribute.id) > -1) { // attribute is a variation attribute
+                            continue; // eslint-disable-line no-continue
+                        }
+
+                        if (cAttribute.type === 'custom' && content[cAttribute.id]) {
                             writer.writeStartElement('custom-attribute');
-                            writer.writeAttribute('attribute-id', attributeList.id);
+                            writer.writeAttribute('attribute-id', cAttribute.id);
                             writer.writeAttribute('xml:lang', language);
-                            writer.writeCharacters(content[attributeList.id]);
+                            writer.writeCharacters(content[cAttribute.id]);
                             writer.writeEndElement();
                         }
                     }
 
                     writer.writeEndElement(); // custom-attributes
+
+                    if (isMasterProduct) { // write all variation attribute minimum data
+                        writer.writeStartElement('variations');
+                        writer.writeStartElement('attributes');
+                        var variationModel = product.variationModel;
+
+                        for (var m = 0; m < variationAttributes.length; m++) {
+                            writer.writeStartElement('variation-attribute');
+                            writer.writeAttribute('attribute-id', variationAttributes[m].attributeID);
+                            writer.writeAttribute('variation-attribute-id', variationAttributes[m].ID);
+
+                            var translatedVAttr = [];
+                            var pvAttribute = variationAttributes[m];
+                            var allValues = getVariationAttributeAllValues(itemID, variationModel, pvAttribute);
+
+                            for (var q = 0; q < attrList.length; q++) {
+                                if (attrList[q].id === variationAttributes[m].attributeID) {
+                                    for (var a = 0; a < allValues.length; a++) {
+                                        var attrKey = attrList[q].id + '|' + allValues[a];
+                                        translatedVAttr.push({
+                                            key: allValues[a],
+                                            value: content[attrKey]
+                                        });
+                                    }
+                                }
+                            }
+
+                            writer.writeStartElement('variation-attribute-values');
+
+                            for (var p = 0; p < allValues.length; p++) {
+                                var singleVariantValue = allValues[p];
+                                writer.writeStartElement('variation-attribute-value');
+                                writer.writeAttribute('value', singleVariantValue);
+
+                                for (var r = 0; r < translatedVAttr.length; r++) {
+                                    if (translatedVAttr[r].key === singleVariantValue) {
+                                        writer.writeStartElement('display-value');
+                                        writer.writeAttribute('xml:lang', language);
+                                        writer.writeCharacters(translatedVAttr[r].value);
+                                        writer.writeEndElement(); // end of display-value
+                                    }
+                                }
+
+                                writer.writeEndElement(); // end of variation-attribute-value
+                            }
+
+                            writer.writeEndElement(); // end of variation-attribute-values
+
+                            writer.writeEndElement(); // end of variation-attribute
+                        }
+
+                        writer.writeEndElement(); // end of attributes
+                        writer.writeEndElement(); // end of variations
+                    }
                 }
 
                 writer.writeEndElement(); // itemType
@@ -239,6 +359,8 @@ function execute(projectID, documentID) {
                 break;
             }
 
+            utils.setItemLastUpdatedData(projectID, documentID, itemType, itemID, isFirstImport);
+
             var ocapiJobUrl = utils.config.ocapi.jobs.post;
             ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
             var jobResponse = utils.ocapiClient('post', ocapiJobUrl, null);
@@ -247,6 +369,10 @@ function execute(projectID, documentID) {
             if (statusCode === 201) {
                 var updateTranslatedLanguageList = require('~/cartridge/scripts/translation/updateTranslatedLanguageList');
                 updateTranslatedLanguageList.execute(itemType, itemID, language);
+                if (itemType === 'pagedesigner' || itemType === 'component') {
+                    var updatePageLastModifiedDate = require('~/cartridge/scripts/translation/updatePageLastModifiedDate');
+                    updatePageLastModifiedDate.execute(itemType, itemID);
+                }
             } else {
                 log.error('Item import failed with error code: ' + statusCode);
             }

@@ -18,10 +18,11 @@ function execute() {
         var queryObj = JSON.parse(query);
         var ids = queryObj.shift();
 
-        if (ids && ids.projectid && ids.documentid) {
+        if (ids && ids.projectid && ids.documentid && ids.isfirstimport) {
             output = {
                 projectID: ids.projectid,
-                documentID: ids.documentid
+                documentID: ids.documentid,
+                isFirstImport: ids.isfirstimport
             };
         }
 

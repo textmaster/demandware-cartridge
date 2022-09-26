@@ -90,6 +90,7 @@
                     transParams.projectID = '';
                     transParams.itemLimit = $('input#itemrequestlimit').val();
                     transParams.itemLimit = isNaN(transParams.itemLimit) ? 20 : transParams.itemLimit;
+                    transParams.itemLimit = parseInt(transParams.itemLimit, 10);
                     transParams.itemProgress = 0;
                     transParams.localeCount = 0;
                     transParams.itemCount = 0;
@@ -174,7 +175,7 @@
 
                         setTimeout(function () {
                             textMasterPlaceOrderApp.triggerExportRequest(transParams);
-                        }, 1500);
+                        }, 250);
                     }
                 });
             }

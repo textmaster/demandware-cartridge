@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <custom-type type-id="TMCheckImportStatusHolder">
+        <display-name xml:lang="x-default">TMCheckImportStatusHolder</display-name>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="ID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="QueuedDocuments">
+                <display-name xml:lang="x-default">QueuedDocuments</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="customData">
+                <display-name xml:lang="x-default">CustomData</display-name>
+                <attribute attribute-id="QueuedDocuments"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
+
+    <custom-type type-id="TMFailedImportDataHolder">
+        <display-name xml:lang="x-default">TMFailedImportDataHolder</display-name>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="ID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="QueuedDocuments">
+                <display-name xml:lang="x-default">QueuedDocuments</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="JobData">
+                <display-name xml:lang="x-default">JobData</display-name>
+                <attribute attribute-id="QueuedDocuments"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
+
     <custom-type type-id="TMImportDataHolder">
         <display-name xml:lang="x-default">TMImportDataHolder</display-name>
         <staging-mode>no-staging</staging-mode>
@@ -36,6 +86,34 @@
             </attribute-group>
         </group-definitions>
     </custom-type>
+
+    <custom-type type-id="TMMasterProducts">
+        <display-name xml:lang="x-default">TMMasterProducts</display-name>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>organization</storage-scope>
+        <key-definition attribute-id="ID">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="productID">
+                <display-name xml:lang="x-default">Product ID</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="CustomAttributes">
+                <display-name xml:lang="x-default">Custom Attributes</display-name>
+                <attribute attribute-id="productID"/>
+                <attribute attribute-id="ID"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
+
     <custom-type type-id="TMQuoteDataHolder">
         <display-name xml:lang="x-default">TMQuoteDataHolder</display-name>
         <staging-mode>no-staging</staging-mode>

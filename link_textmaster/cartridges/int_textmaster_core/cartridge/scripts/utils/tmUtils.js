@@ -11,6 +11,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
+/* eslint-disable default-case */
 
 
 /* API Includes */
@@ -21,9 +22,13 @@ var Resource = require('dw/web/Resource');
 var LocalServiceRegistry = require('dw/svc/LocalServiceRegistry');
 var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var StringUtils = require('dw/util/StringUtils');
+var ProductMgr = require('dw/catalog/ProductMgr');
+var CatalogMgr = require('dw/catalog/CatalogMgr');
+var ContentMgr = require('dw/content/ContentMgr');
 
 /* Script Includes */
 var customCache = require('./customCacheWebdav');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
 var LogUtils = require('*/cartridge/scripts/utils/tmLogUtils');
 
 // Global Variables
@@ -81,7 +86,8 @@ Utils.config = {
                 translation: '/languages/translation',
                 abilityList: '/languages/abilityList'
             },
-            authentication: '/authentication'
+            authentication: '/authentication',
+            masterProducts: '/master-products'
         }
     },
     quote: {
@@ -110,6 +116,18 @@ Utils.config = {
         successMessage: 'Project import started',
         errorMessage: 'Some error occured. Please refer log file to get more details'
     },
+    failedImportData: {
+        customObject: {
+            name: 'TMFailedImportDataHolder',
+            instanceid: 'TMFailedImportDataHolder1'
+        }
+    },
+    checkImportStatus: {
+        customObject: {
+            name: 'TMCheckImportStatusHolder',
+            instanceid: 'TMCheckImportStatusHolder1'
+        }
+    },
     api: {
         get: {
             projects: 'projects/filter',
@@ -129,6 +147,11 @@ Utils.config = {
     },
     pageDesigner: {
         xmlName: 'TextMasterExportContent.xml'
+    },
+    masterProducts: {
+        coName: 'TMMasterProducts',
+        jobName: 'TextMasterProductCache',
+        xmlName: 'TextMasterExportMasterCatalog.xml'
     }
 };
 
@@ -138,13 +161,13 @@ Utils.config = {
 Utils.productTypes = {
     variant: 'Variation Product',
     master: 'Variation Master',
-    product: 'Simple Product',
     bundle: 'Product Bundle',
     bundled: 'Bundled Product',
     optionProduct: 'Option Product',
     productSet: 'Product Set',
     productSetProduct: 'Product Set Product',
-    variationGroup: 'Variation Group'
+    variationGroup: 'Variation Group',
+    product: 'Simple Product'
 };
 
 /**
@@ -1350,6 +1373,27 @@ Utils.getJobDataHolder = function () {
 };
 
 /**
+ * Get custom object to keep job triggering settings
+ * @returns {Object} dataholder
+ */
+Utils.getFailedJobDataHolder = function () {
+    var customObjectName = Utils.config.failedImportData.customObject.name;
+    var customObjectInstanceID = Utils.config.failedImportData.customObject.instanceid;
+    try {
+        var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+        if (dataHolder == null) {
+            Transaction.begin();
+            dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+            Transaction.commit();
+        }
+        return dataHolder;
+    } catch (ex) {
+        Utils.log.error(ex.message + ' - No custom object found.');
+        return null;
+    }
+};
+
+/**
  * Convert an ID text to XML tag format
  * @param {string} str - string
  * @returns {string} tag name
@@ -1377,9 +1421,10 @@ Utils.idToXMLTag = function (str) {
  * Save project id and document id into custom object for import job
  * @param {string} projectid - project id
  * @param {string} documentid - document id
+ * @param {string} isfirstimport - first time import or not
  * @returns {Object} result object
  */
-Utils.setImportJobQuery = function (projectid, documentid) {
+Utils.setImportJobQuery = function (projectid, documentid, isfirstimport) {
     var dataHolder = Utils.getJobDataHolder();
     var tryAgain = true;
     var result;
@@ -1389,7 +1434,8 @@ Utils.setImportJobQuery = function (projectid, documentid) {
         var queueObj = JSON.parse(queue);
         queueObj.push({
             projectid: projectid,
-            documentid: documentid
+            documentid: documentid,
+            isfirstimport: isfirstimport
         });
 
         try {
@@ -1399,10 +1445,126 @@ Utils.setImportJobQuery = function (projectid, documentid) {
 
             result = dataHolder.custom.RunningDocument ? true : false;
             tryAgain = false;
-        } catch (ex) {} // eslint-disable-line no-empty
+        } catch (ex) { } // eslint-disable-line no-empty
     }
 
     return result;
+};
+
+/**
+ * Save project id and document id and other details into custom object for failed import job
+ * @param {Object} obj - import related details object
+ */
+Utils.setFailedImportJobQuery = function (obj) {
+    var dataHolder = Utils.getFailedJobDataHolder();
+
+    if (dataHolder) {
+        var queue = dataHolder.custom.QueuedDocuments || '[]';
+        var queueObj = JSON.parse(queue);
+        queueObj.push(obj);
+
+        try {
+            Transaction.begin();
+            dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
+            Transaction.commit();
+        } catch (ex) {
+            Utils.log.error(ex.message);
+        }
+    }
+};
+
+/**
+ * Get item's last modified date
+ * @param {string} itemType - item type
+ * @param {string} itemID - item ID
+ * @returns {Date} Item's last modified date
+ */
+Utils.getItemLastModifiedDate = function (itemType, itemID) {
+    var item;
+    var lastModified;
+
+    switch (itemType) {
+    case 'product':
+        item = ProductMgr.getProduct(itemID);
+        lastModified = item.lastModified;
+        break;
+    case 'content':
+        item = ContentMgr.getContent(itemID);
+        lastModified = item.lastModified;
+        break;
+    case 'category':
+        item = CatalogMgr.getCategory(itemID);
+        lastModified = item.lastModified;
+        break;
+    case 'folder':
+        item = ContentMgr.getFolder(itemID);
+        if (empty(item)) {
+            item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
+        }
+        lastModified = item.lastModified;
+        break;
+    case 'pagedesigner':
+        lastModified = pageUtils.getPageLastModified(itemID);
+        break;
+    case 'component':
+        lastModified = pageUtils.getPageComponentLastModified(itemID);
+        break;
+    }
+    return lastModified;
+};
+
+/**
+ * Get custom object where the item's last updated data is stored
+ * @returns {Object} custom object
+ */
+Utils.getItemLastUpdatedData = function () {
+    var customObjectName = Utils.config.checkImportStatus.customObject.name;
+    var customObjectInstanceID = Utils.config.checkImportStatus.customObject.instanceid;
+    try {
+        var dataHolder = CustomObjectMgr.getCustomObject(customObjectName, customObjectInstanceID);
+        if (dataHolder == null) {
+            Transaction.begin();
+            dataHolder = CustomObjectMgr.createCustomObject(customObjectName, customObjectInstanceID);
+            Transaction.commit();
+        }
+        return dataHolder;
+    } catch (ex) {
+        Utils.log.error(ex.message + ' - custom object found.');
+        return null;
+    }
+};
+
+/**
+ * Set item's last modified date in custom object
+ * @param {string} projectID - textmaster project ID
+ * @param {string} documentID - textmaster document ID
+ * @param {string} itemType - item type
+ * @param {string} itemID - item ID
+ * @param {string} isFirstImport - first time import or not
+ */
+Utils.setItemLastUpdatedData = function (projectID, documentID, itemType, itemID, isFirstImport) {
+    var dataHolder = Utils.getItemLastUpdatedData();
+
+    if (dataHolder) {
+        var lastModified = Utils.getItemLastModifiedDate(itemType, itemID);
+        var queue = dataHolder.custom.QueuedDocuments || '[]';
+        var queueObj = JSON.parse(queue);
+        queueObj.push({
+            projectID: projectID,
+            documentID: documentID,
+            itemType: itemType,
+            itemID: itemID,
+            lastModified: lastModified,
+            isFirstImport: isFirstImport
+        });
+        try {
+            Transaction.begin();
+            dataHolder.custom.QueuedDocuments = JSON.stringify(queueObj);
+            Transaction.commit();
+        } catch (ex) {
+            Utils.log.error(ex.message + ' - Item last modified date is not saved.');
+        }
+    }
 };
 
 /*
@@ -1455,6 +1617,22 @@ Utils.getPageObject = function (pageID) {
     pageObject = Utils.storefrontCall('GET', endPoint, {}, null);
 
     return pageObject;
+};
+
+/*
+ * Gets variation attributes
+ * @param {Object} product
+ * @returns {Object} list of attributes
+ * */
+Utils.getVariationAttributes = function (product) {
+    var productVariationAttributes;
+
+    if (product.master || product.variant || product.variationGroup) {
+        var variationModel = product.variationModel;
+        productVariationAttributes = variationModel.productVariationAttributes;
+    }
+
+    return productVariationAttributes;
 };
 
 module.exports = Utils;
