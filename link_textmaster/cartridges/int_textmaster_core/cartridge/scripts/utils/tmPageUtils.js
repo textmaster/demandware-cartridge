@@ -36,6 +36,59 @@ Utils.setPageCustom = function (pageID, custom) {
 };
 
 /**
+ * Gets Page Designer's custom attributes from custom cache
+ * @param {string} pageID - pageID
+ * @returns {Date} last modified date
+ */
+Utils.getPageLastModified = function (pageID) {
+    var siteID = Site.current.ID;
+    var pageItemsUrl = '/' + siteID + '/pages/' + pageID + '/lastmodified';
+    var getLastModified = customCache.getCache(pageItemsUrl);
+    var pageLastModified = getLastModified.lastModified;
+    var lastModified = new Date(pageLastModified);
+    lastModified = new Date(lastModified);
+
+    return lastModified;
+};
+
+/**
+ * Sets Page Designer's last modified date to custom cache
+ * @param {string} pageID - pageID
+ * @param {Date} lastModified - last modified date
+ */
+Utils.setPageLastModified = function (pageID, lastModified) {
+    var siteID = Site.current.ID;
+    var pageItemsUrl = '/' + siteID + '/pages/' + pageID + '/lastmodified';
+    customCache.setCache(pageItemsUrl, lastModified);
+};
+
+/**
+ * Gets Page component's custom attributes from custom cache
+ * @param {string} componentID - componentID
+ * @returns {Date} last modified date
+ */
+Utils.getPageComponentLastModified = function (componentID) {
+    var siteID = Site.current.ID;
+    var componentUrl = '/' + siteID + '/components/' + componentID + '/lastmodified';
+    var getLastModified = customCache.getCache(componentUrl);
+    var componentLastModified = getLastModified.lastModified;
+    var lastModified = new Date(componentLastModified);
+
+    return lastModified;
+};
+
+/**
+ * Sets Page component's last modified date to custom cache
+ * @param {string} componentID - componentID
+ * @param {Date} lastModified - last modified date
+ */
+Utils.setPageComponentLastModified = function (componentID, lastModified) {
+    var siteID = Site.current.ID;
+    var componentUrl = '/' + siteID + '/components/' + componentID + '/lastmodified';
+    customCache.setCache(componentUrl, lastModified);
+};
+
+/**
  * Gets Page Component's custom attributes from custom cache
  * @param {string} componentID - componentID
  * @returns {Object} file if exists in cache otherwise null

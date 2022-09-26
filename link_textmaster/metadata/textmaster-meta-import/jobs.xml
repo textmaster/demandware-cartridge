@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="TextMasterProductCacheRefArch" priority="0">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TextMasterMasterProductCache" type="custom.TextMasterGenerateMasterProductCache" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="true">
+                <date>2022-05-05Z</date>
+                <time>06:47:23.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
     <job job-id="TextMasterConvertPagesToCacheRefArch" priority="1">
         <description/>
         <parameters/>
@@ -117,6 +136,13 @@
                 <parameters/>
             </step>
         </flow>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TMImportDataStatusRefArch" type="custom.ImportStatus" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
         <rules/>
         <triggers>
             <run-once enabled="true">
@@ -125,4 +151,57 @@
             </run-once>
         </triggers>
     </job>
+
+    <job job-id="TextMasterExportMasterCatalogRefArch" priority="0">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="Sites"/>
+            <step step-id="ExportMasterCatalog" type="ExportCatalog" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="CatalogID">apparel-m-catalog</parameter>
+                    <parameter name="ExportCategories">false</parameter>
+                    <parameter name="ExportProducts">true</parameter>
+                    <parameter name="ExportCategoryAssignments">false</parameter>
+                    <parameter name="ExportProductOptions">false</parameter>
+                    <parameter name="ExportRecommendations">false</parameter>
+                    <parameter name="ExportVariationAttributes">false</parameter>
+                    <parameter name="ExportFile">textmaster/TextMasterExportMasterCatalog</parameter>
+                    <parameter name="OverwriteExportFile">true</parameter>
+                </parameters>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-once enabled="false">
+                <date>2022-05-04Z</date>
+                <time>15:15:28.000Z</time>
+            </run-once>
+        </triggers>
+    </job>
+
+    <job job-id="TextMasterFailedImportDataRefArch" priority="0">
+        <description/>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="TextMasterFailedImportDataRefArch" type="custom.FailedImportData" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-recurring enabled="true">
+                <recurrence>
+                    <date-from>2022-08-29Z</date-from>
+                    <start-time>21:21:51.000Z</start-time>
+                    <interval>2h</interval>
+                    <day-of-week/>
+                </recurrence>
+            </run-recurring>
+        </triggers>
+    </job>
+
 </jobs>

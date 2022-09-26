@@ -1,6 +1,6 @@
 {
   "name": "textmaster",
-  "version": "22.2.0",
+  "version": "22.3.0",
   "description": "TextMaster Cartridge",
   "main": "index.js",
   "engines": {

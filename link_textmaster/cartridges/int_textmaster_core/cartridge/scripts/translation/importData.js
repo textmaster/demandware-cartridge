@@ -18,10 +18,11 @@ function getOutput(input) {
     var result = false;
     var projectid = input.ProjectID;
     var documentid = input.DocumentID;
+    var isfirstimport = input.isFirstImport;
     var responseMessage;
 
-    if (projectid && documentid) {
-        var jobRunning = utils.setImportJobQuery(projectid, documentid);
+    if (projectid && documentid && isfirstimport) {
+        var jobRunning = utils.setImportJobQuery(projectid, documentid, isfirstimport);
 
         if (jobRunning === false) {
             var jobName = utils.config.importData.jobName + Site.current.ID;

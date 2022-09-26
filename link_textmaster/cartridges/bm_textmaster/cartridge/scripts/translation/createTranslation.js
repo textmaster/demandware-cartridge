@@ -6,6 +6,8 @@
 /* eslint default-case: 0 */
 /* eslint no-nested-ternary: 0 */
 /* eslint no-loop-func: 0 */
+/* eslint no-unused-vars: 0 */
+/* eslint no-param-reassign: 0*/
 
 /* API Includes */
 var Site = require('dw/system/Site');
@@ -171,6 +173,120 @@ function setPageComponentExportDate(componentID, time) {
 }
 
 /**
+ * Gets get Master Variation data as json
+ * @param {Object} product - Product
+ * @param {string} attributeID - attribute ID
+ * @returns {string} variation data
+ * */
+function getMasterVariationContent(product, attributeID) {
+    var variationData = [];
+    var variationModel = product.variationModel;
+    var productVariationAttributes = variationModel.productVariationAttributes;
+
+    for (var i = 0; i < productVariationAttributes.length; i++) {
+        var productVariationAttribute = productVariationAttributes[i];
+
+        if (attributeID === productVariationAttribute.ID) {
+            var allValues = variationModel.getAllValues(productVariationAttribute);
+
+            for (var j = 0; j < allValues.length; j++) {
+                var singleVariantValue = allValues[j];
+                variationData.push({ key: singleVariantValue.value, value: singleVariantValue.displayValue });
+            }
+        }
+    }
+
+    return variationData;
+}
+
+/**
+ * Writes master product ID to custom object
+ * @param {string} productID - product ID
+ * */
+function writeMasterProductToCO(productID) {
+    var CustomObjectMgr = require('dw/object/CustomObjectMgr');
+    var co = CustomObjectMgr.getCustomObject(utils.config.masterProducts.coName, productID);
+
+    if (!co) {
+        Transaction.begin();
+        co = CustomObjectMgr.createCustomObject(utils.config.masterProducts.coName, productID);
+        co.custom.productID = productID;
+        Transaction.commit();
+    }
+}
+
+/**
+ * Gets item data of product
+ * @param {Object} itemAttrs - item attributes
+ * @param {Object} attribute - attribute
+ * @param {Object} item - Product
+ * @param {Object} itemData - cumulatively generating data for export
+ * @param {Object} customData - attribute details
+ * @param {string} markupFlag - attribute details
+ * @returns {Object} iData
+ * */
+function getProductItemData(itemAttrs, attribute, item, itemData, customData, markupFlag) {
+    var contentValue = '';
+    var iData = itemData;
+    var variationAttributes = utils.getVariationAttributes(item);
+    var variationAttributeIDs = [];
+
+    if (variationAttributes) {
+        for (var i = 0; i < variationAttributes.length; i++) {
+            var productVariationAttribute = variationAttributes[i];
+            variationAttributeIDs.push(productVariationAttribute.attributeID);
+        }
+    }
+
+    if (variationAttributeIDs.indexOf(attribute.id) > -1) { // attribute is a variation attribute
+        if (item.master) {
+            contentValue = getMasterVariationContent(item, attribute.id);
+
+            if (contentValue && contentValue.length) {
+                contentValue.forEach(function (content) {
+                    iData[attribute.id + '|' + content.key] = content.value;
+                });
+
+                customData.push({
+                    id: attribute.id,
+                    type: attribute.type
+                });
+
+                markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
+            }
+
+            writeMasterProductToCO(item.ID);
+            return iData;
+        } else if (item.variant || item.variationGroup) {
+            return iData;
+        }
+    }
+
+    for (var j = 0; j < itemAttrs.length; j++) {
+        var itemAttribute = itemAttrs[j];
+        if (attribute.id === itemAttribute.ID) {
+            contentValue = (attribute.id === 'shortDescription' || attribute.id === 'longDescription') ? (item[attribute.id] ? (item[attribute.id].source ? item[attribute.id].source : item[attribute.id]) : '') : item.attributeModel.getDisplayValue(itemAttribute);
+            if (contentValue) {
+                contentValue = contentValue.source ? contentValue.source : contentValue;
+                iData[attribute.id] = contentValue;
+            }
+        }
+    }
+
+    return iData;
+}
+
+/**
+ * Triggers job which keeps variation attribute values of all the exported master products
+ * */
+function triggerMasterProductCacheJob() {
+    var jobName = utils.config.masterProducts.jobName + Site.current.ID;
+    var ocapiJobUrl = utils.config.ocapi.jobs.post;
+    ocapiJobUrl = ocapiJobUrl.replace('{0}', jobName);
+    utils.ocapiClient('post', ocapiJobUrl, null);
+}
+
+/**
  * Creates translation documents
  * @param {Object} input - input object
  * @returns {string} project id
@@ -200,7 +316,7 @@ function getOutput(input) {
     var itemName;
     var avoidItems = [];
 
-    bulkLimit = isNaN(bulkLimit) ? 25 : parseInt(bulkLimit, 10);
+    bulkLimit = isNaN(bulkLimit) ? 20 : parseInt(bulkLimit, 10);
 
     if (localeTo) {
         if (!projectID) {
@@ -300,15 +416,9 @@ function getOutput(input) {
 
                     switch (itemType) {
                     case 'product':
-                        for (var itemAttr = 0; itemAttr < itemAttrs.length; itemAttr++) {
-                            var itemAttribute = itemAttrs[itemAttr];
-                            if (attribute.id === itemAttribute.ID) {
-                                contentValue = (attribute.id === 'shortDescription' || attribute.id === 'longDescription') ? (item[attribute.id] ? (item[attribute.id].source ? item[attribute.id].source : item[attribute.id]) : '') : item.attributeModel.getDisplayValue(itemAttribute);
-                                if (contentValue) {
-                                    contentValue = contentValue.source ? contentValue.source : contentValue;
-                                    itemData[attribute.id] = contentValue;
-                                }
-                            }
+                        itemData = getProductItemData(itemAttrs, attribute, item, itemData, customData, markupFlag);
+                        if (itemData[attribute.id]) {
+                            contentValue = itemData[attribute.id];
                         }
                         break;
                     case 'content':
@@ -343,7 +453,7 @@ function getOutput(input) {
                         break;
                     }
 
-                    if (contentValue) {
+                    if (itemData[attribute.id]) {
                         attrData.id = attribute.id;
 
                         if (itemType !== 'component') {
@@ -408,6 +518,10 @@ function getOutput(input) {
 
             if (avoidItems.length) {
                 log.debug('Failed (' + avoidItems.length + ') ' + utils.firstLetterCapital(itemType) + ' items to export [No contents]: ' + JSON.stringify(avoidItems));
+            }
+
+            if (itemType === 'product') {
+                triggerMasterProductCacheJob();
             }
         }
     }

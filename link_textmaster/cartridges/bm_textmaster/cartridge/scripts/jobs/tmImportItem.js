@@ -15,10 +15,11 @@ function start() {
         if (importQueuedDetails) {
             var projectId = importQueuedDetails.projectID;
             var documentId = importQueuedDetails.documentID;
+            var isFirstImport = importQueuedDetails.isFirstImport;
             try {
-                if (projectId !== '' && documentId !== '') {
+                if (projectId !== '' && documentId !== '' && isFirstImport) {
                     var importData = require('~/cartridge/scripts/translation/import');
-                    importData.execute(projectId, documentId);
+                    importData.execute(projectId, documentId, isFirstImport);
                 }
             } catch (ex) {
                 log.error('Error while importing data:' + ex);

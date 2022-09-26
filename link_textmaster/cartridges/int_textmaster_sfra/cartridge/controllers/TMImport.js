@@ -18,10 +18,12 @@ var log = logUtils.getLogger('ImportCallback');
 server.post('Data', function (req, res, next) {
     var projectid = req.querystring.projectid;
     var documentid = req.querystring.documentid;
+    var isFirstImport = req.querystring.isFirstImport ? req.querystring.isFirstImport : true;
 
     var input = {
         ProjectID: projectid,
-        DocumentID: documentid
+        DocumentID: documentid,
+        isFirstImport: isFirstImport
     };
     log.debug('Import callback received for Project: ' + projectid + ' | Document: ' + documentid);
 
