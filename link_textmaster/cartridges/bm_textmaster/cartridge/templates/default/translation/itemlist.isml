@@ -55,7 +55,7 @@
 								<isloop items="${pdict.CategoryList}" var="category" status="loopstate">
 									<option value="${category.displayName}">${category.displayName}</option>
 								</isloop>
-							<iselse>
+							<iselseif condition="${pdict.Type == 'product'}">
 								<isset name="itemCategoryList" value="${new dw.util.HashSet()}" scope="page"/>
 								<option value="${'unassigned'}">${'unassigned'}</option>
 								<isloop items="${pdict.ItemList}" var="item" status="loopstate">
