@@ -373,6 +373,7 @@ function execute(projectID, documentID, isFirstImport) {
                     var updatePageLastModifiedDate = require('~/cartridge/scripts/translation/updatePageLastModifiedDate');
                     updatePageLastModifiedDate.execute(itemType, itemID);
                 }
+                log.debug(itemType + ' of ID: ' + itemID + ' - import job is triggered.');
             } else {
                 log.error('Item import failed with error code: ' + statusCode);
             }

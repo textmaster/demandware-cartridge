@@ -77,10 +77,15 @@
                 button.val(loadingText);
                 var vars = docFollow.getParams();
                 var itemType = $('input[name=itemtype]').val();
+                var descColumn = 3;
 
                 if (initialLoad && itemType === 'component') {
                     $('.page-details').find('.value').text(loadingText);
                     $('.page-details').removeClass('hide');
+                }
+                
+                if (itemType === 'component') {
+                    descColumn = 4;
                 }
 
                 $.post(app.urls.docDashboardData, {
@@ -101,7 +106,8 @@
                             firstDocument = documents[0];
                             // load DataTables with one row
                             $.post(app.urls.docDashboardFirstRow, {
-                                document: JSON.stringify(firstDocument)
+                                document: JSON.stringify(firstDocument),
+                                itemType: itemType
                             }, function (data) {
                                 $('#filterTableDocuments tbody').html(data);
 
@@ -111,7 +117,7 @@
                                     if (window.dataTablesLoaded) {
                                         docFollow.dataTable = window.tmjdt('#filterTableDocuments').DataTable({
                                             order: [
-                                                [3, 'desc']
+                                                [descColumn, 'desc']
                                             ]
                                         });
                                         retry = false;
@@ -136,8 +142,13 @@
             },
             populateMoreDocData: function (documents) {
                 var docFollow = this;
+                var pageDesigners = [];
+                var storeURL = $('input[name=storeurl]').val();
+                var itemType = $('input[name=itemtype]').val();
+
                 documents.forEach(function (document) {
                     if (document) {
+						var tableRow = [];
                         var itemID =  document.custom_data.item ? document.custom_data.item.id : '';
                         var pageID =  document.custom_data.item ? document.custom_data.item.page_id : '';
                         var itemName =  document.custom_data.item ? (document.custom_data.item.name ? document.custom_data.item.name : itemID) : '';
@@ -149,8 +160,6 @@
                         var minute = timePart ? timePart.split(':')[1] : '00';
                         var documentDate = datePart + ' ' + hour + ':' + minute;
                         var documentStatus = document.status ? document.status : '';
-                        var storeURL = $('input[name=storeurl]').val();
-                        var itemType = $('input[name=itemtype]').val();
                         var documentLink = $('input[name=documentlink]').val();
                         documentLink = documentLink.replace('<<documentid>>', document.id);
                         var storeLinkID = itemType === 'component' ? pageID : itemID;
@@ -160,8 +169,25 @@
                         var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.labels.VALIDATE_ACTION + '</button>';
                         var links = documentStatus === Resources.labels.IN_EXTRA_REVIEW || documentStatus === Resources.labels.IN_REVIEW ? (previewLink + reviewLink) : '';
                         var actions = documentStatus === Resources.labels.IN_REVIEW ? validateAction : '';
+                        
+                        tableRow.push(itemID);
+                        tableRow.push(itemName);
 
-                        docFollow.dataTable.row.add([itemID, itemName, words, documentDate, documentStatus, links, actions]).draw();
+                        if (itemType === 'component') {
+                        	tableRow.push(pageID);
+                        	
+                        	if (pageDesigners.indexOf(pageID) < 0) {
+								pageDesigners.push(pageID);
+							}
+                        }
+
+                        tableRow.push(words);
+                        tableRow.push(documentDate);
+                        tableRow.push(documentStatus);
+                        tableRow.push(links);
+                        tableRow.push(actions);
+
+                        docFollow.dataTable.row.add(tableRow).draw();
 
                         if (documentStatus) {
                             switch (documentStatus) { // eslint-disable-line default-case
@@ -190,6 +216,10 @@
                         docFollow.populateDocStatusDiagram();
                     }
                 });
+
+                if (itemType === 'component') {
+					$('.page-details').find('.value').text(pageDesigners.join(', '));
+				}
             },
             populateDocStatusDiagram: function () {
                 var docFollow = this;

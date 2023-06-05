@@ -209,9 +209,11 @@ function dashboardFirstRow() {
  */
 function docDashboardFirstRow() {
     var document = request.httpParameterMap.get('document').stringValue;
+    var itemType = request.httpParameterMap.get('itemType').stringValue;
 
     ISML.renderTemplate('translation/docfollowuptablerow', {
-        Document: JSON.parse(document)
+        Document: JSON.parse(document),
+        ItemType: itemType
     });
 }
 
@@ -307,9 +309,9 @@ function getPageDesigners() {
  * Gets page components in ajax call
  */
 function getPageComponents() {
-    var pageID = request.httpParameterMap.get('pageID').stringValue;
+    var pageIDs = request.httpParameterMap.get('pageIDs').stringValue;
     var exportDate = request.httpParameterMap.get('date').stringValue;
-    var items = pageUtils.getPageComponents(pageID, exportDate);
+    var items = pageUtils.getPageComponents(pageIDs, exportDate);
     var languages = utils.getTranslationLanguages();
 
     ISML.renderTemplate('translation/tmcomponentlist', {

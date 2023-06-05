@@ -49,7 +49,7 @@
             $('#place-order').on('click', function () {
                 var error = '';
 
-                if ($('.template-list-holder select').length === 0) {
+                if ($('.template-list-holder select').length < transParams.mappedLocaleTo.length) {
                     error = Resources.errors.TEMPLATE_NOT_FOUND;
                 } else {
                     $('.template-list-holder select').each(function () {
@@ -150,7 +150,6 @@
                     itemType: transParams.itemType,
                     catalogID: transParams.catalogID,
                     attributes: JSON.stringify(transParams.attributes),
-                    pageID: transParams.pageID,
                     items: JSON.stringify(items),
                     projectNameType: transParams.projectNameType,
                     projectName: transParams.projectName
