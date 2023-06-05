@@ -94,6 +94,9 @@
             <tr>
                 <th class="table_header n w e s center">${Resource.msg("follow.item.id","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.name","textmaster",null)}</th>
+                <isif condition="${pdict.itemType === 'component'}">
+                	<th class="table_header n e s center">${Resource.msg("general.pagedesigner","textmaster",null)}</th>
+                </isif>
                 <th class="table_header n e s center">${Resource.msg("follow.words","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.date","textmaster",null)}</th>
                 <th class="table_header n e s center">${Resource.msg("follow.item.status","textmaster",null)}</th>

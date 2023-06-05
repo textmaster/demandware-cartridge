@@ -36,7 +36,7 @@
 						<ul class="attribute-list">
 							<isloop items="${transParams.attributes}" var="attribute" status="attrstate">
 								<isif condition="${transParams.itemType === 'component'}">
-									<li>${attribute.id + ' (' + attribute.componentName + ')' }</li>
+									<li>${attribute.id + (attribute.componentName ? ' (' + attribute.componentName + ')' : '')}</li>
 								<iselse>
 									<li>${attribute.name}</li>
 								</isif>

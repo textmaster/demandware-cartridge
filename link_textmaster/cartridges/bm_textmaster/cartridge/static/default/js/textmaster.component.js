@@ -21,12 +21,12 @@
         	checkPageItemsExists: 'TMComponents-CheckPageItemsExists'
         },
         newTranslation: function () {
-            function componentAttrAdd(componentID, checkbox) {
-            	if (!$('.attributes-main ul#attributes-' + componentID).length) {
+            function componentAttrAdd(pageID, componentID, checkbox) {
+            	if (!$('.attributes-main ul#attributes-' + pageID + '-' + componentID).length) {
             		var componentName = checkbox.closest('tr').find('td:nth-of-type(3) label').text();
 	            	var attrString = checkbox.parent().find('input.item-attribute').val();
 	                var attrs = JSON.parse(attrString);
-	                var attrHTML = '<ul class="attributes-holder show-all" id="attributes-' + componentID + '"><h2>' + componentName + ' <span>(' + componentID + ')</span></h2>';
+	                var attrHTML = '<ul class="attributes-holder show-all" id="attributes-' + componentID + '"><h2>' + componentName + ' <span>(' + pageID + '-' + componentID + ')</span></h2>';
 	                for (var i = 0; i < attrs.length; i++) {
 	                	attrHTML += '<li><input type="checkbox" id="attribute-' + componentID + '-' + attrs[i] + '" value="' + componentID + '|' + attrs[i] + '|' + componentName + '" name="attribute[]"><label class="checkbox-label" for="attribute-' + componentID + '-' + attrs[i] + '">' + attrs[i] + '</label></li>';
 	                }
@@ -35,8 +35,8 @@
             	}
             }
             
-            function componentAttrRemove(componentID) {
-            	$('.attributes-main ul#attributes-' + componentID).remove();
+            function componentAttrRemove(pageID, componentID) {
+            	$('.attributes-main ul#attributes-' + pageID + '-' + componentID).remove();
             }
             
             $('.page-designer-list').on('change', 'select[name=page-designer]', function () {
@@ -47,11 +47,14 @@
             
             $('#items-holder').on('click', 'input[type="checkbox"][name="item[]"]', function () {
                 if ($('select[name=item-type]').val() === 'component') {
-                	var componentID = $(this).val();
+                	var pageComponentID = $(this).val();
+                	var pageID = pageComponentID.split('|')[0];
+                	var componentID = pageComponentID.split('|')[1];
+
                 	if ($(this).prop('checked')) {
-                		componentAttrAdd(componentID, $(this));
+                		componentAttrAdd(pageID, componentID, $(this));
                 	} else {
-                		componentAttrRemove(componentID);
+                		componentAttrRemove(pageID, componentID);
                 	}
                 }
             });
@@ -59,8 +62,10 @@
             $('#button-select-all').on('click', function () {
             	if ($('select[name=item-type]').val() === 'component') {
             		$('input[type="checkbox"][name="item[]"]').each(function () {
-            			var componentID = $(this).val();
-                		componentAttrAdd(componentID, $(this));
+            			var pageComponentID = $(this).val();
+	                	var pageID = pageComponentID.split('|')[0];
+	                	var componentID = pageComponentID.split('|')[1];
+                		componentAttrAdd(pageID, componentID, $(this));
                     });
             	}
             });
@@ -68,8 +73,10 @@
             $('#button-deselect-all').on('click', function () {
             	if ($('select[name=item-type]').val() === 'component') {
             		$('input[type="checkbox"][name="item[]"]').each(function () {
-            			var componentID = $(this).val();
-            			componentAttrRemove(componentID);
+            			var pageComponentID = $(this).val();
+	                	var pageID = pageComponentID.split('|')[0];
+	                	var componentID = pageComponentID.split('|')[1];
+            			componentAttrRemove(pageID, componentID);
                     });
             	}
             });

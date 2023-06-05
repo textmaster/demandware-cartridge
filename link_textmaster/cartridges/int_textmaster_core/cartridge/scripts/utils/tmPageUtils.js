@@ -189,28 +189,49 @@ Utils.setPageComponents = function (pageID, items) {
 
 /**
  * Gets Page components list from custom cache
- * @param {string} pageID - pageID
+ * @param {string} pageIDs - pageIDs
  * @param {string} exportDate - export Date
  * @returns {Object} array of page designer objects
  */
-Utils.getPageComponents = function (pageID, exportDate) {
+Utils.getPageComponents = function (pageIDs, exportDate) {
     var siteID = Site.current.ID;
-    var componentItemsUrl = '/' + siteID + '/pages/' + pageID + '/components';
-    var components = customCache.getCache(componentItemsUrl);
-    var customAttributes;
     var items = [];
+    var pageIDsArr = pageIDs.split(',');
+    var pageID;
+    var componentItemsUrl;
+    var components;
+    var customAttributes;
+    var pages = Utils.getPageItems();
+    var pageName;
 
-    if (components) {
-        for (var i = 0; i < components.length; i++) {
-            customAttributes = Utils.getComponentCustom(components[i].id);
-            components[i].custom = customAttributes;
+    for (var k = 0; k < pageIDsArr.length; k++) {
+        pageID = pageIDsArr[k];
+        pageName = pageID;
 
-            if (exportDate) {
-                if (!Utils.isRecentlyExported(customAttributes.exportDate, exportDate)) {
+        for (var m = 0; m < pages.length; m++) {
+            if (pages[m].ID === pageID) {
+                pageName = pages[m].name;
+                break;
+            }
+        }
+
+        componentItemsUrl = '/' + siteID + '/pages/' + pageID + '/components';
+        components = customCache.getCache(componentItemsUrl);
+
+        if (components) {
+            for (var i = 0; i < components.length; i++) {
+                customAttributes = Utils.getComponentCustom(components[i].id);
+                components[i].custom = customAttributes;
+                components[i].id = pageID + '|' + components[i].id;
+                components[i].pageName = pageName;
+
+                if (exportDate) {
+                    if (!Utils.isRecentlyExported(customAttributes.exportDate, exportDate)) {
+                        items.push(components[i]);
+                    }
+                } else {
                     items.push(components[i]);
                 }
-            } else {
-                items.push(components[i]);
             }
         }
     }

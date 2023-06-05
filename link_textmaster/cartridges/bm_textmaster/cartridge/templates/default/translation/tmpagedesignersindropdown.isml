@@ -1,9 +1,11 @@
 <div class="label-holder">${Resource.msg('general.pagedesigner','textmaster',null)}: </div>
 <div class="input-holder">
-	<select name="page-designer">
-		<option value="">${Resource.msg('general.select','textmaster',null)}</option>
+	<ul class="multi-select select-page-designer">
 		<isloop items="${pdict.ItemList}" var="item" status="loopstate">
-			<option value="${item.ID}">${item.name}</option>
-	    </isloop>
-	</select>
+			<li>
+				<input type="checkbox" name="page-designer[]" id="page-designer-${item.ID}" value="${item.ID}">
+				<label class="checkbox-label" for="page-designer-${item.ID}">${item.name}</label>
+			</li>
+		</isloop>
+	</ul>
 </div>

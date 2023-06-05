@@ -200,7 +200,6 @@ function placeOrder() {
         LocaleTo: request.httpParameterMap.get('locale-to[]').values.toArray(),
         MappedLocaleTo: mappedLanguageTo,
         Attributes: request.httpParameterMap.get('attribute[]').values.toArray(),
-        PageID: request.httpParameterMap.get('page-designer').stringValue,
         Items: request.httpParameterMap.get('items').stringValue.split(','),
         ProjectNameType: request.httpParameterMap.get('project-name-type').stringValue,
         ProjectName: request.httpParameterMap.get('project-name').stringValue

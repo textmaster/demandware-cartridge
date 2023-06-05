@@ -13,9 +13,10 @@
             var postData;
             var errorTimeID;
             var searchText;
-            var pageID;
+            var pageIDs = [];
             var itemsLimit = $('#itemsLimit').val();
             var exportDate = '';
+            var eventElement;
 
             itemsLimit = parseInt(itemsLimit, 10);
 
@@ -29,6 +30,13 @@
                     $('.input-holder.locale-to').html(data);
                 });
             });
+            
+            $('.new-translation').on('click', '#locale-to-select-all', function () {
+				eventElement = $(this);
+				$('input[type="checkbox"][name="locale-to[]"]').each(function () {
+                    $(this).prop("checked", eventElement.prop("checked"));
+				});
+			});
 
             $('select[name=item-type]').on('change', function () {
                 var itemType = this.value;
@@ -153,7 +161,9 @@
                 var pids = $('textarea[name=product-ids]').val();
                 var error = false;
                 var errorText = '';
-                pageID = $('select[name=page-designer]').val();
+                pageIDs = $('input[type="checkbox"][name="page-designer[]"]:checked').map(function(){
+			      return $(this).val();
+			    }).get();
 
                 $('input[type="checkbox"][name="category[]"]:checked').each(function () {
                     category.push($(this).val());
@@ -175,7 +185,7 @@
                     error = true;
                     errorText = Resources.errors.SELECT_CATEGORIES;
                 } else if (itemType === 'component') {
-                	if (!pageID) {
+                	if (!pageIDs.length) {
                 		error = true;
                         errorText = Resources.errors.SELECT_PAGE_DESIGNER;
                 	}
@@ -262,7 +272,7 @@
             var getPageComponents = function () {
             	var language = $('select[name=locale-from]').val();
             	var postData = {
-                    pageID: pageID,
+                    pageIDs: pageIDs.toString(),
                     date: exportDate,
                     language: language
                 };

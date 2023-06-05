@@ -41,9 +41,8 @@ function postBulkDocuments(documents, projectID) {
 
     documentPostData.documents = documents;
     var documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + Resource.msg('api.post.documents', 'textmaster', null);
-    log.debug('Request: POST ' + documentEndPoint + ' ' + JSON.stringify(documentPostData));
+    log.debug('Create Documents Request: POST ' + documentEndPoint + ' ' + JSON.stringify(documentPostData));
     var documentResult = utils.textMasterClient('POST', documentEndPoint, JSON.stringify(documentPostData));
-    log.debug('Response: ' + JSON.stringify(documentResult));
 
     if (documentResult) {
         for (var doc = 0; doc < documentResult.length; doc++) {
@@ -79,8 +78,7 @@ function postBulkDocuments(documents, projectID) {
             };
 
             log.debug('Request: PUT ' + documentEndPoint + ' ' + JSON.stringify(documentPostData));
-            var updatedDocumentResult = utils.textMasterClient('PUT', documentEndPoint, JSON.stringify(documentPostData));
-            log.debug('Response: ' + JSON.stringify(updatedDocumentResult));
+            utils.textMasterClient('PUT', documentEndPoint, JSON.stringify(documentPostData));
         }
     }
 }
@@ -297,7 +295,6 @@ function getOutput(input) {
     var localeTo = JSON.parse(input.LocaleTo);
     var itemType = input.ItemType;
     var catalogID = input.CatalogID;
-    var pageID = input.PageID;
     var attributes = JSON.parse(input.Attributes);
     var componentAttributes = attributes;
     var items = JSON.parse(input.Items);
@@ -308,8 +305,10 @@ function getOutput(input) {
     var bulkLimit = Resource.msg('api.bulk.doc.limit', 'textmaster', null) || 20;
     var bulkLimitCount = 0;
     var itemCount = 0;
+    var pageID;
     var projectResult;
     var item;
+    var itemID;
     var contentValue;
     var itemAttrs;
     var attrData;
@@ -350,9 +349,9 @@ function getOutput(input) {
 
             projectPostData.project = project;
             var projectEndPoint = utils.config.api.get.project;
-            log.debug('Request: POST ' + projectEndPoint + ' ' + JSON.stringify(projectPostData));
+            log.debug('Create Project Request: POST ' + projectEndPoint + ' ' + JSON.stringify(projectPostData));
             projectResult = utils.textMasterClient('POST', projectEndPoint, JSON.stringify(projectPostData));
-            log.debug('response: ' + JSON.stringify(projectResult));
+            log.debug('Create Project Response: ' + JSON.stringify(projectResult));
 
             if (projectResult && projectResult.id !== undefined) {
                 projectID = projectResult.id;
@@ -370,29 +369,36 @@ function getOutput(input) {
                 var document = {};
                 var markupFlag = false;
 
+                if (itemType === 'component') {
+                    pageID = items[i].split('|')[0];
+                    itemID = items[i].split('|')[1];
+                } else {
+                    itemID = items[i];
+                }
+
                 switch (itemType) {
                 case 'product':
-                    item = ProductMgr.getProduct(items[i]);
+                    item = ProductMgr.getProduct(itemID);
                     itemAttrs = SystemObjectMgr.describe('Product').getAttributeDefinitions().toArray();
                     break;
                 case 'content':
-                    item = ContentMgr.getContent(items[i]);
+                    item = ContentMgr.getContent(itemID);
                     break;
                 case 'category':
-                    item = CatalogMgr.getCategory(items[i]);
+                    item = CatalogMgr.getCategory(itemID);
                     break;
                 case 'folder':
-                    item = ContentMgr.getFolder(items[i]);
+                    item = ContentMgr.getFolder(itemID);
                     if (empty(item)) {
-                        item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), items[i]);
+                        item = ContentMgr.getFolder(ContentMgr.getLibrary(ContentMgr.PRIVATE_LIBRARY), itemID);
                     }
                     break;
                 }
 
                 if (itemType === 'pagedesigner') {
-                    setPageDesignerExportDate(items[i], Site.getCurrent().getCalendar().getTime());
+                    setPageDesignerExportDate(itemID, Site.getCurrent().getCalendar().getTime());
                 } else if (itemType === 'component') {
-                    setPageComponentExportDate(items[i], Site.getCurrent().getCalendar().getTime());
+                    setPageComponentExportDate(itemID, Site.getCurrent().getCalendar().getTime());
                 } else {
                     Transaction.begin();
                     item.custom.exportDate = Site.getCurrent().getCalendar().getTime();
@@ -403,7 +409,7 @@ function getOutput(input) {
                     attributes = [];
 
                     for (var j = 0; j < componentAttributes.length; j++) {
-                        if (componentAttributes[j].componentID === items[i]) {
+                        if (componentAttributes[j].componentID === itemID) {
                             attributes.push(componentAttributes[j]);
                         }
                     }
@@ -432,7 +438,7 @@ function getOutput(input) {
                         }
                         break;
                     case 'pagedesigner':
-                        contentValue = getPageDesignerAttrValue(items[i], attribute.id, dwLocaleID);
+                        contentValue = getPageDesignerAttrValue(itemID, attribute.id, dwLocaleID);
 
                         if (contentValue) {
                             itemData[attribute.id] = contentValue;
@@ -444,7 +450,7 @@ function getOutput(input) {
 
                         break;
                     case 'component':
-                        contentValue = getComponentAttrValue(pageID, items[i], attribute.id, localeFrom);
+                        contentValue = getComponentAttrValue(pageID, itemID, attribute.id, localeFrom);
 
                         if (contentValue) {
                             itemData[attribute.id] = contentValue;
@@ -476,20 +482,20 @@ function getOutput(input) {
                         itemName = item.name;
                         break;
                     case 'pagedesigner':
-                        itemName = itemName ? itemName : getPageDesignerAttrValue(items[i], 'name', dwLocaleID);
+                        itemName = itemName ? itemName : getPageDesignerAttrValue(itemID, 'name', dwLocaleID);
                         break;
                     case 'component':
-                        itemName = getComponentAttrValue(pageID, items[i], 'component-name', localeFrom);
+                        itemName = getComponentAttrValue(pageID, itemID, 'component-name', localeFrom);
                         break;
                     }
-                    document.title = itemType + '-' + items[i];
+                    document.title = itemType + '-' + itemID;
                     document.original_content = itemData;
                     document.type = Resource.msg('constant.key.value', 'textmaster', null);
                     document.perform_word_count = true;
                     document.markup_in_content = markupFlag;
                     document.custom_data = {
                         item: {
-                            id: items[i],
+                            id: itemID,
                             name: itemName
                         },
                         attribute: customData
@@ -503,7 +509,7 @@ function getOutput(input) {
                     bulkLimitCount++;
                 } else {
                     // No content to be exported
-                    avoidItems.push(items[i]);
+                    avoidItems.push(itemID);
                 }
 
                 itemCount++;
