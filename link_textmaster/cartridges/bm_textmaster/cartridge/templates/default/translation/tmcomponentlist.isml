@@ -7,15 +7,18 @@
     	<th class="table_header center n e s w" width="8%"></th>
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.id','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('follow.item.name','textmaster',null)}</th>
-    	<th class="table_header left n e s" nowrap="nowrap" width="20%">${Resource.msg('general.pagedesigner','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.component.type','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('general.pagedesigner','textmaster',null)}</th>
     	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.languages','textmaster',null)}</th>
+    	<th class="table_header left n e s" nowrap="nowrap" width="8%">${Resource.msg('translation.filter.date','textmaster',null)}</th>
     </thead>
     <tfoot>
         <tr>
             <th>&nbsp;<input type="hidden" name="items" value=""></th>
             <th><input type="text" placeholder="${Resource.msg('translation.search.id','textmaster',null)}" class="inputfield" /></th>
             <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" class="inputfield" /></th>
-            <th><input type="text" placeholder="${Resource.msg('translation.search.name','textmaster',null)}" class="inputfield" /></th>
+            <th><input type="text" placeholder="${Resource.msg('translation.search.component.type','textmaster',null)}" class="inputfield" /></th>
+            <th><input type="text" placeholder="${Resource.msg('translation.search.page.designer','textmaster',null)}" class="inputfield" /></th>
             <th>
                 <select multiple="multiple" id="languagefield">
                     <isloop items="${pdict.Languages}" var="lang" status="loopstate">
@@ -23,6 +26,7 @@
 					</isloop>
                 </select>
             </th>
+            <th><input type="text" placeholder="Search Date" id="datefield" name="datefield" /></th>
         </tr>
     </tfoot>
     <tbody>
@@ -34,8 +38,12 @@
 	        	</td>
 	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.id.split('|')[1]}</label></td>
 	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.name}</label></td>
+	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.type}</label></td>
 	        	<td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${item.pageName}</label></td>
 	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${'TranslatedLanguages' in item.custom && item.custom.TranslatedLanguages ? item.custom.TranslatedLanguages : ''}</label></td>
+	            <isset name="calendarDate" value="${new Date(item.lastModified)}" scope="page"/>
+	            <isset name="lastModifiedDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd')}" scope="page"/>
+	            <td class="table_detail left" nowrap="nowrap"><label class="item-label" for="${'item-'+pdict.Type+'-'+item.id}">${lastModifiedDate}</label></td>
 	        </tr>
 	    </isloop>
     </tbody>
@@ -72,7 +80,7 @@
 	    			    var languageData = [];
 	    			    switch (itemType) {
 	    			    	case 'component':
-	    			    		languageData = data[4];
+	    			    		languageData = data[5];
 	    			    		break;
 	    			    }
 	    			    var showData = false;

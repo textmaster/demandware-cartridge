@@ -64,6 +64,7 @@ function getPageDesignerList() {
         var pageObject;
         var contentType;
         var customAttributes;
+        var lastModified;
 
         xmlStreamWriter.writeStartDocument('UTF-8', '1.0');
         xmlStreamWriter.writeStartElement('library');
@@ -96,6 +97,10 @@ function getPageDesignerList() {
 
                                 if (pageObject && pageObject.isPage) {
                                     customAttributes = pageUtils.getPageCustom(pageID);
+                                    lastModified = pageUtils.getPageLastModified(pageID);
+                                    if (!lastModified) {
+                                        pageUtils.setPageLastModified(pageID, { lastModified: new Date() });
+                                    }
 
                                     items.push({
                                         ID: pageID,

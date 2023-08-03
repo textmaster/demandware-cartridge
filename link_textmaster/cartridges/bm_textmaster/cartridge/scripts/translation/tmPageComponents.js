@@ -85,6 +85,12 @@ function getComponentAttributeValue(attributeKey, formattedContentXML) {
     var attribute = '';
     var j;
 
+    if (attributeKey === 'type') {
+        value = valueArray.split('.');
+        var componentType = value[2];
+        return componentType;
+    }
+
     for (j = 0; j < valueArray.length(); j++) {
         attribute = valueArray[j].attributes().toString();
 
@@ -125,6 +131,7 @@ function getSubComponents(readXmlFile, componentID) {
     var contentData;
     var componentIDs = [];
     var name;
+    var type;
 
     while (xmlStreamReader.hasNext()) {
         if (xmlStreamReader.next() === StreamConstants.START_ELEMENT) {
@@ -154,12 +161,14 @@ function getSubComponents(readXmlFile, componentID) {
 
                         if (contentData !== '' && contentData !== '{}' && contentData !== '{ }') {
                             name = getComponentAttributeValue('display-name', formattedContentXML);
+                            type = getComponentAttributeValue('type', formattedContentXML);
 
                             try {
                                 contentData = JSON.parse(contentData);
                                 componentsData.push({
                                     id: componentID,
                                     name: name,
+                                    type: type,
                                     data: contentData
                                 });
                             } catch (e) {
