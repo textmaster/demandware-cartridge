@@ -44,9 +44,7 @@ Utils.getPageLastModified = function (pageID) {
     var siteID = Site.current.ID;
     var pageItemsUrl = '/' + siteID + '/pages/' + pageID + '/lastmodified';
     var getLastModified = customCache.getCache(pageItemsUrl);
-    var pageLastModified = getLastModified.lastModified;
-    var lastModified = new Date(pageLastModified);
-    lastModified = new Date(lastModified);
+    var lastModified = getLastModified ? new Date(getLastModified.lastModified) : '';
 
     return lastModified;
 };
@@ -71,8 +69,7 @@ Utils.getPageComponentLastModified = function (componentID) {
     var siteID = Site.current.ID;
     var componentUrl = '/' + siteID + '/components/' + componentID + '/lastmodified';
     var getLastModified = customCache.getCache(componentUrl);
-    var componentLastModified = getLastModified.lastModified;
-    var lastModified = new Date(componentLastModified);
+    var lastModified = getLastModified ? new Date(getLastModified.lastModified) : '';
 
     return lastModified;
 };

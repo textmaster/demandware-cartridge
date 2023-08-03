@@ -18,17 +18,24 @@ function getOutput(input) {
     var i;
     var component;
     var customAttributes;
+    var lastModified;
     var attrFound;
 
     for (i = 0; i < components.length; i++) {
         component = components[i];
         customAttributes = pageUtils.getComponentCustom(component.id);
+        lastModified = pageUtils.getPageComponentLastModified(component.id);
+        if (!lastModified) {
+            pageUtils.setPageComponentLastModified(component.id, { lastModified: new Date() });
+        }
         attrFound = false;
 
         if (component.data) {
             item = {
                 id: component.id,
                 name: component.name,
+                type: component.type,
+                lastModified: lastModified || new Date(),
                 attributes: [],
                 custom: {
                     TranslatedLanguages: customAttributes.TranslatedLanguages || ''

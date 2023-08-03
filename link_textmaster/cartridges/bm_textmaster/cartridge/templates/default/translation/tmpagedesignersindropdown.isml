@@ -1,6 +1,9 @@
 <div class="label-holder">${Resource.msg('general.pagedesigner','textmaster',null)}: </div>
-<div class="input-holder">
+<div class="input-holder page-designer">
 	<ul class="multi-select select-page-designer">
+		<div class="page-search">
+			<input type="text" id="pageSearch" placeholder="${Resource.msg('general.search','textmaster',null)}" />
+		</div>
 		<isloop items="${pdict.ItemList}" var="item" status="loopstate">
 			<li>
 				<input type="checkbox" name="page-designer[]" id="page-designer-${item.ID}" value="${item.ID}">
@@ -8,4 +11,8 @@
 			</li>
 		</isloop>
 	</ul>
+</div>
+<div class="input-holder">
+	<input type="checkbox" name="page-select-all" id="page-select-all">
+	<label class="checkbox-label" for="page-select-all">${Resource.msg('general.selectdeselectall','textmaster',null)}</label>
 </div>

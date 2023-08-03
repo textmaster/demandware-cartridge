@@ -160,7 +160,8 @@
     float: left;
 }
 
-.translation-module .field-holder.button-holder {
+.translation-module .field-holder.button-holder,
+.translation-module .field-holder.component-attribute-button-holder {
     border-top: 0.08em solid #DADADA;
     text-align: right;
 }
@@ -392,6 +393,11 @@
 .new-translation .form-holder.page-designer {
     display: none;
 }
+
+.new-translation .page-search {
+    padding-bottom: 7px;
+}
+
 .new-translation .form-holder.page-designer.show {
     display: block;
 }
