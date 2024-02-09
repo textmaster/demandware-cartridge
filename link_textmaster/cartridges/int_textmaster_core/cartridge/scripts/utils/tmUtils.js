@@ -1075,7 +1075,7 @@ Utils.storefrontCall = function (method, endPoint, request, locale) {
 
     var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
     var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
-    var endPointUrl = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + languageCode + endPoint;
+    var endPointUrl = 'https://' + sfProtectionURLpart + Site.current.httpHostName + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + languageCode + endPoint;
 
     request = request || '';
     var serviceConfig = Utils.getServiceConfigPublic();
@@ -1614,7 +1614,7 @@ Utils.getPageObject = function (pageID) {
     var pageObject;
     var endPoint = '/TMPageDesignersImpex-GetPage?pageid=' + pageID;
 
-    pageObject = Utils.storefrontCall('GET', endPoint, {}, null);
+    pageObject = Utils.storefrontCall('GET', endPoint, null, null);
 
     return pageObject;
 };

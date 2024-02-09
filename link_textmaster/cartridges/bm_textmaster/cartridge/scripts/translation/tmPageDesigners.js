@@ -6,6 +6,8 @@
 /* Script Modules */
 var utils = require('*/cartridge/scripts/utils/tmUtils');
 var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
+var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
+var customLog = logUtils.getLogger('tmPageDesigners');
 
 /**
  * Writes page or component data to a custom XML
@@ -14,6 +16,24 @@ var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
  */
 function writeToPageXML(formattedContentXML, xmlStreamWriter) {
     xmlStreamWriter.writeRaw(formattedContentXML.toXMLString());
+}
+
+/**
+ * Writes first level components into custom cache
+ * @param {Object} formattedContentXML - Formatted Content XML
+ * @param {string} pageID - Page ID
+ */
+function writeFirstLevelComponentsInCache(formattedContentXML, pageID) {
+    var components = [];
+    var pageContentLinks = formattedContentXML.descendants('content-link');
+
+    for (var i = 0; i < pageContentLinks.length(); i++) {
+        components.push({
+            id: pageContentLinks[i].attribute('content-id').toString()
+        });
+    }
+
+    pageUtils.setPageComponents(pageID, components);
 }
 
 /**
@@ -30,18 +50,11 @@ function getPageDesignerList() {
     var readXmlFile = new File(readFilePath);
 
     if (readXmlFile.exists()) {
-        var writeFolderPath = File.IMPEX + SEP + 'src' + SEP + 'textmaster' + SEP + Site.current.ID;
+        var writeFolderPath = File.IMPEX + SEP + 'src' + SEP + 'textmaster' + SEP + Site.current.ID + SEP + 'allComponentXMLs';
         var writeFolder = new File(writeFolderPath);
 
         if (!writeFolder.exists()) {
             writeFolder.mkdirs();
-        }
-
-        var writeFilePath = File.IMPEX + SEP + 'src' + SEP + 'textmaster' + SEP + Site.current.ID + SEP + utils.config.pageDesigner.xmlName;
-        var writeXmlFile = new File(writeFilePath);
-
-        if (!writeXmlFile.exists()) {
-            writeXmlFile.createNewFile();
         }
 
         var FileReader = require('dw/io/FileReader');
@@ -54,21 +67,14 @@ function getPageDesignerList() {
         var xmlStreamReader = new StreamReader(xmlFileReader);
         var StreamConstants = require('dw/io/XMLStreamConstants');
 
-        var xmlFileWriter = new FileWriter(writeXmlFile);
-        var xmlStreamWriter = new StreamWriter(xmlFileWriter);
-
         var contentXML;
         var formattedContentXML;
         var localElementName;
-        var pageID;
+        var contentID;
         var pageObject;
         var contentType;
         var customAttributes;
-
-        xmlStreamWriter.writeStartDocument('UTF-8', '1.0');
-        xmlStreamWriter.writeStartElement('library');
-        xmlStreamWriter.writeAttribute('xmlns', 'http://www.demandware.com/xml/impex/library/2006-10-31');
-        xmlStreamWriter.writeComment('Pages and components data');
+        var lastModified;
 
         while (xmlStreamReader.hasNext()) {
             if (xmlStreamReader.next() === StreamConstants.START_ELEMENT) {
@@ -78,7 +84,7 @@ function getPageDesignerList() {
                     var attrCount = xmlStreamReader.getAttributeCount();
                     for (var i = 0; i < attrCount; i++) {
                         if (xmlStreamReader.getAttributeLocalName(i) === 'content-id') {
-                            pageID = xmlStreamReader.getAttributeValue(i);
+                            contentID = xmlStreamReader.getAttributeValue(i);
                             break;
                         }
                     }
@@ -92,32 +98,62 @@ function getPageDesignerList() {
 
                             if (!empty(contentType)) {
                                 // in the content object type attribute found
-                                pageObject = utils.getPageObject(pageID);
+                                if (contentType.toXMLString().indexOf('page') > -1) {
+                                    pageObject = utils.getPageObject(contentID);
 
-                                if (pageObject && pageObject.isPage) {
-                                    customAttributes = pageUtils.getPageCustom(pageID);
-
-                                    items.push({
-                                        ID: pageID,
-                                        name: pageObject.name,
-                                        online: pageObject.online,
-                                        custom: {
-                                            TranslatedLanguages: customAttributes.TranslatedLanguages || ''
+                                    if (pageObject && pageObject.isPage) {
+                                        customAttributes = pageUtils.getPageCustom(contentID);
+                                        lastModified = pageUtils.getPageLastModified(contentID);
+                                        if (!lastModified) {
+                                            pageUtils.setPageLastModified(contentID, { lastModified: new Date() });
                                         }
-                                    });
+
+                                        items.push({
+                                            ID: contentID,
+                                            name: pageObject.name,
+                                            online: pageObject.online,
+                                            custom: {
+                                                TranslatedLanguages: customAttributes.TranslatedLanguages || ''
+                                            }
+                                        });
+
+                                        writeFirstLevelComponentsInCache(formattedContentXML, contentID);
+                                    }
+                                } else if (contentType.toXMLString().indexOf('component') > -1) {
+                                    var writeFilePath = writeFolderPath + SEP + contentID + '.xml';
+                                    var writeXmlFile = new File(writeFilePath);
+
+                                    if (!writeXmlFile.exists()) {
+                                        writeXmlFile.createNewFile();
+                                    }
+
+                                    var xmlFileWriter = new FileWriter(writeXmlFile);
+                                    var xmlStreamWriter = new StreamWriter(xmlFileWriter);
+
+                                    xmlStreamWriter.writeStartDocument('UTF-8', '1.0');
+                                    xmlStreamWriter.writeStartElement('library');
+                                    xmlStreamWriter.writeAttribute('xmlns', 'http://www.demandware.com/xml/impex/library/2006-10-31');
+                                    xmlStreamWriter.writeComment('Components of page ' + contentID);
+
+                                    writeToPageXML(contentXML, xmlStreamWriter);
+
+                                    xmlStreamWriter.writeEndElement();
+                                    xmlStreamWriter.writeEndDocument();
+
+                                    xmlStreamWriter.close();
+                                    xmlFileWriter.close();
                                 }
-                                writeToPageXML(contentXML, xmlStreamWriter);
                             }
+                        } else {
+                            var text = contentXML.toString();
+                            text = text.substr(text.indexOf('content-id'));
+                            text = text.substr(0, text.indexOf('>'));
+                            customLog.debug('One component skipped on cache conversion due to SFCC XML string quota limit: ' + text);
                         }
                     }
                 }
             }
         }
-        xmlStreamWriter.writeEndElement();
-        xmlStreamWriter.writeEndDocument();
-
-        xmlStreamWriter.close();
-        xmlFileWriter.close();
 
         xmlStreamReader.close();
         xmlFileReader.close();

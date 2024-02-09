@@ -36,14 +36,6 @@ function start() {
         }
 
         pageUtils.setPageComponents(pageID, items);
-
-        for (var k = 0; k < items.length; k++) {
-            var itemID = items[k].id;
-            var lastModified = {
-                lastModified: new Date()
-            };
-            pageUtils.setPageComponentLastModified(itemID, lastModified);
-        }
     }
 }
 

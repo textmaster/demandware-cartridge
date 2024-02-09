@@ -30,7 +30,8 @@ var log = logUtils.getLogger('ImportScript');
  */
 function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, language, content, writer) {
     var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
-    var componentsCacheUrl = '/pages/' + pageID + '/components/' + sfccLanguageTo;
+    var siteID = Site.current.ID;
+    var componentsCacheUrl = '/' + siteID + '/pages/' + pageID + '/components/' + sfccLanguageTo;
     var components = customCache.getCache(componentsCacheUrl);
     var data;
     var componentPosition;

@@ -30,7 +30,7 @@
                     $('.input-holder.locale-to').html(data);
                 });
             });
-            
+
             $('.new-translation').on('click', '#locale-to-select-all', function () {
 				eventElement = $(this);
 				$('input[type="checkbox"][name="locale-to[]"]').each(function () {
@@ -130,6 +130,10 @@
                 parentLi.find('ul li input[name="category[]"]').prop('checked', $(this).is(':checked'));
             });
 
+            $('.form-holder.page-designer').on('click', '#page-select-all', function (e) {
+                $('input[name="page-designer[]"]').prop('checked', $(e.target).is(':checked'));
+            });
+
             $('.new-translation').on('click', '.show-all-attributes input[type=button]', function () {
                 $('.attributes-holder').addClass('show-all');
                 $('.show-default-attributes').addClass('show');
@@ -139,6 +143,30 @@
                 $('.attributes-holder').removeClass('show-all');
                 $('.show-default-attributes').removeClass('show');
                 $('.attributes-holder > li:not(.default) input[type=checkbox]:checked').prop('checked', false);
+            });
+
+            // page designer search for page components
+            $('.form-holder.page-designer').on('keyup', '#pageSearch', function () {
+                var searchKey = this.value;
+                var LIs = $('.page-designer-list ul.select-page-designer > li');
+                if (searchKey !== '') {
+                    searchKey = searchKey.toLowerCase();
+
+                    LIs.each(function () {
+                        var labelText = $(this).find('> label').text();
+                        labelText = labelText ? labelText.toLowerCase() : labelText;
+
+                        if (labelText.indexOf(searchKey) < 0) {
+                            $(this).addClass('hide');
+                        } else {
+                            $(this).removeClass('hide');
+                        }
+                    });
+                } else {
+                    LIs.each(function () {
+                        $(this).removeClass('hide');
+                    });
+                }
             });
 
             $('#filter-search').on('click', function () {
