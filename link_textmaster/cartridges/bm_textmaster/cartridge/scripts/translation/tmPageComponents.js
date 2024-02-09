@@ -15,64 +15,6 @@ var componentsData;
 var globLocaleID;
 
 /**
- * Returns all component IDs, which are direct child of page designer objects, from library XML
- * @param {Object} readXmlFile - readXmlFile
- * @param {string} pageID - pageID
- * @returns {Object} componentIDs
- */
-function getPageComponents(readXmlFile, pageID) {
-    var FileReader = require('dw/io/FileReader');
-    var StreamReader = require('dw/io/XMLStreamReader');
-    var xmlFileReader = new FileReader(readXmlFile);
-    var xmlStreamReader = new StreamReader(xmlFileReader);
-    var StreamConstants = require('dw/io/XMLStreamConstants');
-    var contentID;
-    var localElementName;
-    var contentXML;
-    var pageContentLinks;
-    var formattedContentXML;
-    var i;
-    var attrCount;
-    var componentIDs = [];
-
-    while (xmlStreamReader.hasNext()) {
-        if (xmlStreamReader.next() === StreamConstants.START_ELEMENT) {
-            localElementName = xmlStreamReader.getLocalName();
-
-            if (localElementName === 'content') {
-                attrCount = xmlStreamReader.getAttributeCount();
-                for (i = 0; i < attrCount; i++) {
-                    if (xmlStreamReader.getAttributeLocalName(i) === 'content-id') {
-                        contentID = xmlStreamReader.getAttributeValue(i);
-                        break;
-                    }
-                }
-
-                if (contentID === pageID) {
-                    contentXML = xmlStreamReader.readXMLObject();
-
-                    if (contentXML) {
-                        formattedContentXML = XML(contentXML.toString().replace('xmlns', 'xmlns:i'));
-                        pageContentLinks = formattedContentXML.descendants('content-link');
-
-                        for (i = 0; i < pageContentLinks.length(); i++) {
-                            componentIDs.push(pageContentLinks[i].attribute('content-id').toString());
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    xmlStreamReader.close();
-    xmlFileReader.close();
-
-    return componentIDs;
-}
-
-/**
  * Gets value of a specific attribute of Component data
  * @param {string} attributeKey - tag name as in XML
  * @param {string} formattedContentXML - Component XML
@@ -92,7 +34,7 @@ function getComponentAttributeValue(attributeKey, formattedContentXML) {
     }
 
     for (j = 0; j < valueArray.length(); j++) {
-        attribute = valueArray[j].attributes().toString();
+        attribute = valueArray[j].attributes().toString().toLowerCase();
 
         if (attribute === globLocaleID) {
             value = valueArray[j].toString();
@@ -111,42 +53,36 @@ function getComponentAttributeValue(attributeKey, formattedContentXML) {
 
 /**
  * Returns all component IDs, which are direct child of other components of page designer objects, from library XML
- * @param {Object} readXmlFile - readXmlFile
  * @param {string} componentID - componentID
  * @returns {Object} component ids
  */
-function getSubComponents(readXmlFile, componentID) {
+function getSubComponents(componentID) {
     var FileReader = require('dw/io/FileReader');
     var StreamReader = require('dw/io/XMLStreamReader');
-    var xmlFileReader = new FileReader(readXmlFile);
-    var xmlStreamReader = new StreamReader(xmlFileReader);
     var StreamConstants = require('dw/io/XMLStreamConstants');
-    var contentID;
     var localElementName;
-    var contentXML;
     var pageContentLinks;
+    var contentXML;
     var formattedContentXML;
     var i;
-    var attrCount;
     var contentData;
     var componentIDs = [];
     var name;
     var type;
+    var File = require('dw/io/File');
+    var SEP = File.SEPARATOR;
+    var readFilePath = File.IMPEX + SEP + 'src' + SEP + 'textmaster' + SEP + Site.current.ID + SEP + 'allComponentXMLs' + SEP + componentID + '.xml';
+    var readXmlFile = new File(readFilePath);
 
-    while (xmlStreamReader.hasNext()) {
-        if (xmlStreamReader.next() === StreamConstants.START_ELEMENT) {
-            localElementName = xmlStreamReader.getLocalName();
+    if (readXmlFile.exists()) {
+        var xmlFileReader = new FileReader(readXmlFile);
+        var xmlStreamReader = new StreamReader(xmlFileReader);
 
-            if (localElementName === 'content') {
-                attrCount = xmlStreamReader.getAttributeCount();
-                for (i = 0; i < attrCount; i++) {
-                    if (xmlStreamReader.getAttributeLocalName(i) === 'content-id') {
-                        contentID = xmlStreamReader.getAttributeValue(i);
-                        break;
-                    }
-                }
+        while (xmlStreamReader.hasNext()) {
+            if (xmlStreamReader.next() === StreamConstants.START_ELEMENT) {
+                localElementName = xmlStreamReader.getLocalName();
 
-                if (contentID === componentID) {
+                if (localElementName === 'content') {
                     contentXML = xmlStreamReader.readXMLObject();
 
                     if (contentXML) {
@@ -180,30 +116,29 @@ function getSubComponents(readXmlFile, componentID) {
                 }
             }
         }
-    }
 
-    xmlStreamReader.close();
-    xmlFileReader.close();
+        xmlStreamReader.close();
+        xmlFileReader.close();
+    }
 
     return componentIDs;
 }
 
 /**
  * Gets all component IDs, which are direct child of other components of page designer objects, from library XML
- * @param {Object} readXmlFile - readXmlFile
  * @param {string} componentIDs - componentID
  * @returns {Object} component ids
  */
-function getComponentComponents(readXmlFile, componentIDs) {
+function getComponentComponents(componentIDs) {
     var subIDs = [];
     var allSubIDs = [];
 
     for (var i = 0; i < componentIDs.length; i++) {
-        subIDs = getSubComponents(readXmlFile, componentIDs[i]);
+        subIDs = getSubComponents(componentIDs[i]);
 
         if (subIDs && subIDs.length) {
             allSubIDs = allSubIDs.concat(subIDs);
-            var subSubIDs = getComponentComponents(readXmlFile, subIDs);
+            var subSubIDs = getComponentComponents(subIDs);
 
             if (subSubIDs && subSubIDs.length) {
                 allSubIDs = allSubIDs.concat(subSubIDs);
@@ -215,6 +150,25 @@ function getComponentComponents(readXmlFile, componentIDs) {
 }
 
 /**
+ * Returns all component IDs, which are direct child of page designer objects, from library XML
+ * @param {string} pageID - pageID
+ * @returns {Object} componentIDs
+ */
+function getFirstLevelComponentIDs(pageID) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var componentIDs = [];
+    var siteID = Site.current.ID;
+    var componentsCacheUrl = '/' + siteID + '/pages/' + pageID + '/components';
+    var components = customCache.getCache(componentsCacheUrl);
+
+    for (var i = 0; i < components.length; i++) {
+        componentIDs.push(components[i].id);
+    }
+
+    return componentIDs;
+}
+
+/**
  * Gets components data of all the components of a specific page designer object
  * @param {string} pageID - pageID
  * @param {string} locale - locale
@@ -222,19 +176,11 @@ function getComponentComponents(readXmlFile, componentIDs) {
  */
 function getPDComponents(pageID, locale) {
     componentsData = [];
-    var File = require('dw/io/File');
-    var SEP = File.SEPARATOR;
-    var tmUtils = require('*/cartridge/scripts/utils/tmUtils');
-    var readFilePath = File.IMPEX + SEP + 'src' + SEP + 'textmaster' + SEP + Site.current.ID + SEP + tmUtils.config.pageDesigner.xmlName;
-    var readXmlFile = new File(readFilePath);
     var componentIDs = [];
 
     globLocaleID = locale.replace(/_/g, '-');
-
-    if (readXmlFile.exists()) {
-        componentIDs = getPageComponents(readXmlFile, pageID);
-        getComponentComponents(readXmlFile, componentIDs);
-    }
+    componentIDs = getFirstLevelComponentIDs(pageID);
+    getComponentComponents(componentIDs);
 
     return componentsData;
 }
@@ -247,7 +193,8 @@ function getPDComponents(pageID, locale) {
 function getComponents(input) {
     var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
     var components = getPDComponents(input.PageID, input.Language);
-    var componentsCacheUrl = '/pages/' + input.PageID + '/components/' + input.Language;
+    var siteID = Site.current.ID;
+    var componentsCacheUrl = '/' + siteID + '/pages/' + input.PageID + '/components/' + input.Language;
     customCache.setCache(componentsCacheUrl, components);
 
     return components;

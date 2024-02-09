@@ -128,7 +128,8 @@ function getPageDesignerAttrValue(pageID, attrID, locale) {
 function getComponentAttrValue(pageID, componentID, attributeID, language) {
     var attrValue = '';
     var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
-    var componentsCacheUrl = '/pages/' + pageID + '/components/' + language;
+    var siteID = Site.current.ID;
+    var componentsCacheUrl = '/' + siteID + '/pages/' + pageID + '/components/' + language;
     var components = customCache.getCache(componentsCacheUrl);
 
     // components has all the components and its data of specified page in specific language
