@@ -95,6 +95,38 @@ function getVariationAttributeAllValues(productID, variationModel, pvAttribute) 
 }
 
 /**
+ * Writes XML attribute value
+ * @param {Object} writer - XML Writer
+ * @param {string} contentArg - translated content
+ * @param {Object} attribute - attribute data from TextMaster API
+ */
+function writeCustomAttributeContent(writer, contentArg, attribute) {
+    var dummyTransValue = '';
+    var content = contentArg;
+
+    if (attribute && attribute.valueTypeCode && attribute.valueTypeCode === 23) {
+        try {
+            if (utils.config.apiEnv === 'demo') {
+                dummyTransValue = utils.config.dummyTestTranslationValue;
+                content = content.replace(dummyTransValue, '');
+            }
+
+            var arrayValue = JSON.parse(content);
+
+            for (var i = 0; i < arrayValue.length; i++) {
+                writer.writeStartElement('value');
+                writer.writeCharacters(dummyTransValue + arrayValue[i]);
+                writer.writeEndElement();
+            }
+        } catch (e) {
+            writer.writeCharacters(content);
+        }
+    } else {
+        writer.writeCharacters(content);
+    }
+}
+
+/**
  * Imports translation data from textMaster projects
  * @param {string} projectID - textmaster project ID
  * @param {string} documentID - textmaster document ID
@@ -268,7 +300,7 @@ function execute(projectID, documentID, isFirstImport) {
                             writer.writeStartElement('custom-attribute');
                             writer.writeAttribute('attribute-id', cAttribute.id);
                             writer.writeAttribute('xml:lang', language);
-                            writer.writeCharacters(content[cAttribute.id]);
+                            writeCustomAttributeContent(writer, content[cAttribute.id], cAttribute);
                             writer.writeEndElement();
                         }
                     }

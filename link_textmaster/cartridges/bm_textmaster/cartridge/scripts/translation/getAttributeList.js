@@ -43,6 +43,7 @@ function getOutput(input) {
     var itemType = input.itemType;
     var attrItemType = itemType === 'Pagedesigner' ? 'Content' : itemType; // Pagedesigner's attributes are of Content Asset
     var defaultAttributes = Site.getCurrent().getCustomPreferenceValue('TM' + itemType + 'Attributes');
+    var attributeValueTypes = [3, 4, 5, 23]; /* string = 3, text: 4, html: 5, set of string = 23 */
 
     try {
         defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
@@ -63,7 +64,7 @@ function getOutput(input) {
                 continue;
             }
 
-            if (attrDefinitions[attrDef].valueTypeCode === 3 || attrDefinitions[attrDef].valueTypeCode === 4 || attrDefinitions[attrDef].valueTypeCode === 5) {
+            if (attributeValueTypes.indexOf(attrDefinitions[attrDef].valueTypeCode) > -1) {
                 var attr = {};
                 attr.ID = attrDefinitions[attrDef].ID;
                 attr.name = attrDefinitions[attrDef].displayName;

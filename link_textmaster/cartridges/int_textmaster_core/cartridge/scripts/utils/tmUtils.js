@@ -76,6 +76,7 @@ Utils.config = {
     tmApiCache: Site.current.getCustomPreferenceValue('TMAPICache') || 'disabled',
     languageMapping: Site.current.getCustomPreferenceValue('tmLanguageMapping') ? JSON.parse(Site.current.getCustomPreferenceValue('tmLanguageMapping')) : [],
     demandwareLanguages: [],
+    dummyTestTranslationValue: '[translated] ',
     fromLanguages: {
         source: 'mapping'
     },

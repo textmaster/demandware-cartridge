@@ -263,11 +263,24 @@ function getProductItemData(itemAttrs, attribute, item, itemData, customData, ma
 
     for (var j = 0; j < itemAttrs.length; j++) {
         var itemAttribute = itemAttrs[j];
+
         if (attribute.id === itemAttribute.ID) {
             contentValue = (attribute.id === 'shortDescription' || attribute.id === 'longDescription') ? (item[attribute.id] ? (item[attribute.id].source ? item[attribute.id].source : item[attribute.id]) : '') : item.attributeModel.getDisplayValue(itemAttribute);
+
+            if (itemAttribute.valueTypeCode && itemAttribute.valueTypeCode === 23) { // Set of string
+                var arrayContentValue = [];
+
+                for (var k = 0; k < contentValue.length; k++) {
+                    arrayContentValue.push(contentValue[k]);
+                }
+
+                contentValue = JSON.stringify(arrayContentValue);
+            }
+
             if (contentValue) {
                 contentValue = contentValue.source ? contentValue.source : contentValue;
                 iData[attribute.id] = contentValue;
+                iData.valueTypeCode = itemAttribute.valueTypeCode; // Will delete this 'valueTypeCode' from iData after using it in called function
             }
         }
     }
@@ -361,6 +374,8 @@ function getOutput(input) {
 
         if (projectID) {
             var documents = [];
+            var itemAttribute;
+            var arrayContentValue;
             var dwLocaleID = utils.formatLocaleDemandware(localeFrom);
             request.setLocale(dwLocaleID); // eslint-disable-line no-undef
 
@@ -424,14 +439,35 @@ function getOutput(input) {
                     switch (itemType) {
                     case 'product':
                         itemData = getProductItemData(itemAttrs, attribute, item, itemData, customData, markupFlag);
+
                         if (itemData[attribute.id]) {
                             contentValue = itemData[attribute.id];
+                            attribute.valueTypeCode = itemData.valueTypeCode;
+                            delete itemData.valueTypeCode; // this value is not meant to be in itemData which to be sent to TextMaster
                         }
+
                         break;
                     case 'content':
                     case 'category':
                     case 'folder':
-                        contentValue = attribute.type === 'system' ? (item[attribute.id] || '') : (item.custom[attribute.id] ? (item.custom[attribute.id].source ? item.custom[attribute.id].source : item.custom[attribute.id]) : '');
+                        // eslint-disable-next-line no-prototype-builtins
+                        contentValue = attribute.type === 'system' ? (item[attribute.id] || '') : (item.custom[attribute.id] ? (item.custom[attribute.id].hasOwnProperty('source') ? item.custom[attribute.id].source : item.custom[attribute.id]) : '');
+                        itemAttrs = SystemObjectMgr.describe(utils.firstLetterCapital(itemType)).getAttributeDefinitions().toArray();
+
+                        for (var k = 0; k < itemAttrs.length; k++) {
+                            itemAttribute = itemAttrs[k];
+
+                            if (attribute.id === itemAttribute.ID && itemAttribute.valueTypeCode && itemAttribute.valueTypeCode === 23) { // Set of string
+                                arrayContentValue = [];
+
+                                for (var m = 0; m < contentValue.length; m++) {
+                                    arrayContentValue.push(contentValue[m]);
+                                }
+
+                                contentValue = JSON.stringify(arrayContentValue);
+                                attribute.valueTypeCode = itemAttribute.valueTypeCode;
+                            }
+                        }
 
                         if (contentValue) {
                             contentValue = contentValue.source ? contentValue.source : contentValue;
@@ -465,6 +501,10 @@ function getOutput(input) {
 
                         if (itemType !== 'component') {
                             attrData.type = attribute.type;
+
+                            if (attribute.valueTypeCode) {
+                                attrData.valueTypeCode = attribute.valueTypeCode;
+                            }
                         }
 
                         markupFlag = /<[a-z][\s\S]*>/i.test(contentValue) ? true : markupFlag;
