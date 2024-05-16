@@ -14,6 +14,7 @@ var XMLIndentingStreamWriter = require('dw/io/XMLIndentingStreamWriter');
 /* Script Modules */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
 var utils = require('*/cartridge/scripts/utils/tmUtils');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
 
 /* Global variables */
 var log = logUtils.getLogger('ImportScript');
@@ -50,11 +51,12 @@ function writePageComponents(pageID, componentID, attrList, sfccLanguageTo, lang
 
     writer.writeStartElement('data');
     writer.writeAttribute('xml:lang', language);
-    writer.writeCharacters(JSON.stringify(data));
+    var outputData = pageUtils.componentHtmlDecode(data);
+    writer.writeCharacters(JSON.stringify(outputData));
     writer.writeEndElement();
 
     // write imported data back in cache
-    components[componentPosition].data = data;
+    components[componentPosition].data = pageUtils.componentHtmlEncode(data);
     customCache.setCache(componentsCacheUrl, components);
 }
 

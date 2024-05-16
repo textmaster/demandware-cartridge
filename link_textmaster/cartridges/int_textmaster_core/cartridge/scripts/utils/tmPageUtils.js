@@ -10,6 +10,7 @@ var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
 // Global Variables
 var Utils = {};
 var Site = require('dw/system/Site');
+var StringUtils = require('dw/util/StringUtils');
 
 /**
  * Gets Page's custom attributes from custom cache
@@ -261,6 +262,48 @@ Utils.isRecentlyExported = function (pageExportDate, checkExportDate) {
     }
 
     return false;
+};
+
+/**
+ * Substitutes characters that conflict with HTML syntax
+ * @param {Object} contentData - contentData
+ * @returns {Object} - data
+ */
+Utils.componentHtmlEncode = function (contentData) {
+    var data = contentData;
+
+    Object.keys(data).forEach(function (key) { // eslint-disable-line no-loop-func
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (typeof data[key] === 'string') {
+                data[key] = StringUtils.encodeString(data[key], StringUtils.ENCODE_TYPE_HTML);
+            } else if (data[key] && typeof data[key] === 'object') {
+                data[key] = Utils.componentHtmlEncode(data[key]);
+            }
+        }
+    });
+
+    return data;
+};
+
+/**
+ * Decodes HTML encoded character to normal character. Eg:- $lt; to <
+ * @param {Object} contentData - contentData
+ * @returns {Object} - data
+ */
+Utils.componentHtmlDecode = function (contentData) {
+    var data = contentData;
+
+    Object.keys(data).forEach(function (key) { // eslint-disable-line no-loop-func
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (typeof data[key] === 'string') {
+                data[key] = StringUtils.decodeString(data[key], StringUtils.ENCODE_TYPE_HTML);
+            } else if (data[key] && typeof data[key] === 'object') {
+                data[key] = Utils.componentHtmlDecode(data[key]);
+            }
+        }
+    });
+
+    return data;
 };
 
 module.exports = Utils;

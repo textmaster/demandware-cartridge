@@ -48,7 +48,7 @@
 						<isset name="getMappedLanguageTo" value="${utils.getMappedLanguage(localeTo.id)}" scope="page"/>
 						<isset name="mappedLanguageFrom" value="${getMappedLanguageFrom ? getMappedLanguageFrom : transParams.localeFrom.id}" scope="page"/>
 						<isset name="mappedLanguageTo" value="${getMappedLanguageTo ? getMappedLanguageTo : localeTo.id}" scope="page"/>
-						<div class="template-list-holder" data-locale-from="${mappedLanguageFrom}" data-locale-to="${mappedLanguageTo}" id="template-list-holder-${mappedLanguageFrom +'-'+ mappedLanguageTo}"></div>
+						<div class="template-list-holder" data-locale-from="${mappedLanguageFrom}" data-locale-to="${mappedLanguageTo}" id="template-list-holder-${mappedLanguageFrom +'-'+ mappedLanguageTo}"><img src="${URLUtils.staticURL('/icons/loading_medium.gif')}" width="20"></div>
 					</td>
 				</tr>
 			</isloop>

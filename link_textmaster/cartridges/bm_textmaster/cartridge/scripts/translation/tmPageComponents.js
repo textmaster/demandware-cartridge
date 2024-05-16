@@ -5,10 +5,10 @@
 
 /* API Includes */
 var Site = require('dw/system/Site');
-var StringUtils = require('dw/util/StringUtils');
 
 /* Script Modules */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
+var pageUtils = require('*/cartridge/scripts/utils/tmPageUtils');
 
 /* Global Variables */
 var log = logUtils.getLogger('tmPageComponents');
@@ -50,27 +50,6 @@ function getComponentAttributeValue(attributeKey, formattedContentXML) {
     }
 
     return value;
-}
-
-/**
- * Substitutes characters that conflict with HTML syntax
- * @param {Object} contentData - contentData
- * @returns {Object} - data
- */
-function htmlEncode(contentData) {
-    var data = contentData;
-
-    Object.keys(data).forEach(function (key) { // eslint-disable-line no-loop-func
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (typeof data[key] === 'string') {
-                data[key] = StringUtils.stringToHtml(data[key]);
-            } else if (data[key] && typeof data[key] === 'object') {
-                data[key] = htmlEncode(data[key]);
-            }
-        }
-    });
-
-    return data;
 }
 
 /**
@@ -123,7 +102,7 @@ function getSubComponents(componentID) {
 
                             try {
                                 contentData = JSON.parse(contentData);
-                                contentData = htmlEncode(contentData);
+                                contentData = pageUtils.componentHtmlEncode(contentData);
 
                                 componentsData.push({
                                     id: componentID,
