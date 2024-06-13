@@ -366,7 +366,7 @@ function getOutput(input) {
             request.setLocale(dwLocaleID); // eslint-disable-line no-undef
             var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
             var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
-            var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-General';
+            var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-Data';
 
             var callbackObject = {
                 in_extra_review: {
