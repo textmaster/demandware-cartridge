@@ -19,21 +19,46 @@ var log = logUtils.getLogger('ImportCallback');
  * Calls start method
  */
 function data() {
+    log.debug('Import callback received');
     var importData = require('*/cartridge/scripts/translation/importData');
     var projectid = request.httpParameterMap.get('projectid').value;
     var documentid = request.httpParameterMap.get('documentid').value;
     var isFirstImport = request.httpParameterMap.get('isFirstImport').isSubmitted() ? request.httpParameterMap.get('isFirstImport').value : true;
-    var input = {
-        ProjectID: projectid,
-        DocumentID: documentid,
-        isFirstImport: isFirstImport
-    };
 
-    var output = importData.output(input);
+    if (!projectid || !documentid) {
+        var document = {};
 
-    log.debug('Import callback received for Project: ' + projectid + ' | Document: ' + documentid);
+        if (request && request.httpParameterMap && request.httpParameterMap.getRequestBodyAsString()) {
+            try {
+                document = JSON.parse(request.httpParameterMap.getRequestBodyAsString());
+            } catch (e) {
+                log.error('Malformed Request body');
+            }
+        } else {
+            log.error('Request body is not found');
+        }
 
-    r.renderJSON(output);
+        projectid = document.project_id ? document.project_id : null;
+        documentid = document.id ? document.id : null;
+    }
+
+    if (projectid && documentid) {
+        var input = {
+            ProjectID: projectid,
+            DocumentID: documentid,
+            isFirstImport: isFirstImport
+        };
+
+        var output = importData.output(input);
+
+        log.debug('Project: ' + projectid + ' | Document: ' + documentid);
+
+        r.renderJSON(output);
+    } else {
+        log.debug('Invalid import callback');
+        r.setStatusCode(422);
+        r.renderJSON({ status: 'ERROR', success: false, error: true });
+    }
 }
 
 /*

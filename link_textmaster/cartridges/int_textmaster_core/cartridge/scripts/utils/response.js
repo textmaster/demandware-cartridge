@@ -16,3 +16,11 @@ exports.renderJSON = function (object) {
     var json = JSON.stringify(object);
     response.writer.print(json); // eslint-disable-line no-undef
 };
+
+/**
+ * Set the HTML status code on response
+ * @param {number} httpStatusCode - HTTP Status Code
+ */
+exports.setStatusCode = function (httpStatusCode) {
+    response.setStatus(httpStatusCode); // eslint-disable-line no-undef
+};
