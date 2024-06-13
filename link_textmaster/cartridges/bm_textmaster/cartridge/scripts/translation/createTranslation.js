@@ -36,8 +36,6 @@ var log = logUtils.getLogger('CreateTranslation');
  */
 function postBulkDocuments(documents, projectID) {
     var documentPostData = {};
-    var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
-    var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
 
     documentPostData.documents = documents;
     var documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + Resource.msg('api.post.documents', 'textmaster', null);
@@ -58,21 +56,9 @@ function postBulkDocuments(documents, projectID) {
                     wordCount += utils.getWordCount(document.original_content[key].original_phrase);
                 }
             });
-            var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-Data?projectid=' + projectID + '&documentid=' + documentID;
 
             documentPostData = {
                 document: {
-                    callback: {
-                        in_extra_review: {
-                            url: callBackURL
-                        },
-                        in_review: {
-                            url: callBackURL
-                        },
-                        completed: {
-                            url: callBackURL
-                        }
-                    },
                     word_count: wordCount
                 }
             };
@@ -378,6 +364,21 @@ function getOutput(input) {
             var arrayContentValue;
             var dwLocaleID = utils.formatLocaleDemandware(localeFrom);
             request.setLocale(dwLocaleID); // eslint-disable-line no-undef
+            var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
+            var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
+            var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-General';
+
+            var callbackObject = {
+                in_extra_review: {
+                    url: callBackURL
+                },
+                in_review: {
+                    url: callBackURL
+                },
+                completed: {
+                    url: callBackURL
+                }
+            };
 
             for (var i = 0; i < items.length; i++) {
                 var customData = [];
@@ -545,6 +546,8 @@ function getOutput(input) {
                     if (itemType === 'component') {
                         document.custom_data.item.page_id = pageID;
                     }
+
+                    document.callback = callbackObject;
 
                     documents.push(document);
                     bulkLimitCount++;
