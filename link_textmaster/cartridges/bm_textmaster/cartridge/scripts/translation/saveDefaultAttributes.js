@@ -2,10 +2,22 @@
 
 /* API Includes */
 var Site = require('dw/system/Site');
-var Transaction = require('dw/system/Transaction');
 
 /* Script Includes */
 var utils = require('*/cartridge/scripts/utils/tmUtils');
+
+/**
+ * Save default attributes in custom cache
+ * @param {string} prefName - object cache file name
+ * @param {string} prefValue - object attributes list to save to cache file
+ * */
+function saveDefaultAttributesInCache(prefName, prefValue) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var siteID = Site.current.ID;
+    var cacheUrl = '/' + siteID + '/configurations/default-attributes/' + prefName;
+
+    customCache.setCache(cacheUrl, prefValue);
+}
 
 /**
  * Saves default attributes
@@ -24,9 +36,7 @@ function getOutput(input) {
     var prefName = 'TM' + utils.firstLetterCapital(itemType) + 'Attributes';
     var prefValue = JSON.stringify(attributeList);
 
-    Transaction.begin();
-    Site.getCurrent().setCustomPreferenceValue(prefName, prefValue);
-    Transaction.commit();
+    saveDefaultAttributesInCache(prefName, prefValue);
 
     return {
         output: 'success'
