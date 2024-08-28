@@ -34,6 +34,20 @@ function getTMDefault(ID, name, defaultAttributes) {
 }
 
 /**
+ * Load Default Attributes from Cache
+ * @param {string} cacheFileName - Cache file name
+ * @returns {Object} defaultAttributes
+ * */
+function loadDefaultAttributesFromCache(cacheFileName) {
+    var customCache = require('*/cartridge/scripts/utils/customCacheWebdav');
+    var siteID = Site.current.ID;
+    var cacheUrl = '/' + siteID + '/configurations/default-attributes/' + cacheFileName;
+    var defaultAttributes = customCache.getCache(cacheUrl);
+
+    return defaultAttributes;
+}
+
+/**
  * Gets attribute list for a particular item type (product, content, category)
  * @param {Object} input - input object
  * @returns {Object} attributes array
@@ -42,14 +56,8 @@ function getOutput(input) {
     var attributes = [];
     var itemType = input.itemType;
     var attrItemType = itemType === 'Pagedesigner' ? 'Content' : itemType; // Pagedesigner's attributes are of Content Asset
-    var defaultAttributes = Site.getCurrent().getCustomPreferenceValue('TM' + itemType + 'Attributes');
+    var defaultAttributes = loadDefaultAttributesFromCache('TM' + itemType + 'Attributes');
     var attributeValueTypes = [3, 4, 5, 23]; /* string = 3, text: 4, html: 5, set of string = 23 */
-
-    try {
-        defaultAttributes = defaultAttributes ? JSON.parse(defaultAttributes) : null;
-    } catch (ex) {
-        log.error('Exception on getting default attribute list for ' + itemType + ' from Site Preferences: ' + ex.message);
-    }
 
     try {
         var attrDefinitions = SystemObjectMgr.describe(attrItemType).getAttributeDefinitions().toArray();

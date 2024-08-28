@@ -111,25 +111,37 @@ function followUp() {
  * @returns {string} store URL
  */
 function getStoreURL(itemType, targetLangID) {
+    var URLAction = require('dw/web/URLAction');
+    var URLUtils = require('dw/web/URLUtils');
+    var URLParameter = require('dw/web/URLParameter');
     var storeLangID = utils.formatLocaleDemandware(utils.formatLocaleStandard(targetLangID));
-    var storeURL = 'https://' + Site.current.getHttpsHostName() + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + storeLangID;
-    var controllerPart = '';
+    var controller = '';
+    var idKey = '';
+
     switch (itemType) {
     case 'product':
-        controllerPart = '/Product-Show?pid=';
+        controller = 'Product-Show';
+        idKey = 'pid';
         break;
     case 'category':
-        controllerPart = '/Search-Show?cgid=';
+        controller = 'Search-Show';
+        idKey = 'cgid';
         break;
     case 'content':
     case 'pagedesigner':
     case 'component':
-        controllerPart = '/Page-Show?cid=';
+        controller = 'Page-Show';
+        idKey = 'cid';
         break;
     default:
-        controllerPart = '';
+        controller = '';
     }
-    return controllerPart ? (storeURL + controllerPart) : '';
+
+    var urlAction = new URLAction(controller, Site.current.ID, storeLangID);
+    var param = new URLParameter(idKey, '');
+    var storeURL = URLUtils.abs(urlAction, param);
+
+    return storeURL;
 }
 
 /**

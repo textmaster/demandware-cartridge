@@ -108,15 +108,6 @@
                 <min-length>0</min-length>
                 <default-value>enabled</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="TMCategoryAttributes">
-                <display-name xml:lang="x-default">TextMaster Category Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default category attributes for translation (Set via API Setup page)</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[]</default-value>
-            </attribute-definition>
             <attribute-definition attribute-id="TMCategoryCode">
                 <display-name xml:lang="x-default">TextMaster Category Code</display-name>
                 <description xml:lang="x-default">Set via API Setup page</description>
@@ -125,33 +116,6 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
                 <default-value>C020</default-value>
-            </attribute-definition>
-            <attribute-definition attribute-id="TMContentAttributes">
-                <display-name xml:lang="x-default">TextMaster Content Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default content asset attributes for translation (Set via Default Attribute Setup page)</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[]</default-value>
-            </attribute-definition>
-	    <attribute-definition attribute-id="TMFolderAttributes">
-                <display-name xml:lang="x-default">TextMaster Folder Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default folder attributes for translation (Set via Default Attribute Setup page)</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[]</default-value>
-            </attribute-definition>
-            <attribute-definition attribute-id="TMPagedesignerAttributes">
-                <display-name xml:lang="x-default">TextMaster Page Designer Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default page designer attributes for translation (Set via Default Attribute Setup page)</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[]</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMDashboardPageSize">
                 <display-name xml:lang="x-default">Dashboard Data Size</display-name>
@@ -205,15 +169,6 @@
                 <type>password</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-            </attribute-definition>
-            <attribute-definition attribute-id="TMProductAttributes">
-                <display-name xml:lang="x-default">TextMaster Product Attributes</display-name>
-                <description xml:lang="x-default">TextMaster default product attributes for translation</description>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-                <default-value>[]</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="TMSFpassword">
                 <display-name xml:lang="x-default">Store front Password</display-name>
@@ -280,11 +235,6 @@
         <group-definitions>
             <attribute-group group-id="TextMaster">
                 <display-name xml:lang="x-default">TextMaster</display-name>
-                <attribute attribute-id="TMCategoryAttributes"/>
-                <attribute attribute-id="TMProductAttributes"/>
-                <attribute attribute-id="TMContentAttributes"/>
-		<attribute attribute-id="TMFolderAttributes"/>
-                <attribute attribute-id="TMPagedesignerAttributes"/>
                 <attribute attribute-id="TMCategoryCode"/>
                 <attribute attribute-id="TMEmail"/>
                 <attribute attribute-id="TMLibraryType"/>
@@ -295,13 +245,13 @@
                 <attribute attribute-id="TMAPIEnvironment"/>
                 <attribute attribute-id="TMDashboardPageSize"/>
                 <attribute attribute-id="TMAPICache"/>
-		<attribute attribute-id="tmApiBaseUrlDemo"/>
-		<attribute attribute-id="tmApiBaseUrlLive"/>
-		<attribute attribute-id="tmBackofficeBaseUrlDemo"/>
-		<attribute attribute-id="tmBackofficeBaseUrlLive"/>
-		<attribute attribute-id="tmApiVersionUrlDemo"/>
-		<attribute attribute-id="tmApiVersionUrlLive"/>
-		<attribute attribute-id="tmLanguageMapping"/>
+				<attribute attribute-id="tmApiBaseUrlDemo"/>
+				<attribute attribute-id="tmApiBaseUrlLive"/>
+				<attribute attribute-id="tmBackofficeBaseUrlDemo"/>
+				<attribute attribute-id="tmBackofficeBaseUrlLive"/>
+				<attribute attribute-id="tmApiVersionUrlDemo"/>
+				<attribute attribute-id="tmApiVersionUrlLive"/>
+				<attribute attribute-id="tmLanguageMapping"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
