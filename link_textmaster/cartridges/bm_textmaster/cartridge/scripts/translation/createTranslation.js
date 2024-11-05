@@ -20,6 +20,8 @@ var ContentMgr = require('dw/content/ContentMgr');
 var SystemObjectMgr = require('dw/object/SystemObjectMgr');
 var Calendar = require('dw/util/Calendar');
 var StringUtils = require('dw/util/StringUtils');
+var URLAction = require('dw/web/URLAction');
+var URLUtils = require('dw/web/URLUtils');
 
 /* Script Includes */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
@@ -366,7 +368,9 @@ function getOutput(input) {
             request.setLocale(dwLocaleID); // eslint-disable-line no-undef
             var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
             var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
-            var callBackURL = 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMImport-Data';
+            var urlAction = new URLAction('TMImport-Data', Site.current.ID, 'default');
+            var storeURL = URLUtils.abs(urlAction).toString();
+            var callBackURL = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
 
             var callbackObject = {
                 in_extra_review: {
