@@ -25,6 +25,8 @@ var StringUtils = require('dw/util/StringUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var CatalogMgr = require('dw/catalog/CatalogMgr');
 var ContentMgr = require('dw/content/ContentMgr');
+var URLAction = require('dw/web/URLAction');
+var URLUtils = require('dw/web/URLUtils');
 
 /* Script Includes */
 var customCache = require('./customCacheWebdav');
@@ -1076,7 +1078,10 @@ Utils.storefrontCall = function (method, endPoint, request, locale) {
 
     var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
     var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
-    var endPointUrl = 'https://' + sfProtectionURLpart + Site.current.httpHostName + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/' + languageCode + endPoint;
+    var urlAction = new URLAction('TMImport-Data', Site.current.ID, languageCode);
+    var storeURL = URLUtils.abs(urlAction).toString();
+    var endPointUrl = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
+    endPointUrl = endPointUrl.replace('/TMImport-Data', endPoint);
 
     request = request || '';
     var serviceConfig = Utils.getServiceConfigPublic();
