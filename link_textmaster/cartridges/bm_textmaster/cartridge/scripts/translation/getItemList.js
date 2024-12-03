@@ -50,8 +50,12 @@ function getOutput(input) {
     var itemType = input.ItemType;
     var categoryIDs = input.Category ? input.Category.split(',') : [];
     var productIDs = input.ProductIDs ? input.ProductIDs.split(',') : [];
+    var contentIDs = input.ContentIDs ? input.ContentIDs.split(',') : [];
+    var contentPage = input.ContentPage;
     var items = [];
     var allCategories = [];
+    var isLastContentPage = true;
+    var i;
 
     if (!itemType || (itemType === 'category' && !categoryIDs.length) || (itemType === 'product' && !categoryIDs.length && !productIDs.length)) {
         log.error('Mandatory values are missing for getting item list');
@@ -83,7 +87,7 @@ function getOutput(input) {
                 }
             }
         } else {
-            for (var i = 0; i < productIDs.length; i++) {
+            for (i = 0; i < productIDs.length; i++) {
                 var product = ProductMgr.getProduct(productIDs[i].trim());
 
                 if (!(utils.isProductExistInList(items, product)) && !isLastExported(product, date)) {
@@ -113,26 +117,81 @@ function getOutput(input) {
         }
         break;
     case 'content':
-        var library = ContentMgr.siteLibrary;
-        var rootContentFolder = library.root;
-        var subContentFolders = getSubContentFolders(rootContentFolder);
-        /* read all contents of root content folder, convert to array and keep in items */
-        var contents = rootContentFolder.content;
-        items = contents.toArray();
+        var content;
 
-        /* read all contents of sub content folders, convert to array and append to items */
-        for (var index = 0; index < subContentFolders.length; index++) {
-            contents = subContentFolders[index].content.toArray();
-            for (var con = 0; con < contents.length; con++) {
-                var content = contents[con];
-                var contentCurrentIndex = contents.indexOf(content);
+        if (contentIDs && contentIDs.length) {
+            contentPage = 0;
+            var consideredCIDs = [];
 
-                if (isLastExported(content, date)) {
-                    contents.splice(contentCurrentIndex, 1);
-                    con--;
+            for (i = 0; i < contentIDs.length; i++) {
+                if (!consideredCIDs.includes(contentIDs[i].trim())) {
+                    content = ContentMgr.getContent(contentIDs[i].trim());
+
+                    if (content) {
+                        if (!isLastExported(content, date)) {
+                            items.push(content);
+                            consideredCIDs.push(contentIDs[i].trim());
+                        }
+                    } else {
+                        log.error('Content ID "' + contentIDs[i].trim() + '" is not valid so skipping on search');
+                    }
                 }
             }
-            items.push.apply(items, contents);
+        } else {
+            const CONTENT_PAGE_SIZE = 1000;
+            var skippedContents = 0;
+            var library = ContentMgr.siteLibrary;
+            var rootContentFolder = library.root;
+            var subContentFolders = getSubContentFolders(rootContentFolder);
+            /* read all contents of root content folder, convert to array and keep in items */
+            var contents = rootContentFolder.content;
+            var contentsArray = contents.toArray();
+            contentPage = contentPage === 0 ? 1 : contentPage;
+
+            if (contentPage === 1) {
+                items = contentsArray.length <= CONTENT_PAGE_SIZE ? contentsArray : contentsArray.slice(0, CONTENT_PAGE_SIZE);
+            } else if (contentsArray.length > (contentPage - 1) * CONTENT_PAGE_SIZE) {
+                items = contentsArray.slice((contentPage - 1) * CONTENT_PAGE_SIZE, CONTENT_PAGE_SIZE);
+            } else {
+                skippedContents = contentsArray.length;
+            }
+
+            if (items.length < CONTENT_PAGE_SIZE) {
+                /* read all contents of sub content folders, convert to array and append to items */
+                for (var index = 0; index < subContentFolders.length; index++) {
+                    contents = subContentFolders[index].content.toArray();
+
+                    for (var con = 0; con < contents.length; con++) {
+                        content = contents[con];
+
+                        if (!isLastExported(content, date)) {
+                            if (contentPage === 1) {
+                                items.push(content);
+
+                                if (items.length === CONTENT_PAGE_SIZE) {
+                                    break;
+                                }
+                            } else if (skippedContents < (contentPage - 1) * CONTENT_PAGE_SIZE) {
+                                skippedContents++;
+                            } else {
+                                items.push(content);
+
+                                if (items.length === CONTENT_PAGE_SIZE) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (items.length === CONTENT_PAGE_SIZE) {
+                        break;
+                    }
+                }
+            }
+
+            if (items.length === CONTENT_PAGE_SIZE) {
+                isLastContentPage = false;
+            }
         }
 
         break;
@@ -158,7 +217,9 @@ function getOutput(input) {
     return {
         Type: itemType,
         ItemList: items,
-        CategoryList: allCategories
+        CategoryList: allCategories,
+        ContentPage: contentPage,
+        IsLastContentPage: isLastContentPage
     };
 }
 

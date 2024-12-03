@@ -728,6 +728,19 @@ span.cache-message {
     display: none;
 }
 
+.content-pagination {
+    text-align: center;
+    border-top: 1px solid #DADADA;
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+}
+
+.content-pagination .buttons {
+	max-width: 20em;
+    margin: auto;
+    text-align: center;
+}
+
 /* Responsive */
 @media screen and (max-width:2732px) {
     .new-translation #items-holder .item-label {

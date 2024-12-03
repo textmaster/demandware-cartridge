@@ -78,6 +78,8 @@ function itemList() {
         Category: request.httpParameterMap.get('category').stringValue,
         ItemType: request.httpParameterMap.get('itemType').stringValue,
         ProductIDs: request.httpParameterMap.get('pids').stringValue,
+        ContentIDs: request.httpParameterMap.get('cids').stringValue,
+        ContentPage: request.httpParameterMap.get('contentPage').intValue,
         Date: request.httpParameterMap.get('date').stringValue
     };
     var output = items.output(input);
@@ -102,6 +104,8 @@ function itemList() {
             CategoryList: output.CategoryList,
             Languages: languages,
             ProductTypes: productTypes,
+            ContentPage: output.ContentPage,
+            IsLastContentPage: output.IsLastContentPage,
             Utils: utils
         });
     }

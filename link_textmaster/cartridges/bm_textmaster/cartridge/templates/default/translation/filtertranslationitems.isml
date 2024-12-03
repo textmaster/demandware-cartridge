@@ -48,6 +48,12 @@
 						<textarea name="product-ids" rows="4" cols="50"></textarea>
 					</div>
 				</div>
+				<div class="field-holder content-id hide">
+					<div class="label-holder">${Resource.msg('translation.search.contents.by.id','textmaster',null)}: </div>
+					<div class="input-holder">
+						<textarea name="content-ids" rows="4" cols="50"></textarea>
+					</div>
+				</div>
 				<div class="field-holder">
 					<div class="label-holder">${Resource.msg('translation.from','textmaster',null)}: </div>
 					<div class="input-holder">
@@ -95,6 +101,7 @@
 				</div>
 			</div>
 			<div class="form-holder relative items">
+				<input type="hidden" name="content-page" value="1" />
 				<div class="field-holder title-holder">
 					<h2>${Resource.msg('translation.select.items','textmaster',null)}</h2>
 				</div>

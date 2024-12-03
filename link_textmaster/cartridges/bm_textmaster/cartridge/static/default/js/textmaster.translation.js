@@ -40,6 +40,10 @@
 
             $('select[name=item-type]').on('change', function () {
                 var itemType = this.value;
+                $('.search-by').addClass('hide');
+                $('.product-id').addClass('hide');
+                $('.content-id').addClass('hide');
+                $('.category').removeClass('show');
 
                 if (itemType === 'component') {
                 	$('.form-holder.page-designer').addClass('show');
@@ -80,8 +84,6 @@
                     });
                     $('select[name=search-type]').change();
                 } else if (itemType === 'category') {
-                    $('.search-by').addClass('hide');
-                    $('.product-id').addClass('hide');
                     $('.category').addClass('show');
                     $('ul.select-category').html('<span>' + Resources.messages.WAITING + '</span>');
                     $('.common-error.search').removeClass('show');
@@ -91,10 +93,8 @@
                         $('.input-holder.category').html(data);
                     });
                     $(this).removeClass('error-field');
-                } else {
-                    $('.search-by').addClass('hide');
-                    $('.product-id').addClass('hide');
-                    $('.category').removeClass('show');
+                } else if (itemType === 'content') {
+                	$('.content-id').removeClass('hide');
                 }
 
                 $('.attributes-main').html('');
@@ -187,6 +187,8 @@
                 var searchBy = $('select[name=search-type]').val();
                 var category = [];
                 var pids = $('textarea[name=product-ids]').val();
+                var cids = $('textarea[name=content-ids]').val();
+                var contentPage = $('input[name=content-page]').val();
                 var error = false;
                 var errorText = '';
                 pageIDs = $('input[type="checkbox"][name="page-designer[]"]:checked').map(function(){
@@ -238,6 +240,8 @@
                         itemType: itemType,
                         category: searchBy === 'category' ? category.join(',') : '',
                         pids: searchBy === 'productid' ? pids : '',
+                        cids: cids,
+                        contentPage: contentPage,
                         date: exportDate
                     };
                 	$.post(textMasterGeneralApp.urls.translationItemList, postData, function (data) {
@@ -245,6 +249,7 @@
                         if (itemType !== 'pagedesigner') {
                         	$('#filter-search').prop('disabled', false).val(searchText);
                         	$('.items .ajax-loader').removeClass('show');
+                        	textMasterTranslationApp.itemListEvents();
                         }
                     });
                 }
@@ -417,6 +422,23 @@
                 // Populate To Language List if only one language is on From Language list
                 $('select[name=locale-from]').trigger('change');
             }
+        },
+        itemListEvents: function() {
+        	$('input[type="button"][name="content-page-prev"]').on('click', function () {
+            	var contentPage = $('input[name=content-page]').val();
+            	contentPage = contentPage == 1 ? 1 : contentPage - 1;
+            	$('input[name=content-page]').val(contentPage);
+            	
+            	$('#filter-search').trigger('click');
+            });
+            
+            $('input[type="button"][name="content-page-next"]').on('click', function () {
+            	var contentPage = $('input[name=content-page]').val();
+            	contentPage++;
+            	$('input[name=content-page]').val(contentPage);
+            	
+            	$('#filter-search').trigger('click');
+            });
         }
     };
 
