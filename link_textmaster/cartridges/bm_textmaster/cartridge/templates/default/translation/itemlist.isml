@@ -133,6 +133,19 @@
 	    </isloop>
     </tbody>
 </table>
+<isif condition="${pdict.ContentPage > 1 || pdict.IsLastContentPage == false}">
+	<div class="content-pagination">
+		<p>${Resource.msg('translation.items.content.pagination.description','textmaster',null)}</p>
+		<div class="buttons">
+			<isif condition="${pdict.ContentPage > 1}">
+				<input type="button" value="${Resource.msg('general.prev.page','textmaster',null)}" name="content-page-prev">
+			</isif>
+			<isif condition="${pdict.IsLastContentPage == false}">
+				<input type="button" value="${Resource.msg('general.next.page','textmaster',null)}" name="content-page-next">
+			</isif>
+		</div>
+	</div>
+</isif>
 
 <script src="${URLUtils.staticURL('/js/jquery.multiselect.js')}"></script>
 <script>

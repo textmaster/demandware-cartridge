@@ -12,5 +12,8 @@
         "no-shadow": ["error", { "allow": ["err", "callback"]}],
         "linebreak-style": 0,
         "max-len": "off"
+    },
+    "env": {
+        "es6": true
     }
 }
