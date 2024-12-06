@@ -2,8 +2,9 @@
 
 /* API Includes */
 var Site = require('dw/system/Site');
-var System = require('dw/system/System');
 var Resource = require('dw/web/Resource');
+var URLAction = require('dw/web/URLAction');
+var URLUtils = require('dw/web/URLUtils');
 
 /* Script Includes */
 var logUtils = require('*/cartridge/scripts/utils/tmLogUtils');
@@ -28,7 +29,12 @@ function getOutput(input) {
         utils.textMasterClient('PUT', projectEndPoint, JSON.stringify({}));
     } else {
         log.debug('Sending quote for Project ID: ' + projectID);
-        utils.triggerURL('POST', 'https://' + sfProtectionURLpart + System.instanceHostname + '/on/demandware.store/Sites-' + Site.current.ID + '-Site/default/TMQuote-Send?projectid=' + projectID);
+        var endPoint = '/TMQuote-Send?projectid=' + projectID;
+        var urlAction = new URLAction('TMController-Dummy', Site.current.ID, 'default');
+        var storeURL = URLUtils.abs(urlAction).toString();
+        var endPointUrl = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
+        endPointUrl = endPointUrl.replace('/TMController-Dummy', endPoint);
+        utils.triggerURL('POST', endPointUrl);
     }
 
     return {
