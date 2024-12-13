@@ -34,6 +34,8 @@ function getOutput(input) {
         var storeURL = URLUtils.abs(urlAction).toString();
         var endPointUrl = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
         endPointUrl = endPointUrl.replace('/TMController-Dummy', endPoint);
+        endPointUrl = utils.replaceHostnameWithExternalAlias(endPointUrl, sfProtectionURLpart);
+        log.debug('Quote controller: ' + endPointUrl);
         utils.triggerURL('POST', endPointUrl);
     }
 
