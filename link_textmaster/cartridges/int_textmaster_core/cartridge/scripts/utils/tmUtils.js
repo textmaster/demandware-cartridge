@@ -71,6 +71,7 @@ Utils.config = {
     apiEnv: Site.current.getCustomPreferenceValue('TMAPIEnvironment') || 'demo',
     tmBackofficeBaseUrlLive: Site.current.getCustomPreferenceValue('tmBackofficeBaseUrlLive') || 'live',
     tmBackofficeBaseUrlDemo: Site.current.getCustomPreferenceValue('tmBackofficeBaseUrlDemo') || 'demo',
+    tmExternalAliasHostName: Site.current.getCustomPreferenceValue('tmExternalAliasHostName') || '',
     tmApiBaseUrlDemo: Site.current.getCustomPreferenceValue('tmApiBaseUrlDemo') || '',
     tmApiBaseUrlLive: Site.current.getCustomPreferenceValue('tmApiBaseUrlLive') || '',
     tmApiVersionUrlLive: Site.current.getCustomPreferenceValue('tmApiVersionUrlLive') || '',
@@ -1078,10 +1079,11 @@ Utils.storefrontCall = function (method, endPoint, request, locale) {
 
     var tmSFpassword = Site.getCurrent().getCustomPreferenceValue('TMSFpassword') || '';
     var sfProtectionURLpart = (Site.current.status === Site.SITE_STATUS_PROTECTED) ? (Resource.msg('storefront.username', 'textmaster', null) + ':' + tmSFpassword + '@') : '';
-    var urlAction = new URLAction('TMImport-Data', Site.current.ID, languageCode);
+    var urlAction = new URLAction('TMController-Dummy', Site.current.ID, languageCode);
     var storeURL = URLUtils.abs(urlAction).toString();
     var endPointUrl = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
-    endPointUrl = endPointUrl.replace('/TMImport-Data', endPoint);
+    endPointUrl = endPointUrl.replace('/TMController-Dummy', endPoint);
+    endPointUrl = Utils.replaceHostnameWithExternalAlias(endPointUrl, sfProtectionURLpart);
 
     request = request || '';
     var serviceConfig = Utils.getServiceConfigPublic();
@@ -1639,6 +1641,28 @@ Utils.getVariationAttributes = function (product) {
     }
 
     return productVariationAttributes;
+};
+
+/**
+ * Replaces host name in storefront controllers like callback URLs with external alias in the custom site preference
+ * @param {string} endPointUrl - Storefront URL
+ * @param {string} sfProtectionURLpart - Storefront protection username and password combination in storefront URL
+ * @returns {string} - Modified Storefront URL
+ * */
+Utils.replaceHostnameWithExternalAlias = function (endPointUrl, sfProtectionURLpart) {
+    var exteralAlias = Utils.config.tmExternalAliasHostName;
+
+    if (exteralAlias) {
+        exteralAlias = exteralAlias.replace('https://', '');
+        var modifiedEndPointUrl = endPointUrl.replace('https://', '');
+        modifiedEndPointUrl = modifiedEndPointUrl.replace(sfProtectionURLpart, '');
+        modifiedEndPointUrl = modifiedEndPointUrl.substring(modifiedEndPointUrl.indexOf('/') + 1);
+        modifiedEndPointUrl = 'https://' + sfProtectionURLpart + exteralAlias + modifiedEndPointUrl;
+
+        return modifiedEndPointUrl;
+    }
+
+    return endPointUrl;
 };
 
 module.exports = Utils;

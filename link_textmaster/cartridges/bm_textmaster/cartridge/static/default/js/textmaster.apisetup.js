@@ -77,6 +77,7 @@
                 data.tmBackofficeBaseUrlDemo = $('input[name=backoffice-basedemourl]').val();
                 data.tmApiVersionUrlDemo = $('input[name=api-versiondemourl]').val();
                 data.tmApiVersionUrlLive = $('input[name=api-versionliveurl]').val();
+                data.tmExternalAliasHostName = $('input[name=external-alias-host-name]').val();
             },
             validate: function () {
                 var errorMessages = [];

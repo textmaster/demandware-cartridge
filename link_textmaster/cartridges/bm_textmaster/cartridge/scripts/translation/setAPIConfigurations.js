@@ -23,6 +23,8 @@ function getOutput(input) {
     site.setCustomPreferenceValue('tmBackofficeBaseUrlDemo', input.tmBackofficeBaseUrlDemo);
     site.setCustomPreferenceValue('tmApiVersionUrlLive', input.tmApiVersionUrlLive);
     site.setCustomPreferenceValue('tmApiVersionUrlDemo', input.tmApiVersionUrlDemo);
+    site.setCustomPreferenceValue('tmExternalAliasHostName', input.tmExternalAliasHostName);
+
     if (Site.current.status === Site.SITE_STATUS_PROTECTED) {
         site.setCustomPreferenceValue('TMSFpassword', input.TMSFpassword);
     }

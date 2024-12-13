@@ -176,6 +176,20 @@
 					<span class="cache-message hidden">${Resource.msg('api.cache.message', 'textmaster',null)}</span>
 				</td>
 			</tr>
+			<thead>
+				<tr>
+					<th colspan="2" class="table_header n w e s left">${Resource.msg('general.other.settings', 'textmaster',null)}</th>
+				</tr>
+			</thead>
+			<tr>
+				<td class="table_detail e s w right">
+					${Resource.msg('api.external.alias.hostname', 'textmaster',null)}
+				</td>
+				<td class="table_detail e s">
+					<input type="text" name="external-alias-host-name" value="${pdict.tmExternalAliasHostName}"/>
+					<span>${Resource.msg('api.external.alias.hostname.desc', 'textmaster',null)}</span>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

@@ -371,6 +371,7 @@ function getOutput(input) {
             var urlAction = new URLAction('TMImport-Data', Site.current.ID, 'default');
             var storeURL = URLUtils.abs(urlAction).toString();
             var callBackURL = storeURL.replace('https://', 'https://' + sfProtectionURLpart);
+            callBackURL = utils.replaceHostnameWithExternalAlias(callBackURL, sfProtectionURLpart);
 
             var callbackObject = {
                 in_extra_review: {

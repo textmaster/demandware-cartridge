@@ -173,6 +173,7 @@ function saveAPIConfigurations() {
         APICache: request.httpParameterMap.get('apiCache').stringValue,
         TMPageSize: request.httpParameterMap.get('tmPageSize').intValue,
         TMSFpassword: request.httpParameterMap.get('tmSFpassword').stringValue,
+        tmExternalAliasHostName: request.httpParameterMap.get('tmExternalAliasHostName').stringValue,
         tmApiBaseUrlDemo: request.httpParameterMap.get('tmApiBaseUrlDemo').stringValue,
         tmApiBaseUrlLive: request.httpParameterMap.get('tmApiBaseUrlLive').stringValue,
         tmBackofficeBaseUrlLive: request.httpParameterMap.get('tmBackofficeBaseUrlLive').stringValue,

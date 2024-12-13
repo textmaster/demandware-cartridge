@@ -28,6 +28,7 @@ function getOutput() {
         APICategories: categories,
         TMPageSize: site.getCustomPreferenceValue('TMDashboardPageSize') || 100,
         TMSFpassword: site.getCustomPreferenceValue('TMSFpassword') || '',
+        tmExternalAliasHostName: site.getCustomPreferenceValue('tmExternalAliasHostName') || '',
         tmApiBaseUrlDemo: site.getCustomPreferenceValue('tmApiBaseUrlDemo') || '',
         tmApiBaseUrlLive: site.getCustomPreferenceValue('tmApiBaseUrlLive') || '',
         tmBackofficeBaseUrlLive: site.getCustomPreferenceValue('tmBackofficeBaseUrlLive') || '',
