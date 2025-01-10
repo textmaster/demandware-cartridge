@@ -84,6 +84,8 @@
                         } else {
                             noAutoLaunchCount++;
                         }
+                        
+                        transParams.localeTo[count].briefing = $('input[name=project-briefing-' + count + ']').val();
                     }
 
                     transParams.projectIDs = [];
@@ -103,6 +105,44 @@
             });
 
             $('#reload-templates').trigger('click');
+            
+            $('img.project-briefing').on('click', function () {
+            	var index = $(this).data('index');
+            	$('input[name=project-index]').val(index);
+            	var briefing = $('input[name=project-briefing-' + index + ']').val();
+            	$('.project-briefing-holder textarea').val(briefing);
+            	$('.overlay-holder').addClass('show');
+            });
+            
+            $('.overlay-holder .cancel-button').on('click', function () {
+            	$('.overlay-holder').removeClass('show');
+            });
+            
+            $('.overlay-holder .clear-button').on('click', function () {
+            	$('.project-briefing-holder textarea').val('');
+            	$('.project-briefing-holder textarea').focus();
+            });
+            
+            $('.overlay-holder .apply-button').on('click', function () {
+            	var briefing = $('.project-briefing-holder textarea').val().trim();
+            	var projectIndex = $('input[name=project-index]').val();
+            	$('input[name=project-briefing-' + projectIndex + ']').val(briefing);
+            	$('.overlay-holder').removeClass('show');
+            	
+            	if (briefing) {
+            		$('input[name=project-briefing-' + projectIndex + ']').parent().addClass('briefing-added');
+            	} else {
+            		$('input[name=project-briefing-' + projectIndex + ']').parent().removeClass('briefing-added');
+            	}
+            });
+            
+            $('.project-briefing-holder textarea').on('focus', function () {
+            	$(this).parent().addClass('focus');
+            });
+            
+            $('.project-briefing-holder textarea').on('blur', function () {
+            	$(this).parent().removeClass('focus');
+            });
         },
 
         triggerExportRequest: function (transParams) {

@@ -14,7 +14,7 @@
 		<a href="${currentBaseURL + Resource.msg('link.clients','textmaster',null) + Resource.msg('link.list.templates','textmaster',null)}" target="_blank" class="button">${Resource.msg('order.edit.templates','textmaster',null)}</a>
 		<a id="reload-templates" class="button">${Resource.msg('order.reload.templates','textmaster',null)}</a>
 	</div>
-	<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<table class="project-entries" class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
 				<th class="table_header n w e s center">${Resource.msg('general.item.type','textmaster',null)}</th>
@@ -22,6 +22,7 @@
 				<th class="table_header n e s center">${Resource.msg('order.target.locale','textmaster',null)}</th>
 				<th class="table_header n e s center">${Resource.msg('order.item.count','textmaster',null)}</th>
 				<th class="table_header n e s center">${Resource.msg('general.attributes','textmaster',null)}</th>
+				<th class="table_header n e s center">${Resource.msg('follow.item.action','textmaster',null)}</th>
 				<th class="table_header n e s center">${Resource.msg('order.select.template','textmaster',null)}</th>
 			</tr>
 		</thead>
@@ -42,6 +43,11 @@
 								</isif>
 							</isloop>
 						</ul>
+					</td>
+					<td class="table_detail e s center">
+						<img src="${URLUtils.staticURL('/icons/tm_briefing.png')}" title="${Resource.msg('order.add.project.briefing','textmaster',null)}" class="project-briefing" data-index="${loopstate.index}" />
+						<span class="tick-mark"></span>
+						<input type="hidden" name="project-briefing-${loopstate.index}" value="" />
 					</td>
 					<td class="table_detail e s center">
 						<isset name="getMappedLanguageFrom" value="${utils.getMappedLanguage(transParams.localeFrom.id)}" scope="page"/>
@@ -75,6 +81,24 @@
 		<input type="hidden" name="projectID" value="">
 	</form>
 	<span class="hidden" id="hidden-values">${JSON.stringify(transParams)}</span>
+</div>
+<div class="overlay-holder">
+	<div class="overlay">
+		<div class="project-briefing-holder">
+			<h2>${Resource.msg('order.project.briefing.title','textmaster',null)}</h2>
+			<div class="field-holder">
+				<div class="textarea-holder">
+					<textarea maxlength="2000"></textarea>
+				</div>
+			</div>
+			<div class="field-holder button-holder">
+				<input type="button" value="${Resource.msg('general.close','textmaster',null)}" class="cancel-button" />
+				<input type="button" value="${Resource.msg('general.clear','textmaster',null)}" class="clear-button" />
+				<input type="button" value="${Resource.msg('general.apply','textmaster',null)}" class="apply-button" />
+				<input type="hidden" name="project-index" />
+			</div>
+		</div>
+	</div>
 </div>
 <isinclude template="resources/appresources"/>
 </isdecorate>

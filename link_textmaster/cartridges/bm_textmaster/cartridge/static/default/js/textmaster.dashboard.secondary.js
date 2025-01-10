@@ -11,6 +11,7 @@
         urls: {
             docDashboardData: 'TMComponents-DocDashboardData',
             docDashboardFirstRow: 'TMComponents-DocDashboardFirstRow',
+            documentInstructionsUpdate: 'TMComponents-DocInstructionsUpdate',
             documentComplete: 'TMComponents-DocumentComplete'
         },
         docsFollowup: {
@@ -66,6 +67,63 @@
                             }
                         });
                     }
+                });
+                
+                $('.docs-followup').on('click', 'img.document-instructions', function () {
+                	var documentID = $(this).data('document-id');
+                	$('input[name=instructions-document-id]').val(documentID);
+                	var instructions = $('input[name=document-instructions-' + documentID + ']').val();
+                	$('.document-instructions-holder textarea').val(instructions);
+                	$('.overlay-holder').addClass('show');
+                });
+                
+                $('.overlay-holder .cancel-button').on('click', function () {
+                	$('.overlay-holder').removeClass('show');
+                });
+                
+                $('.overlay-holder .clear-button').on('click', function () {
+                	$('.document-instructions-holder textarea').val('');
+                	$('.document-instructions-holder textarea').focus();
+                });
+                
+                $('.overlay-holder .document-instructions-holder .apply-button').on('click', function () {
+                	var saveButton = $(this);
+                	saveButton.prop('disabled', true);
+                	var instructions = $('.document-instructions-holder textarea').val().trim();
+                	var documentID = $('input[name=instructions-document-id]').val();
+                	var projectID = $('input[name=project-id]').val();
+                	var postData = {
+                		projectID: projectID,
+                		documentID: documentID,
+                		instructions: instructions
+                	};
+                	
+                	$.post(app.urls.documentInstructionsUpdate, postData, function (response) {
+                		if (response && response.success) {
+                			$('input[name=document-instructions-' + documentID + ']').val(instructions);
+                			alert('Document instructions got updated successfully!');
+                			
+                			if (instructions) {
+                				$('input[name=document-instructions-' + documentID + ']').parent().addClass('instructions-added');
+                			} else {
+                				$('input[name=document-instructions-' + documentID + ']').parent().removeClass('instructions-added');
+                			}
+                		} else {
+                			alert('Document instructions failed to update. Document status might have changed already OR API server may have temporary issues.');
+                			window.location.reload();
+                		}
+
+                		saveButton.prop('disabled', false);
+                		$('.overlay-holder').removeClass('show');
+                	});
+                });
+                
+                $('.document-instructions-holder textarea').on('focus', function () {
+                	$(this).parent().addClass('focus');
+                });
+                
+                $('.document-instructions-holder textarea').on('blur', function () {
+                	$(this).parent().removeClass('focus');
                 });
             },
             loadDocData: function (initialLoad) {
@@ -166,9 +224,12 @@
                         storeURL = storeURL ? (storeURL + storeLinkID) : '';
                         var previewLink = storeURL ? '<a class="doc-link" href="' + storeURL + '" target="_blank">' + Resources.labels.PREVIEW_LINK + '</a><br/>' : '';
                         var reviewLink = documentLink ? '<a class="doc-link" href="' + documentLink + '" target="_blank">' + Resources.labels.REVIEW_LINK + '</a><br/>' : '';
+                        var staticIconsPath = $('input[name=static-icons-path]').val();
+                        var inCreationAction = '<img src="' + staticIconsPath + 'tm_briefing.png" title="Add document instructions" class="document-instructions" data-document-id="' + document.id + '" /><span class="tick-mark"></span><input type="hidden" name="document-instructions-' + document.id + '" value="' + document.instructions + '" class="document-instructions" />';
                         var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.labels.VALIDATE_ACTION + '</button>';
                         var links = documentStatus === Resources.labels.IN_EXTRA_REVIEW || documentStatus === Resources.labels.IN_REVIEW ? (previewLink + reviewLink) : '';
                         var actions = documentStatus === Resources.labels.IN_REVIEW ? validateAction : '';
+                        actions = documentStatus === Resources.labels.IN_CREATION || documentStatus === Resources.labels.COUNTING ? inCreationAction : '';
                         
                         tableRow.push(itemID);
                         tableRow.push(itemName);
@@ -215,6 +276,12 @@
                         docFollow.dataTable.page(docFollow.config.lastPage === lastPage ? (docFollow.config.lastPage - 1) : docFollow.config.lastPage).draw(false);
                         docFollow.populateDocStatusDiagram();
                     }
+                });
+                
+                $('input.document-instructions').each(function () {
+                	if ($(this).val()) {
+                		$(this).parent().addClass('instructions-added');
+                	}
                 });
 
                 if (itemType === 'component') {

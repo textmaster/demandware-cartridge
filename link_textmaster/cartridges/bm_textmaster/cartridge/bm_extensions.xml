@@ -56,6 +56,8 @@
 			<pipeline name="TMComponents-DocDashboardData" />
 			<pipeline name="TMComponents-DashboardFirstRow" />
 			<pipeline name="TMComponents-DocDashboardFirstRow" />
+			<pipeline name="TMComponents-DocInstructionsUpdate" />
+			<pipeline name="TMComponents-ProjectBriefingUpdate" />
 			<pipeline name="TMComponents-LaunchProject" />
 			<pipeline name="TMComponents-DocumentComplete" />
 		</sub-pipelines>
