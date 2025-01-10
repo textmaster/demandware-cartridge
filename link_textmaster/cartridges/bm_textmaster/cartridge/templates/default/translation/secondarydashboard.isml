@@ -114,6 +114,26 @@
         </tbody>
     </table>
     <div class="load-more"><input type="button" value="${Resource.msg('follow.loadmore.label','textmaster',null)}" title="${Resource.msg('follow.loadmore.label','textmaster',null)}" /></div>
+    <input type="hidden" name="static-icons-path" value="${URLUtils.staticURL('/icons/')}" />
+    <input type="hidden" name="project-id" value="${pdict.projectID}" />
+</div>
+<div class="overlay-holder">
+	<div class="overlay">
+		<div class="document-instructions-holder">
+			<h2>${Resource.msg('follow.document.instructions.title','textmaster',null)}</h2>
+			<div class="field-holder">
+				<div class="textarea-holder">
+					<textarea maxlength="2000"></textarea>
+				</div>
+			</div>
+			<div class="field-holder button-holder">
+				<input type="button" value="${Resource.msg('general.close','textmaster',null)}" class="cancel-button" />
+				<input type="button" value="${Resource.msg('general.clear','textmaster',null)}" class="clear-button" />
+				<input type="button" value="${Resource.msg('general.apply','textmaster',null)}" class="apply-button" />
+				<input type="hidden" name="instructions-document-id" />
+			</div>
+		</div>
+	</div>
 </div>
 
 <isinclude template="resources/appresources"/>

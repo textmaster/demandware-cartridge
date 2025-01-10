@@ -12,6 +12,7 @@
             dashboardData: 'TMComponents-DashboardData',
             dashboardFirstRow: 'TMComponents-DashboardFirstRow',
             launchProject: 'TMComponents-LaunchProject',
+            projectBriefingUpdate: 'TMComponents-ProjectBriefingUpdate',
             documentFollowUp: 'TMTranslation-DocumentsFollowUp'
         },
         followup: {
@@ -66,6 +67,61 @@
                             $button.parent().append($('<div class="translate-action-error"></div>').text(Resources.errors.TRANSLATE_ACTION));
                         }
                     });
+                });
+                
+                $('.primary-dashboard').on('click', 'img.project-briefing', function () {
+                	var projectID = $(this).data('project-id');
+                	$('input[name=project-id]').val(projectID);
+                	var briefing = $('input[name=project-briefing-' + projectID + ']').val();
+                	$('.project-briefing-holder textarea').val(briefing);
+                	$('.overlay-holder').addClass('show');
+                });
+                
+                $('.overlay-holder .cancel-button').on('click', function () {
+                	$('.overlay-holder').removeClass('show');
+                });
+                
+                $('.overlay-holder .clear-button').on('click', function () {
+                	$('.project-briefing-holder textarea').val('');
+                	$('.project-briefing-holder textarea').focus();
+                });
+                
+                $('.overlay-holder .apply-button').on('click', function () {
+                	var saveButton = $(this);
+                	saveButton.prop('disabled', true);
+                	var briefing = $('.project-briefing-holder textarea').val().trim();
+                	var projectID = $('input[name=project-id]').val();
+                	var postData = {
+                		projectID: projectID,
+                		briefing: briefing
+                	};
+                	
+                	$.post(app.urls.projectBriefingUpdate, postData, function (response) {
+                		if (response && response.success) {
+                			$('input[name=project-briefing-' + projectID + ']').val(briefing);
+                			alert('Project instructions got updated successfully!');
+                			
+                			if (briefing) {
+                        		$('input[name=project-briefing-' + projectID + ']').parent().addClass('briefing-added');
+                        	} else {
+                        		$('input[name=project-briefing-' + projectID + ']').parent().removeClass('briefing-added');
+                        	}
+                		} else {
+                			alert('Project instructions failed to update. Project status might have changed already OR API server may have temporary issues.');
+                			window.location.reload();
+                		}
+
+                		saveButton.prop('disabled', false);
+                		$('.overlay-holder').removeClass('show');
+                	});
+                });
+                
+                $('.project-briefing-holder textarea').on('focus', function () {
+                	$(this).parent().addClass('focus');
+                });
+                
+                $('.project-briefing-holder textarea').on('blur', function () {
+                	$(this).parent().removeClass('focus');
                 });
             },
             loadData: function (initialLoad) {
@@ -135,8 +191,11 @@
                         var itemTypeFormatted = app.utils.firstLetterCapital(itemType);
                         var projectLocale = project.locale ? project.locale : '';
                         var projectStatus = project.status;
+                        var staticIconsPath = $('input[name=static-icons-path]').val();
                         var translateAction = '<button class="dashboard-action-button actions-translate" value=' + project.id + '>' + Resources.labels.TRANSLATE_ACTION + '</button>';
-                        var actions = projectStatus === Resources.labels.IN_CREATION ? translateAction : '';
+                        var inCreationAction = '<img src="' + staticIconsPath + 'tm_briefing.png" title="Add project instructions" class="project-briefing" data-project-id="' + project.id + '" /><span class="tick-mark"></span><input type="hidden" name="project-briefing-' + project.id + '" value="' + project.project_briefing + '" class="project-briefing" />';
+                        var actions = projectStatus === Resources.labels.IN_CREATION ? translateAction + inCreationAction : '';
+                        actions = projectStatus === Resources.labels.COUNTING ? inCreationAction : actions;
                         var price = project.currency;
                         var createdAt = project.created_at.full;
                         var creationDate = createdAt && createdAt.indexOf(' ') > -1 ? createdAt.split(' ')[0] : '';
@@ -175,6 +234,12 @@
                 var lastPage = parseInt($('#filtertableProjects_paginate span a.paginate_button:last-of-type').text(), 10);
                 follow.dataTable.page(follow.config.lastPage === lastPage ? (follow.config.lastPage - 1) : follow.config.lastPage).draw(false);
                 follow.populateStatusDiagram();
+                
+                $('input.project-briefing').each(function () {
+                	if ($(this).val()) {
+                		$(this).parent().addClass('briefing-added');
+                	}
+                });
             },
             populateStatusDiagram: function () {
                 var follow = this;

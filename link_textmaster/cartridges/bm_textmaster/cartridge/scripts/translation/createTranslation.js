@@ -337,7 +337,11 @@ function getOutput(input) {
             project.language_from = mappedLanguageFrom ? mappedLanguageFrom : localeFrom;
             project.language_to = mappedLanguageTo ? mappedLanguageTo : localeTo.id;
             project.category = categoryCode;
-            project.project_briefing = 'LANGUAGE - FROM ' + utils.getLocaleName(localeFrom) + ' [' + localeFrom + '] TO ' + utils.getLocaleName(localeTo.id) + ' [' + localeTo.id + '] - ' + Resource.msg('constant.briefing', 'textmaster', null);
+
+            if (localeTo.briefing) {
+                project.project_briefing = localeTo.briefing;
+            }
+
             project.options = {
                 language_level: Resource.msg('constant.enterprise', 'textmaster', null)
             };

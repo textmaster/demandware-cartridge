@@ -367,6 +367,37 @@ function clearToken() {
     r.renderJSON({ success: true });
 }
 
+/**
+* Document instructions update
+**/
+function docInstructionsUpdate() {
+    var projectID = request.httpParameterMap.get('projectID').stringValue;
+    var documentID = request.httpParameterMap.get('documentID').stringValue;
+    var instructions = request.httpParameterMap.get('instructions').stringValue;
+    var documentEndPoint = utils.config.api.get.project + '/' + projectID + '/' + utils.config.api.get.document + '/' + documentID;
+    var documentPostData = {
+        instructions: instructions
+    };
+    var resp = utils.textMasterClient('PUT', documentEndPoint, JSON.stringify(documentPostData));
+
+    r.renderJSON({ success: resp !== null });
+}
+
+/**
+* Project briefing update
+**/
+function projectBriefingUpdate() {
+    var projectID = request.httpParameterMap.get('projectID').stringValue;
+    var briefing = request.httpParameterMap.get('briefing').stringValue;
+    var projectEndPoint = utils.config.api.get.project + '/' + projectID;
+    var projectPostData = {
+        project_briefing: briefing
+    };
+    var resp = utils.textMasterClient('PUT', projectEndPoint, JSON.stringify(projectPostData));
+
+    r.renderJSON({ success: resp !== null });
+}
+
 /*
  * Web exposed methods
  */
@@ -394,6 +425,8 @@ getPageComponents.public = true;
 saveAuthData.public = true;
 generateToken.public = true;
 clearToken.public = true;
+docInstructionsUpdate.public = true;
+projectBriefingUpdate.public = true;
 
 exports.AttributeList = attributeList;
 exports.CategoryDropdown = categoryDropdown;
@@ -416,3 +449,5 @@ exports.GetPageComponents = getPageComponents;
 exports.SaveAuthData = saveAuthData;
 exports.GenerateToken = generateToken;
 exports.ClearToken = clearToken;
+exports.DocInstructionsUpdate = docInstructionsUpdate;
+exports.ProjectBriefingUpdate = projectBriefingUpdate;
