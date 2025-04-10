@@ -26,7 +26,7 @@ function register() {
         utils.resetLanguageCache();
     }
 
-    var abilityListCache = customCache.getCache(utils.config.cache.url.languages.abilityList);
+    var abilityListCache = customCache.getCache(utils.config.cache.url.languages.abilityList.replace('{site_id}', Site.current.ID));
 
     config.ClearCache = abilityListCache !== null;
 
