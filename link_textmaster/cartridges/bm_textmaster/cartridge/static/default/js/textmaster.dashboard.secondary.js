@@ -229,7 +229,7 @@
                         var validateAction = '<button class="dashboard-action-button actions-validate" value=' + document.id + '>' + Resources.labels.VALIDATE_ACTION + '</button>';
                         var links = documentStatus === Resources.labels.IN_EXTRA_REVIEW || documentStatus === Resources.labels.IN_REVIEW ? (previewLink + reviewLink) : '';
                         var actions = documentStatus === Resources.labels.IN_REVIEW ? validateAction : '';
-                        actions = documentStatus === Resources.labels.IN_CREATION || documentStatus === Resources.labels.COUNTING ? inCreationAction : '';
+                        actions = documentStatus === Resources.labels.IN_CREATION || documentStatus === Resources.labels.COUNTING ? inCreationAction : actions;
                         
                         tableRow.push(itemID);
                         tableRow.push(itemName);

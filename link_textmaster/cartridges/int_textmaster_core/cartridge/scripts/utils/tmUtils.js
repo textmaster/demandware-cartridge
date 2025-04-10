@@ -80,15 +80,12 @@ Utils.config = {
     languageMapping: Site.current.getCustomPreferenceValue('tmLanguageMapping') ? JSON.parse(Site.current.getCustomPreferenceValue('tmLanguageMapping')) : [],
     demandwareLanguages: [],
     dummyTestTranslationValue: '[translated] ',
-    fromLanguages: {
-        source: 'mapping'
-    },
     cache: {
         url: {
             languages: {
-                fromList: '/languages/fromList',
-                translation: '/languages/translation',
-                abilityList: '/languages/abilityList'
+                fromList: '/{site_id}/languages/fromList',
+                translation: '/{site_id}/languages/translation',
+                abilityList: '/{site_id}/languages/abilityList'
             },
             authentication: '/authentication',
             masterProducts: '/master-products'
@@ -323,7 +320,7 @@ Utils.formatLocaleStandard = function (locale) {
  * @returns {Array} languages array
  */
 Utils.getTranslationLanguages = function () {
-    var translationLanguageCache = customCache.getCache(Utils.config.cache.url.languages.translation);
+    var translationLanguageCache = customCache.getCache(Utils.config.cache.url.languages.translation.replace('{site_id}', Site.current.ID));
     var mappedLanguage;
 
     if (translationLanguageCache) {
@@ -350,7 +347,7 @@ Utils.getTranslationLanguages = function () {
     });
 
     translationLanguageCache = languages;
-    customCache.setCache(Utils.config.cache.url.languages.translation, translationLanguageCache);
+    customCache.setCache(Utils.config.cache.url.languages.translation.replace('{site_id}', Site.current.ID), translationLanguageCache);
 
     return languages;
 };
@@ -428,51 +425,37 @@ Utils.getSfccMappingLanguage = function (tmLang) {
  */
 Utils.getLanguageFromList = function () {
     var result = [];
+    var apiCache = Utils.config.tmApiCache;
 
-    if (Utils.config.fromLanguages.source === 'mapping') {
-        var languageMapping = require('~/cartridge/scripts/translation/getLanguageMapping');
-
-        for (var i = 0; i < languageMapping.data.length; i++) {
-            if (Utils.isLocaleEnabled(languageMapping.data[i].dw)) {
-                result.push({
-                    id: languageMapping.data[i].dw,
-                    name: languageMapping.data[i].dwName
-                });
-            }
-        }
-    } else {
-        var apiCache = Utils.config.tmApiCache;
-
-        if (apiCache.toLowerCase() === 'disabled') {
-            // Cache settings checking is only here.
-            // In all other functions, data will be fetched from cache if data found in cache
-            Utils.resetLanguageCache();
-        }
-
-        var languageFromListCache = customCache.getCache(Utils.config.cache.url.languages.fromList);
-
-        if (languageFromListCache) {
-            return languageFromListCache;
-        }
-
-        var languages = Utils.getTranslationLanguages();
-
-        for (var j = 0; j < languages.length; j++) {
-            var language = languages[j];
-            if (Utils.isLocaleEnabled(language.id)) {
-                var languageToList = Utils.getLanguageTo(language.id);
-
-                if (languageToList.length > 0) {
-                    result.push(language);
-                }
-            }
-        }
-
-        result = Utils.makeArrayUnique(result, 'id');
-
-        languageFromListCache = result;
-        customCache.setCache(Utils.config.cache.url.languages.fromList, languageFromListCache);
+    if (apiCache.toLowerCase() === 'disabled') {
+        // Cache settings checking is only here.
+        // In all other functions, data will be fetched from cache if data found in cache
+        Utils.resetLanguageCache();
     }
+
+    var languageFromListCache = customCache.getCache(Utils.config.cache.url.languages.fromList.replace('{site_id}', Site.current.ID));
+
+    if (languageFromListCache) {
+        return languageFromListCache;
+    }
+
+    var languages = Utils.getTranslationLanguages();
+
+    for (var j = 0; j < languages.length; j++) {
+        var language = languages[j];
+        if (Utils.isLocaleEnabled(language.id)) {
+            var languageToList = Utils.getLanguageTo(language.id);
+
+            if (languageToList.length > 0) {
+                result.push(language);
+            }
+        }
+    }
+
+    result = Utils.makeArrayUnique(result, 'id');
+
+    languageFromListCache = result;
+    customCache.setCache(Utils.config.cache.url.languages.fromList.replace('{site_id}', Site.current.ID), languageFromListCache);
 
     return result;
 };
@@ -481,7 +464,7 @@ Utils.getLanguageFromList = function () {
  * Reset cache values
  */
 Utils.resetLanguageCache = function () {
-    customCache.clearCache('/languages');
+    customCache.clearCache('/' + Site.current.ID + '/languages');
 };
 
 /**
@@ -517,7 +500,7 @@ Utils.isTranslationLanguage = function (languageCheck) {
  * @returns {Object} object of language details
  */
 Utils.getLanguageAbilityList = function () {
-    var abilityListCache = customCache.getCache(Utils.config.cache.url.languages.abilityList);
+    var abilityListCache = customCache.getCache(Utils.config.cache.url.languages.abilityList.replace('{site_id}', Site.current.ID));
 
     if (abilityListCache) {
         return abilityListCache;
@@ -553,7 +536,7 @@ Utils.getLanguageAbilityList = function () {
     }
 
     abilityListCache = result;
-    customCache.setCache(Utils.config.cache.url.languages.abilityList, abilityListCache);
+    customCache.setCache(Utils.config.cache.url.languages.abilityList.replace('{site_id}', Site.current.ID), abilityListCache);
 
     return result;
 };
@@ -573,20 +556,10 @@ Utils.getLanguageTo = function (languageFrom) {
         if (language.from === languageFrom && language.to !== languageFrom) {
             var sfccMappingLanguage = Utils.getSfccMappingLanguage(language.to);
             var languageToCode = sfccMappingLanguage ? sfccMappingLanguage : language.to;
-
-            if (Utils.config.fromLanguages.source === 'mapping') {
-                if (Utils.isDWLanguageInMapping(languageToCode)) {
-                    languageTo.push({
-                        id: languageToCode,
-                        name: Utils.getLocaleName(languageToCode)
-                    });
-                }
-            } else {
-                languageTo.push({
-                    id: languageToCode,
-                    name: Utils.getLocaleName(languageToCode)
-                });
-            }
+            languageTo.push({
+                id: languageToCode,
+                name: Utils.getLocaleName(languageToCode)
+            });
         }
     }
 

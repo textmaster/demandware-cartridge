@@ -39,29 +39,40 @@
                     var tmLangCode = $('#tmlanguageSelect option:selected').val();
 
                     if (dwLangCode && tmLangCode) {
-                        saveButton.prop('disabled', true);
-                        $('#cancelMapping').prop('disabled', true);
-                        saveButton.val(Resources.messages.WAITING);
-
-                        var dwLangName = $('#dwlanguageSelect option:selected').text();
-                        var tmLangName = $('#tmlanguageSelect option:selected').text();
-                        var langCodesStr = saveButton.closest('td').attr('data-langs');
-                        var langCodes = langCodesStr.split('|');
-
-                        var newLanguageMappingData = {
-                            dwLangName: dwLangName.replace('* ', ''),
-                            tmLangName: tmLangName,
-                            dwLangCode: dwLangCode,
-                            tmLangCode: tmLangCode,
-                            currDwLangCode: langCodes[0],
-                            currTmLangCode: langCodes[1]
-                        };
-
-                        $.post(textMasterGeneralApp.urls.saveLanguageMapping, newLanguageMappingData, function (responseHTML) {
-                            saveButton.closest('tr').html(responseHTML);
-                            $('.add-mapping').attr('disabled', false);
-                            $('#mappingList').removeClass('form-mode');
-                        });
+                    	if (dwLangCode !== tmLangCode) {
+	                        saveButton.prop('disabled', true);
+	                        $('#cancelMapping').prop('disabled', true);
+	                        saveButton.val(Resources.messages.WAITING);
+	
+	                        var dwLangName = $('#dwlanguageSelect option:selected').text();
+	                        var tmLangName = $('#tmlanguageSelect option:selected').text();
+	                        var langCodesStr = saveButton.closest('td').attr('data-langs');
+	                        var langCodes = langCodesStr.split('|');
+	
+	                        var newLanguageMappingData = {
+	                            dwLangName: dwLangName.replace('* ', ''),
+	                            tmLangName: tmLangName,
+	                            dwLangCode: dwLangCode,
+	                            tmLangCode: tmLangCode,
+	                            currDwLangCode: langCodes[0],
+	                            currTmLangCode: langCodes[1]
+	                        };
+	
+	                        $.post(textMasterGeneralApp.urls.saveLanguageMapping, newLanguageMappingData, function (responseHTML) {
+	                            saveButton.closest('tr').html(responseHTML);
+	                            $('.add-mapping').attr('disabled', false);
+	                            $('#mappingList').removeClass('form-mode');
+	                        });
+	                        $.ajax({
+	                            type: 'POST',
+	                            url: textMasterGeneralApp.urls.clearCache,
+	                            success: function () {
+	                                console.log("Language cache cleared");
+	                            }
+	                        });
+                    	} else {
+                    		alert("Mapping between same language code is not required. For more details please read the description under the heading of this page.");
+                    	}
                     }
                 });
 
@@ -99,6 +110,13 @@
                         }
 
                         $.post(textMasterGeneralApp.urls.deleteRowMapping, langMapping, function () {});
+                        $.ajax({
+                            type: 'POST',
+                            url: textMasterGeneralApp.urls.clearCache,
+                            success: function () {
+                            	console.log("Language cache cleared");
+                            }
+                        });
                     }
                 });
 
