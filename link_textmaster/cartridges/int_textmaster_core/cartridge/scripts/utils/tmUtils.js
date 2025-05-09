@@ -508,19 +508,25 @@ Utils.getLanguageAbilityList = function () {
 
     var abilityEndPoint = Resource.msg('api.get.abilities', 'textmaster', null);
     var result = [];
-    var fetchNextPage = true;
     var page = 1;
-    var maxPages = 65;
+    var lastPage = 1; // will set this with correct value from first API response
 
-    while (fetchNextPage && page <= maxPages) {
+    while (page <= lastPage) {
         var abilityEndPointPage = (abilityEndPoint + '&page=' + page);
         var abilities = Utils.textMasterClient('GET', abilityEndPointPage, null);
+        Utils.log.debug("Current page: " + page);
+        Utils.log.debug(JSON.stringify(abilities));
 
         if (abilities && abilities.data && abilities.data.length > 0) {
+        	if (lastPage === 1 && abilities.total_pages) {
+        		lastPage = abilities.total_pages;
+        	}
+        	
             abilities = abilities.data;
 
             for (var i = 0; i < abilities.length; i++) {
                 var ability = abilities[i];
+                
                 if (Utils.isTranslationLanguage(ability.language_to)) {
                     result.push({
                         from: ability.language_from,
@@ -528,8 +534,6 @@ Utils.getLanguageAbilityList = function () {
                     });
                 }
             }
-        } else {
-            fetchNextPage = false;
         }
 
         page++;
