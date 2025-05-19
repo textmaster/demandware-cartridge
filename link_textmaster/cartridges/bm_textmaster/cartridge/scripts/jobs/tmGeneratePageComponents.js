@@ -11,16 +11,7 @@ function start() {
     var items;
     var language;
     var i;
-    var languages = utils.config.languageMapping;
-
-    if (languages.length) {
-        for (i = 0; i < languages.length; i++) {
-            languages[i].id = languages[i].dw;
-        }
-    } else {
-        languages = utils.getDWLanguages();
-    }
-
+    var languages = utils.getDWLanguages();
     var pages = pageUtils.getPageItems();
     var components = require('~/cartridge/scripts/translation/tmGetPageComponentList');
 
