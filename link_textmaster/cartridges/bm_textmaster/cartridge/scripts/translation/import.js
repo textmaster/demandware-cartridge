@@ -170,7 +170,7 @@ function execute(projectID, documentID, isFirstImport) {
             } else if (itemType === 'product' || itemType === 'category') {
                 genericFolder = 'catalog';
             }
-            relativeFolder = 'textmaster' + File.SEPARATOR + genericFolder;
+            relativeFolder = 'textmaster' + File.SEPARATOR + Site.current.ID + File.SEPARATOR + genericFolder;
             fileName = documentID + '.xml';
 
             var importDir = new File(baseFolder + File.SEPARATOR + relativeFolder);
