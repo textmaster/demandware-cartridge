@@ -80,13 +80,13 @@
             <step step-id="TMImportCatalog" type="ImportCatalog" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="WorkingFolder">textmaster/catalog</parameter>
+                    <parameter name="WorkingFolder">textmaster/RefArch/catalog</parameter>
                     <parameter name="FileNamePattern">(.*).xml</parameter>
                     <parameter name="NoFilesFoundHandling">WARN</parameter>
                     <parameter name="ImportMode">Merge</parameter>
                     <parameter name="ImportFailedHandling">WARN</parameter>
                     <parameter name="AfterImportFileHandling">Archive</parameter>
-                    <parameter name="ArchiveFolder">src/textmaster/archives/catalog/imported</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/RefArch/archives/catalog/imported</parameter>
                 </parameters>
             </step>
         </flow>
@@ -107,13 +107,13 @@
             <step step-id="TMImportContent" type="ImportContent" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="WorkingFolder">textmaster/content</parameter>
+                    <parameter name="WorkingFolder">textmaster/RefArch/content</parameter>
                     <parameter name="FileNamePattern">(.*).xml</parameter>
                     <parameter name="NoFilesFoundHandling">WARN</parameter>
                     <parameter name="ImportMode">Merge</parameter>
                     <parameter name="ImportFailedHandling">WARN</parameter>
                     <parameter name="AfterImportFileHandling">Archive</parameter>
-                    <parameter name="ArchiveFolder">src/textmaster/archives/content/imported</parameter>
+                    <parameter name="ArchiveFolder">src/textmaster/RefArch/archives/content/imported</parameter>
                 </parameters>
             </step>
         </flow>
