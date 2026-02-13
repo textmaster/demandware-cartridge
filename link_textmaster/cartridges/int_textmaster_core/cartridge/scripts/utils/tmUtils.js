@@ -104,7 +104,7 @@ Utils.config = {
             password: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         },
         token: {
-            post: 'https://account.demandware.com/dw/oauth2/access_token?grant_type=client_credentials'
+            post: 'https://account.demandware.com/dwsso/oauth2/access_token?grant_type=client_credentials'
         }
     },
     importData: {
